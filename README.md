@@ -58,7 +58,7 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 由于 Abracadabra 的功能涉及中文的输入和输出，在不同平台上，对不同编码的支持各不相同。
 
-项目仅在 Windows 平台上通过了测试，由于使用了 MS 独有的接口以确保命令行输入输出编码的一致性，目前不兼容 Linux 平台。
+项目在 Windows 11 和 Ubuntu 22.04 LTS 上通过了编译测试。
 
 ### 编译
 
@@ -66,8 +66,6 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 - [nlohmann/json](https://github.com/nlohmann/json)
 - [cppcodec](https://github.com/tplgy/cppcodec)
-
-请在 Windows x64 环境下用 MinGW 编译，其他环境尚未测试。
 
 ## 细节
 
