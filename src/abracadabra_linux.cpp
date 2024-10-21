@@ -1,10 +1,10 @@
 #include <iostream>
-#include <String.h>
+#include <string.h>
 #include <stdio.h>
 #include <cstdlib>
 #include <codecvt>
 #include <random>
-#include <Windows.h>
+//#include <Windows.h>
 #include <nlohmann/json.hpp>
 #include <cppcodec/base64_rfc4648.hpp>
 using namespace std;
@@ -42,12 +42,12 @@ string GetCryptedText(string letter);
 string GetLinkCryptedText(string text);
 string UrlEncode(const string& szToEncode);
 string UrlDecode(const string& szToDecode);
-std::string GbkToUtf8(const char* src_str);
+//std::string GbkToUtf8(const char* src_str);
 PreCheckResult preCheck(string input);
 
 
 int main(int argc, char *argv[]){
-    SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
+    //SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
 
     string arg1,arg2;
     PreCheckResult input;
@@ -55,12 +55,12 @@ int main(int argc, char *argv[]){
     string::size_type idx; 
    
     if(argc >= 2){ //读取参数，最多两个
-        arg1 = GbkToUtf8(argv[1]);
+        arg1 = argv[1];
     }else{
         arg1 = "";
     }
     if(argc >= 3){
-        arg2 = GbkToUtf8(argv[2]);
+        arg2 = argv[2];
     }else{
         arg2 = ""; 
     }
@@ -419,7 +419,6 @@ string deMap(PreCheckResult input){
     size = TempStrz.length();
     OriginStr = TempStrz;
 
-
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
         int cplen2 = 1;
@@ -446,7 +445,8 @@ string deMap(PreCheckResult input){
         if(findtemp == "BIG"){ //如果这是一个大写标志位
             findtemp = FindOriginText(temp2); //那么找第二个字符的原文
             string BIGA = findtemp;
-            BIGA = strupr((char*)BIGA.c_str());
+            BIGA = toupper(BIGA[0]);
+            //BIGA = strupr((char*)BIGA.c_str());
             TempStr1 = TempStr1 + BIGA; //把找到的原文增加到字符串上
             i = i + cplen + cplen2; //跳过两个字段
             continue;
@@ -528,6 +528,7 @@ string GetCryptedText(string letter){//查表返回加密之后的字符串
             vector<string> CipherArrayBIG;
             key = el.key();
             keyU = (string)key;
+            keyU = toupper(keyU[0]);
             if(key == letter){
                 el.value().get_to(CipherArray); //把密本存进容器里
                 RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
@@ -538,7 +539,7 @@ string GetCryptedText(string letter){//查表返回加密之后的字符串
                     }
                     i++;
                 }
-            }else if(strupr((char*)keyU.c_str()) == letter){//碰到大写字母
+            }else if(keyU == letter){//碰到大写字母
                 el.value().get_to(CipherArray);
                 Map_Obj["special"]["BIG"].get_to(CipherArrayBIG);
                 RandIndex = dist(mt_r) % CipherArray.size();
@@ -716,7 +717,7 @@ string UrlDecode(const string& szToDecode)
 	}
 	return result;
 }
-std::string GbkToUtf8(const char* src_str)
+/*std::string GbkToUtf8(const char* src_str)
 {
     std::string result;
     wchar_t* strSrc;
@@ -734,4 +735,4 @@ std::string GbkToUtf8(const char* src_str)
     if (szRes)
         delete[]szRes;
     return result;
-}
+}*/
