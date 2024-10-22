@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <nlohmann/json.hpp>
 #include <cppcodec/base64_rfc4648.hpp>
+#include <CLI11.hpp>
 using namespace std;
 using json = nlohmann::json;
 using base64 = cppcodec::base64_rfc4648;
@@ -48,13 +49,97 @@ PreCheckResult preCheck(string input);
 
 int main(int argc, char *argv[]){
     SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
+    CLI::App app{"***Abracadabra v0.1.2 , by SheepChef***"}; //CLI11提供的命令行参数解析
 
-    string arg1,arg2;
+    string arg1 = "";
     PreCheckResult input;
     bool l = false, b = false, n = false, d = false;
+    string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR;//给定的文件路径和输入
     string::size_type idx; 
-   
-    if(argc >= 2){ //读取参数，最多两个
+
+    //定义命令行参数
+    CLI::Option* i2flag = app.add_option("DEFAULT", i2, "Input text, if there is no given option besides.");
+    CLI::Option* lflag = app.add_flag("-l", l, "Force to encrypt using url mode");
+    CLI::Option* bflag = app.add_flag("-b", b, "Force to encrypt using base64 mode");
+    CLI::Option* nflag = app.add_flag("-n", n, "Force to encrypt the input directly");
+    CLI::Option* dflag = app.add_flag("-d", d, "Force to decrypt the given input");
+    CLI::Option* fflag = app.add_option("-f", f, "Encrypt a arbitrary given file, using base64 mode");
+    CLI::Option* oflag = app.add_option("-o", o, "Set a output file path, which is necessary when -f is used.");
+    CLI::Option* iflag = app.add_option("-i", i, "Input text, expected if -f is not used.");
+
+
+    i2flag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-d")
+        ->excludes("-f")
+        ->excludes("-l")
+        ->excludes("-o")
+        ->excludes("-i");
+    lflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-d")
+        ->excludes("-f")
+        ->excludes("-o")
+        ->needs("-i");
+    bflag
+        ->take_last()
+        ->excludes("-l")
+        ->excludes("-n")
+        ->excludes("-d")
+        ->excludes("-f")
+        ->excludes("-o")
+        ->needs("-i");
+    nflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-l")
+        ->excludes("-d")
+        ->excludes("-f")
+        ->excludes("-o")
+        ->needs("-i");
+    dflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-l")
+        ->excludes("-f")
+        ->excludes("-o")
+        ->needs("-i");
+    fflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-l")
+        ->excludes("-d")
+        ->excludes("-i")
+        ->needs("-o");
+    oflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-l")
+        ->excludes("-d")
+        ->excludes("-i")
+        ->needs("-f");
+    iflag
+        ->take_last()
+        ->excludes("-f")
+        ->excludes("-o");
+    try{
+        CLI11_PARSE(app, argc, argv);
+    }catch(...){
+        cout<<"Your Command is not valid."<<endl;
+        cout<<"Run with --help for more information."<<endl;
+        return 0;
+    }
+
+
+
+    /*if(argc == 2){ //读取第一个参数
         arg1 = GbkToUtf8(argv[1]);
     }else{
         arg1 = "";
@@ -63,9 +148,9 @@ int main(int argc, char *argv[]){
         arg2 = GbkToUtf8(argv[2]);
     }else{
         arg2 = ""; 
-    }
+    }*/
         
-    idx=arg1.find("-h");
+    /*idx=arg1.find("-h");
     // -h 输出帮助信息
     if (idx != string::npos || argc < 2){
         cout<<"*** Abracadabra v0.1.1 , by SheepChef ***"<<endl;
@@ -107,18 +192,26 @@ int main(int argc, char *argv[]){
     idx=arg1.find("-d");
     if (idx != string::npos){
         d = true;
-    }
-    idx=arg1.find("-");
-    if (idx == string::npos){
+    }*/
+    if (i2 != NULL_STR){//如果i2存在，即只有一个参数
         PreCheckResult Result;
-        Result = preCheck(arg1);
+        Result = preCheck(GbkToUtf8(i2.c_str()));
 
         if(Result.isEncrypted){
             d = true;
         }
         input = Result;
     }else{
-        input = preCheck(arg2);
+        if(i != NULL_STR){
+            input = preCheck(GbkToUtf8(i.c_str()));
+            if(input.isEncrypted){
+                d = true;
+            }
+        }else{
+            cout<<"Your Command is not valid."<<endl;
+            cout<<"Run with --help for more information."<<endl;
+            return 0;
+        }
     }
 
 

@@ -5,3 +5,4 @@ node_modules
 package-lock.json
 package.json
 abracadabra_linux_amd64
+abracadabra_win_amd64.exe
