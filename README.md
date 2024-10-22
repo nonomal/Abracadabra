@@ -1,3 +1,4 @@
+
 # Abracadabra：用中文表示一切
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -6,11 +7,14 @@
 
 Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
+设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
+
 ## 特性
 
 ![动画](https://github.com/user-attachments/assets/7ec6e01c-230d-4d27-a0b1-80015307c5f4)
 
-- 方便，密文可以描述自身是否被加密以及其类型。
+- 方便，密文可以描述自身。
+- 随机，加密结果具有随机性。
 - 无序，加密的文本如咒语般不可阅读。
 - 安心，密码表中已剔除敏感汉字。
 - 快速，C++ 快如闪电。
@@ -88,3 +92,11 @@ Abracadabra 使用古老的多表加密，以最常用的 500 个汉字(剔除�
 ### 灵感
 
 Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
+
+## Todo
+
+ - [ ] 实现更规范地解析命令参数
+ - [ ] 实现加密任意文件，输出文本文档
+ - [ ] 用 Python 完整实现 Abracadabra 的轮子
+ - [ ] 用 Node.js 完整实现 Abracadabra 的轮子
+ - [ ] 实现让嵌入自定义密本更具灵活性
