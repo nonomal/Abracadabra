@@ -1,4 +1,3 @@
-
 # Abracadabra：用中文表示一切
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -26,33 +25,13 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 ### ⌨️ CLI 使用须知
 
-```shell
-PS C:\Abracadabra>.\abracadabra
-*** Abracadabra v0.1, by SheepChef ***
-Usage:
-      abracadabra [arg] [input]
-input   : a string to process
-Arguments :
- -l     : Force to encrypt using url mode
- -b     : Force to encrypt using base64 mode
- -n     : Force to encrypt the input directly
- -d     : Force to decrypt the given input
- -h     : Print help information
-Tips :
-      Usually, the mapped string could tell if itself was mapped and what type itself is.
-
-      Using base64 to process your string could provide the highest compatibility,
-      but may lose efficiency if your input had no non-English characters.
-
-      If you are processing links, use link mode could increase the effciency,
-      since some common phrases were directly mapped to single characters.
-```
-
 强制使用 base64 模式 `-b` 处理字符串可以提供最高的兼容性、但如果输入中没有宽字符，则可能显著降低效率。
 
-如果要处理链接，使用链接模式 `-l` 可以提高效率、因为一些常用短语可以直接加密为单个字符。
+如果要处理链接，使用链接模式 `-l` 可以提高效率、因为一些常用短语可以直接加密为单个字符。不会自动检测给定文本是否是链接，链接模式需要手动指定。
 
-如果不附带模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。不会自动检测给定文本是否是链接，链接模式需要手动指定。如果给定的字符串不存在宽字符，则不会用 base64 预处理字符串，提高效率。
+如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
+
+如果给定的字符串不存在宽字符，则不会用 base64 预处理字符串，提高效率。
 
 ## 注意
 
@@ -64,12 +43,13 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 项目在 Windows 11 和 Ubuntu 22.04 LTS 上通过了编译测试。
 
-### 编译
+### 依赖
 
 如果你想自行编译 Abracadabra，请确保正确添加了以下依赖库：
 
 - [nlohmann/json](https://github.com/nlohmann/json)
 - [cppcodec](https://github.com/tplgy/cppcodec)
+- [CLI11](https://github.com/CLIUtils/CLI11)
 
 ## 细节
 
@@ -95,8 +75,8 @@ Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
 
 ## Todo
 
- - [ ] 实现更规范地解析命令参数
- - [ ] 实现加密任意文件，输出文本文档
- - [ ] 用 Python 完整实现 Abracadabra 的轮子
- - [ ] 用 Node.js 完整实现 Abracadabra 的轮子
- - [ ] 实现让嵌入自定义密本更具灵活性
+- [x] 实现更规范地解析命令参数
+- [ ] 实现加密任意文件，输出文本文档
+- [ ] 用 Python 完整实现 Abracadabra 的轮子
+- [ ] 用 Node.js 完整实现 Abracadabra 的轮子
+- [ ] 实现让嵌入自定义密本更具灵活性
