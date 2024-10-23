@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <String.h>
 #include <stdio.h>
 #include <cstdlib>
@@ -35,15 +36,21 @@ struct PreCheckResult { // 专门用来打包传递预检的结果
     bool isEncrypted = false;
 };
 
+struct DemapResult { // 专门用来打包解密的结果
+    string output;
+    vector<BYTE> output_B;
+};
 
-string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect);
-string deMap(PreCheckResult input);
+
+string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect,bool isfile = false);
+DemapResult deMap(PreCheckResult input);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
 string GetLinkCryptedText(string text);
 string UrlEncode(const string& szToEncode);
 string UrlDecode(const string& szToDecode);
 std::string GbkToUtf8(const char* src_str);
+std::vector<BYTE> readFile(const char* filename);
 PreCheckResult preCheck(string input);
 
 
@@ -53,9 +60,12 @@ int main(int argc, char *argv[]){
 
     string arg1 = "";
     PreCheckResult input;
-    bool l = false, b = false, n = false, d = false;
+    bool l = false, b = false, n = false, d = false,isfile = false;
     string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR;//给定的文件路径和输入
     string::size_type idx; 
+    ofstream outfile;
+    vector<BYTE> inputfiledata;
+    
 
     //定义命令行参数
     CLI::Option* i2flag = app.add_option("DEFAULT", i2, "Input text, if there is no given option besides.");
@@ -63,8 +73,8 @@ int main(int argc, char *argv[]){
     CLI::Option* bflag = app.add_flag("-b", b, "Force to encrypt using base64 mode");
     CLI::Option* nflag = app.add_flag("-n", n, "Force to encrypt the input directly");
     CLI::Option* dflag = app.add_flag("-d", d, "Force to decrypt the given input");
-    CLI::Option* fflag = app.add_option("-f", f, "Encrypt a arbitrary given file, using base64 mode");
-    CLI::Option* oflag = app.add_option("-o", o, "Set a output file path, which is necessary when -f is used.");
+    CLI::Option* fflag = app.add_option("-f", f, "Input an arbitrary given file.");
+    CLI::Option* oflag = app.add_option("-o", o, "Declare an output file to save the result.");
     CLI::Option* iflag = app.add_option("-i", i, "Input text, expected if -f is not used.");
 
 
@@ -81,54 +91,30 @@ int main(int argc, char *argv[]){
         ->take_last()
         ->excludes("-b")
         ->excludes("-n")
-        ->excludes("-d")
-        ->excludes("-f")
-        ->excludes("-o")
-        ->needs("-i");
+        ->excludes("-d");
     bflag
         ->take_last()
         ->excludes("-l")
         ->excludes("-n")
-        ->excludes("-d")
-        ->excludes("-f")
-        ->excludes("-o")
-        ->needs("-i");
+        ->excludes("-d");
     nflag
         ->take_last()
         ->excludes("-b")
         ->excludes("-l")
-        ->excludes("-d")
-        ->excludes("-f")
-        ->excludes("-o")
-        ->needs("-i");
+        ->excludes("-d");
     dflag
         ->take_last()
         ->excludes("-b")
         ->excludes("-n")
-        ->excludes("-l")
-        ->excludes("-f")
-        ->excludes("-o")
-        ->needs("-i");
+        ->excludes("-l");
     fflag
         ->take_last()
-        ->excludes("-b")
-        ->excludes("-n")
-        ->excludes("-l")
-        ->excludes("-d")
-        ->excludes("-i")
-        ->needs("-o");
+        ->excludes("-i");
     oflag
-        ->take_last()
-        ->excludes("-b")
-        ->excludes("-n")
-        ->excludes("-l")
-        ->excludes("-d")
-        ->excludes("-i")
-        ->needs("-f");
+        ->take_last();
     iflag
         ->take_last()
-        ->excludes("-f")
-        ->excludes("-o");
+        ->excludes("-f");
     try{
         CLI11_PARSE(app, argc, argv);
     }catch(...){
@@ -193,6 +179,8 @@ int main(int argc, char *argv[]){
     if (idx != string::npos){
         d = true;
     }*/
+
+    //这里处理所有输入的逻辑
     if (i2 != NULL_STR){//如果i2存在，即只有一个参数
         PreCheckResult Result;
         Result = preCheck(GbkToUtf8(i2.c_str()));
@@ -207,6 +195,32 @@ int main(int argc, char *argv[]){
             if(input.isEncrypted){
                 d = true;
             }
+        }else if(f != NULL_STR){ //指定了输入文件
+            try{
+                inputfiledata = readFile(f.c_str()); //读取文件，进行几次编码/类型转换
+            }catch(...){
+                cout<<"Error Reading File."<<endl;
+                cout<<"Check your command and try again."<<endl;
+                return 0;
+            }
+            //cout<<inputfiledata.size();
+            string RawStr(inputfiledata.begin(),inputfiledata.end()); //尝试将读取到的字节转换为字符串
+            input = preCheck(RawStr.c_str()); //这里默认读取到的文件编码是UTF-8，预处理函数不会进行编码转换。
+            if(input.isEncrypted){ //如果给定的是一个任意二进制文件，预处理函数默认将其视为字符串对待，虽然强行输出绝对是乱码。
+                d = true;
+            }else{//如果Precheck找不到标志位，那么默认这个文件是个任意二进制文件，直接对其进行base64转换。
+                PreCheckResult BinaryfileInput;
+
+                BinaryfileInput.isNormal = true;
+                BinaryfileInput.output = base64::encode(inputfiledata);
+
+                b = false; //请勿两次Base编码
+                n = false;
+                l = false;
+                d = false;
+                isfile = true;
+                input = BinaryfileInput;
+            }
         }else{
             cout<<"Your Command is not valid."<<endl;
             cout<<"Run with --help for more information."<<endl;
@@ -214,14 +228,38 @@ int main(int argc, char *argv[]){
         }
     }
 
+    string Process_res; //一个变量用来存储处理结束后的对象
+    DemapResult Res;
+    vector<BYTE> OutputData;
 
-    if(!d){
-        cout<<enMap(input,l,b,n)<<endl;
+    if(!d || l || b || n){
+        Process_res = enMap(input,l,b,n,isfile);
     }else{
         //尝试解密
-        cout<<deMap(input)<<endl;
+       
+        Res = deMap(input); //如果输入的是文件，解密后的“字符串”未必是字符串，只是类字符数组，若不指定输出路径，直接命令行输出必乱码
+        Process_res = Res.output;
+        OutputData = Res.output_B;
     }
 
+    if(o != NULL_STR){ //如果指定了输出文件
+        try{
+            outfile.open(o.c_str(), ios::out | ios::trunc | ios::binary);
+        }catch(...){
+            cout<<"Error Creating/Openning Output File."<<endl;
+            cout<<"Check your command and try again."<<endl;
+            return 0;
+        }
+        if(OutputData.size() != 0){ //有字节码就直接写出字节码
+             outfile.write(reinterpret_cast<const char*>(OutputData.data()),OutputData.size()); //输出到文件
+        }else{ //没字节码才写字符串
+            outfile<<Process_res;
+        }
+       
+        //;
+    }else{//如果没有指定输出，那么直接输出到命令行
+        cout<<Process_res;
+    }
 
     return 0;
 }
@@ -309,7 +347,7 @@ PreCheckResult preCheck(string input){
     return Result;
 }
 
-string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect){
+string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect,bool isfile){
 
     string OriginStr = input.output;
     string TempStr1;
@@ -329,6 +367,9 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
         OriginStr = base64::encode(input.output);
     }else if(input.isUnNormal){//包含特殊字符，默认Base64
         OriginStr = base64::encode(input.output);
+        forceBase64 = true;
+    }
+    if(isfile){
         forceBase64 = true;
     }
 
@@ -470,7 +511,7 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
     return TempStr1;
 }
 
-string deMap(PreCheckResult input){
+DemapResult deMap(PreCheckResult input){
     string OriginStr = input.output;
     string TempStr1,TempStrz;
     
@@ -553,15 +594,19 @@ string deMap(PreCheckResult input){
     }
     //到这儿应该能还原出预先处理过的原文
 
+    DemapResult Res;
+    
     if(input.isBase64){//如果是Base64加密后的文本，那么解密
     std::vector<uint8_t> TempStr2Int;
     TempStr2Int = base64::decode(TempStr1);
     string TempStr2(TempStr2Int.begin(),TempStr2Int.end());
-    return TempStr2;
+    Res.output = TempStr2;
+    Res.output_B = TempStr2Int;
+    return Res;
     } //不进行urldecode
 
-
-    return TempStr1;
+    Res.output = TempStr1;
+    return Res;
 }
 string GetLinkCryptedText(string text){//查表，检查是否有任何预配置的关键词
     string s = text; //源文本
@@ -827,4 +872,14 @@ std::string GbkToUtf8(const char* src_str)
     if (szRes)
         delete[]szRes;
     return result;
+}
+
+std::vector<BYTE> readFile(const char* filename)
+{
+    // open the file:
+    std::ifstream file(filename, std::ios::binary);
+
+    // read the data:
+    return std::vector<BYTE>((std::istreambuf_iterator<char>(file)),
+                              std::istreambuf_iterator<char>());
 }
