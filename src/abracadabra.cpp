@@ -201,7 +201,7 @@ int main(int argc, char *argv[]){
         }
        
     }else{//如果没有指定输出，那么直接输出到命令行
-        cout<<Process_res;
+        cout<<Process_res<<endl;
     }
 
     return 0;
