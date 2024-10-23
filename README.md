@@ -25,7 +25,37 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 ### ⌨️ CLI 使用须知
 
-强制使用 base64 模式 `-b` 处理字符串可以提供最高的兼容性、但如果输入中没有宽字符，则可能显著降低效率。
+```shell
+PS C:\Abracadabra> .\abracadabra.exe -h
+***Abracadabra v0.2 , by SheepChef***
+Usage: G:\Code-projects\Abracadabra\abracadabra.exe [OPTIONS] [DEFAULT]
+
+Positionals:
+  DEFAULT TEXT Excludes: -l -b -n -d -f -o -i
+                              Input text, if there is no given option besides.
+
+Options:
+  -h,--help                   Print this help message and exit
+  -l Excludes: DEFAULT -b -n -d
+                              Force to encrypt using url mode
+  -b Excludes: DEFAULT -l -n -d
+                              Force to encrypt using base64 mode
+  -n Excludes: DEFAULT -l -b -d
+                              Force to encrypt the input directly
+  -d Excludes: DEFAULT -l -b -n
+                              Force to decrypt the given input
+  -f TEXT Excludes: DEFAULT -i
+                              Input an arbitrary given file.
+  -o TEXT Excludes: DEFAULT   Declare an output file to save the result.
+  -i TEXT Excludes: DEFAULT -f
+                              Input text, expected if -f is not used.
+```
+
+程序的输入和输出分离，输入可以是 `-i` 后跟一串字符串，也可以是 `-f` 后指定任意文件。 默认情况下结果输出在控制台，也可以 `-o` 后指定一个输出文件。
+
+**理论上本程序可以处理任何文件，但不建议尝试处理大小超过 100kb 以上的文件，处理大文件的速度很慢，且对大部分文件强制使用 Base64 模式。** 如果指定文件仅包括英文字母，数字和部分符号，那么你可以指定处理方式。文件加密的处理依赖标志位，去除标志位可能导致文件无法解密。
+
+使用 base64 模式 `-b` 处理字符串可以提供最高的兼容性、但如果输入中没有宽字符，则可能显著降低效率。
 
 如果要处理链接，使用链接模式 `-l` 可以提高效率、因为一些常用短语可以直接加密为单个字符。不会自动检测给定文本是否是链接，链接模式需要手动指定。
 
@@ -75,8 +105,8 @@ Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
 
 ## Todo
 
-- [x] 实现更规范地解析命令参数
-- [ ] 实现加密任意文件，输出文本文档
+- [x] ~~实现更规范地解析命令参数~~
+- [x] ~~实现加密任意文件，输出文本文档~~
 - [ ] 用 Python 完整实现 Abracadabra 的轮子
 - [ ] 用 Node.js 完整实现 Abracadabra 的轮子
 - [ ] 实现让嵌入自定义密本更具灵活性

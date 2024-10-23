@@ -56,7 +56,7 @@ PreCheckResult preCheck(string input);
 
 int main(int argc, char *argv[]){
     SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
-    CLI::App app{"***Abracadabra v0.1.2 , by SheepChef***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v0.2 , by SheepChef***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -123,63 +123,6 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-
-
-    /*if(argc == 2){ //读取第一个参数
-        arg1 = GbkToUtf8(argv[1]);
-    }else{
-        arg1 = "";
-    }
-    if(argc >= 3){
-        arg2 = GbkToUtf8(argv[2]);
-    }else{
-        arg2 = ""; 
-    }*/
-        
-    /*idx=arg1.find("-h");
-    // -h 输出帮助信息
-    if (idx != string::npos || argc < 2){
-        cout<<"*** Abracadabra v0.1.1 , by SheepChef ***"<<endl;
-        cout<<"Usage:"<<endl;
-        cout<<"      abracadabra [arg] [input]"<<endl;
-        cout<<"input   : a string to process"<<endl;
-        cout<<"Arguments :"<<endl;
-        cout<<" -l     : Force to encrypt using url mode"<<endl;
-        cout<<" -b     : Force to encrypt using base64 mode"<<endl;
-        cout<<" -n     : Force to encrypt the input directly"<<endl;
-        cout<<" -d     : Force to decrypt the given input"<<endl;
-        cout<<" -h     : Print help information"<<endl;
-        cout<<"Tips :"<<endl;
-        cout<<"      Usually, the mapped string could tell if itself was mapped and what type itself is."<<endl;
-        cout<<endl;
-        cout<<"      Using base64 to process your string could provide the highest compatibility, "<<endl;
-        cout<<"      but may lose efficiency if your input had no non-English characters."<<endl;
-        cout<<endl;
-        cout<<"      If you are processing links, use link mode could increase the effciency,"<<endl;
-        cout<<"      since some common phrases were directly mapped to single characters."<<endl;
-        return 0;
-        
-    }
-    
-    
-    //判断指令参数
-    idx=arg1.find("-l"); 
-    if (idx != string::npos){
-        l = true;
-    }
-    idx=arg1.find("-b");
-    if (idx != string::npos){
-        b = true;
-    }
-    idx=arg1.find("-n");
-    if (idx != string::npos){
-        n = true;
-    }
-    idx=arg1.find("-d");
-    if (idx != string::npos){
-        d = true;
-    }*/
-
     //这里处理所有输入的逻辑
     if (i2 != NULL_STR){//如果i2存在，即只有一个参数
         PreCheckResult Result;
@@ -203,7 +146,6 @@ int main(int argc, char *argv[]){
                 cout<<"Check your command and try again."<<endl;
                 return 0;
             }
-            //cout<<inputfiledata.size();
             string RawStr(inputfiledata.begin(),inputfiledata.end()); //尝试将读取到的字节转换为字符串
             input = preCheck(RawStr.c_str()); //这里默认读取到的文件编码是UTF-8，预处理函数不会进行编码转换。
             if(input.isEncrypted){ //如果给定的是一个任意二进制文件，预处理函数默认将其视为字符串对待，虽然强行输出绝对是乱码。
@@ -211,12 +153,9 @@ int main(int argc, char *argv[]){
             }else{//如果Precheck找不到标志位，那么这个文件可能是一个任意的文本文档，也有可能是一个任意二进制文件
                 if(input.isUnNormal){//如果输入包含任何无法理解的字符
                     PreCheckResult BinaryfileInput;
-
                     //强制base64
-
                     BinaryfileInput.isNormal = true;
                     BinaryfileInput.output = base64::encode(inputfiledata);
-
                     b = false; //请勿两次Base编码
                     n = false;
                     l = false;
@@ -261,7 +200,6 @@ int main(int argc, char *argv[]){
             outfile<<Process_res;
         }
        
-        //;
     }else{//如果没有指定输出，那么直接输出到命令行
         cout<<Process_res;
     }
@@ -353,14 +291,10 @@ PreCheckResult preCheck(string input){
 }
 
 string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect,bool isfile){
-
     string OriginStr = input.output;
     string TempStr1;
-    
     string temp,temp2,group;
     string::size_type idx; 
-
-
     if(input.isUnNormal && forceDirect){//如果给定的字符串包括特殊字符且指定不处理特殊字符，解决矛盾
         forceDirect = false;
         forceLink = false;
@@ -377,8 +311,6 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
     if(isfile){
         forceBase64 = true;
     }
-
-
     int size = OriginStr.length();
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
@@ -816,48 +748,6 @@ string UrlEncode(const string& szToEncode)
 		}
 	}
 	return dst;
-}
-string UrlDecode(const string& szToDecode)
-{
-	string result;
-	int hex = 0;
-	for (size_t i = 0; i < szToDecode.length(); ++i)
-	{
-		switch (szToDecode[i])
-		{
-		case '+':
-			result += ' ';
-			break;
-		case '%':
-			if (isxdigit(szToDecode[i + 1]) && isxdigit(szToDecode[i + 2]))
-			{
-				string hexStr = szToDecode.substr(i + 1, 2);
-				hex = strtol(hexStr.c_str(), 0, 16);
-				//字母和数字[0-9a-zA-Z]、一些特殊符号[$-_.+!*'(),] 、以及某些保留字[$&+,/:;=?@]
-				//可以不经过编码直接用于URL
-				if (!((hex >= 48 && hex <= 57) ||	//0-9
-					(hex >=97 && hex <= 122) ||	//a-z
-					(hex >=65 && hex <= 90) ||	//A-Z
-					//一些特殊符号及保留字[$-_.+!*'(),]  [$&+,/:;=?@]
-					hex == 0x21 || hex == 0x24 || hex == 0x26 || hex == 0x27 || hex == 0x28 || hex == 0x29
-					|| hex == 0x2a || hex == 0x2b|| hex == 0x2c || hex == 0x2d || hex == 0x2e || hex == 0x2f
-					|| hex == 0x3A || hex == 0x3B|| hex == 0x3D || hex == 0x3f || hex == 0x40 || hex == 0x5f
-					))
-				{
-					result += char(hex);
-					i += 2;
-				}
-				else result += '%';
-			}else {
-				result += '%';
-			}
-			break;
-		default:
-			result += szToDecode[i];
-			break;
-		}
-	}
-	return result;
 }
 std::string GbkToUtf8(const char* src_str)
 {
