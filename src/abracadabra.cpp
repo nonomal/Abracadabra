@@ -208,18 +208,24 @@ int main(int argc, char *argv[]){
             input = preCheck(RawStr.c_str()); //这里默认读取到的文件编码是UTF-8，预处理函数不会进行编码转换。
             if(input.isEncrypted){ //如果给定的是一个任意二进制文件，预处理函数默认将其视为字符串对待，虽然强行输出绝对是乱码。
                 d = true;
-            }else{//如果Precheck找不到标志位，那么默认这个文件是个任意二进制文件，直接对其进行base64转换。
-                PreCheckResult BinaryfileInput;
+            }else{//如果Precheck找不到标志位，那么这个文件可能是一个任意的文本文档，也有可能是一个任意二进制文件
+                if(input.isUnNormal){//如果输入包含任何无法理解的字符
+                    PreCheckResult BinaryfileInput;
 
-                BinaryfileInput.isNormal = true;
-                BinaryfileInput.output = base64::encode(inputfiledata);
+                    //强制base64
 
-                b = false; //请勿两次Base编码
-                n = false;
-                l = false;
-                d = false;
-                isfile = true;
-                input = BinaryfileInput;
+                    BinaryfileInput.isNormal = true;
+                    BinaryfileInput.output = base64::encode(inputfiledata);
+
+                    b = false; //请勿两次Base编码
+                    n = false;
+                    l = false;
+                    //d = false; 允许用户强行尝试解密。
+                    isfile = true;
+                    input = BinaryfileInput;
+                }else{//如果全是可以直接处理的字符，此时用户可以决定是否预处理。
+                    d = false; //不可能是加密的字符串，所以禁止解密。
+                }
             }
         }else{
             cout<<"Your Command is not valid."<<endl;
@@ -228,7 +234,7 @@ int main(int argc, char *argv[]){
         }
     }
 
-    string Process_res; //一个变量用来存储处理结束后的对象
+    string Process_res; //变量用来存储处理结束后的对象
     DemapResult Res;
     vector<BYTE> OutputData;
 
@@ -236,7 +242,6 @@ int main(int argc, char *argv[]){
         Process_res = enMap(input,l,b,n,isfile);
     }else{
         //尝试解密
-       
         Res = deMap(input); //如果输入的是文件，解密后的“字符串”未必是字符串，只是类字符数组，若不指定输出路径，直接命令行输出必乱码
         Process_res = Res.output;
         OutputData = Res.output_B;
