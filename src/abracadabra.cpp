@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <String.h>
 #include <stdio.h>
 #include <cstdlib>
@@ -7,6 +8,7 @@
 #include <Windows.h>
 #include <nlohmann/json.hpp>
 #include <cppcodec/base64_rfc4648.hpp>
+#include <CLI11.hpp>
 using namespace std;
 using json = nlohmann::json;
 using base64 = cppcodec::base64_rfc4648;
@@ -34,101 +36,173 @@ struct PreCheckResult { // 专门用来打包传递预检的结果
     bool isEncrypted = false;
 };
 
+struct DemapResult { // 专门用来打包解密的结果
+    string output;
+    vector<BYTE> output_B;
+};
 
-string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect);
-string deMap(PreCheckResult input);
+
+string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect,bool isfile = false);
+DemapResult deMap(PreCheckResult input);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
 string GetLinkCryptedText(string text);
 string UrlEncode(const string& szToEncode);
 string UrlDecode(const string& szToDecode);
 std::string GbkToUtf8(const char* src_str);
+std::vector<BYTE> readFile(const char* filename);
 PreCheckResult preCheck(string input);
 
 
 int main(int argc, char *argv[]){
     SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
+    CLI::App app{"***Abracadabra v0.2 , by SheepChef***"}; //CLI11提供的命令行参数解析
 
-    string arg1,arg2;
+    string arg1 = "";
     PreCheckResult input;
-    bool l = false, b = false, n = false, d = false;
+    bool l = false, b = false, n = false, d = false,isfile = false;
+    string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR;//给定的文件路径和输入
     string::size_type idx; 
-   
-    if(argc >= 2){ //读取参数，最多两个
-        arg1 = GbkToUtf8(argv[1]);
-    }else{
-        arg1 = "";
-    }
-    if(argc >= 3){
-        arg2 = GbkToUtf8(argv[2]);
-    }else{
-        arg2 = ""; 
-    }
-        
-    idx=arg1.find("-h");
-    // -h 输出帮助信息
-    if (idx != string::npos || argc < 2){
-        cout<<"*** Abracadabra v0.1.1 , by SheepChef ***"<<endl;
-        cout<<"Usage:"<<endl;
-        cout<<"      abracadabra [arg] [input]"<<endl;
-        cout<<"input   : a string to process"<<endl;
-        cout<<"Arguments :"<<endl;
-        cout<<" -l     : Force to encrypt using url mode"<<endl;
-        cout<<" -b     : Force to encrypt using base64 mode"<<endl;
-        cout<<" -n     : Force to encrypt the input directly"<<endl;
-        cout<<" -d     : Force to decrypt the given input"<<endl;
-        cout<<" -h     : Print help information"<<endl;
-        cout<<"Tips :"<<endl;
-        cout<<"      Usually, the mapped string could tell if itself was mapped and what type itself is."<<endl;
-        cout<<endl;
-        cout<<"      Using base64 to process your string could provide the highest compatibility, "<<endl;
-        cout<<"      but may lose efficiency if your input had no non-English characters."<<endl;
-        cout<<endl;
-        cout<<"      If you are processing links, use link mode could increase the effciency,"<<endl;
-        cout<<"      since some common phrases were directly mapped to single characters."<<endl;
+    ofstream outfile;
+    vector<BYTE> inputfiledata;
+    
+
+    //定义命令行参数
+    CLI::Option* i2flag = app.add_option("DEFAULT", i2, "Input text, if there is no given option besides.");
+    CLI::Option* lflag = app.add_flag("-l", l, "Force to encrypt using url mode");
+    CLI::Option* bflag = app.add_flag("-b", b, "Force to encrypt using base64 mode");
+    CLI::Option* nflag = app.add_flag("-n", n, "Force to encrypt the input directly");
+    CLI::Option* dflag = app.add_flag("-d", d, "Force to decrypt the given input");
+    CLI::Option* fflag = app.add_option("-f", f, "Input an arbitrary given file.");
+    CLI::Option* oflag = app.add_option("-o", o, "Declare an output file to save the result.");
+    CLI::Option* iflag = app.add_option("-i", i, "Input text, expected if -f is not used.");
+
+
+    i2flag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-d")
+        ->excludes("-f")
+        ->excludes("-l")
+        ->excludes("-o")
+        ->excludes("-i");
+    lflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-d");
+    bflag
+        ->take_last()
+        ->excludes("-l")
+        ->excludes("-n")
+        ->excludes("-d");
+    nflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-l")
+        ->excludes("-d");
+    dflag
+        ->take_last()
+        ->excludes("-b")
+        ->excludes("-n")
+        ->excludes("-l");
+    fflag
+        ->take_last()
+        ->excludes("-i");
+    oflag
+        ->take_last();
+    iflag
+        ->take_last()
+        ->excludes("-f");
+    try{
+        CLI11_PARSE(app, argc, argv);
+    }catch(...){
+        cout<<"Your Command is not valid."<<endl;
+        cout<<"Run with --help for more information."<<endl;
         return 0;
-        
     }
-    
-    
-    //判断指令参数
-    idx=arg1.find("-l"); 
-    if (idx != string::npos){
-        l = true;
-    }
-    idx=arg1.find("-b");
-    if (idx != string::npos){
-        b = true;
-    }
-    idx=arg1.find("-n");
-    if (idx != string::npos){
-        n = true;
-    }
-    idx=arg1.find("-d");
-    if (idx != string::npos){
-        d = true;
-    }
-    idx=arg1.find("-");
-    if (idx == string::npos){
+
+    //这里处理所有输入的逻辑
+    if (i2 != NULL_STR){//如果i2存在，即只有一个参数
         PreCheckResult Result;
-        Result = preCheck(arg1);
+        Result = preCheck(GbkToUtf8(i2.c_str()));
 
         if(Result.isEncrypted){
             d = true;
         }
         input = Result;
     }else{
-        input = preCheck(arg2);
+        if(i != NULL_STR){
+            input = preCheck(GbkToUtf8(i.c_str()));
+            if(input.isEncrypted){
+                d = true;
+            }
+        }else if(f != NULL_STR){ //指定了输入文件
+            try{
+                inputfiledata = readFile(f.c_str()); //读取文件，进行几次编码/类型转换
+            }catch(...){
+                cout<<"Error Reading File."<<endl;
+                cout<<"Check your command and try again."<<endl;
+                return 0;
+            }
+            string RawStr(inputfiledata.begin(),inputfiledata.end()); //尝试将读取到的字节转换为字符串
+            input = preCheck(RawStr.c_str()); //这里默认读取到的文件编码是UTF-8，预处理函数不会进行编码转换。
+            if(input.isEncrypted){ //如果给定的是一个任意二进制文件，预处理函数默认将其视为字符串对待，虽然强行输出绝对是乱码。
+                d = true;
+            }else{//如果Precheck找不到标志位，那么这个文件可能是一个任意的文本文档，也有可能是一个任意二进制文件
+                if(input.isUnNormal){//如果输入包含任何无法理解的字符
+                    PreCheckResult BinaryfileInput;
+                    //强制base64
+                    BinaryfileInput.isNormal = true;
+                    BinaryfileInput.output = base64::encode(inputfiledata);
+                    b = false; //请勿两次Base编码
+                    n = false;
+                    l = false;
+                    //d = false; 允许用户强行尝试解密。
+                    isfile = true;
+                    input = BinaryfileInput;
+                }else{//如果全是可以直接处理的字符，此时用户可以决定是否预处理。
+                    d = false; //不可能是加密的字符串，所以禁止解密。
+                }
+            }
+        }else{
+            cout<<"Your Command is not valid."<<endl;
+            cout<<"Run with --help for more information."<<endl;
+            return 0;
+        }
     }
 
+    string Process_res; //变量用来存储处理结束后的对象
+    DemapResult Res;
+    vector<BYTE> OutputData;
 
-    if(!d){
-        cout<<enMap(input,l,b,n)<<endl;
+    if(!d || l || b || n){
+        Process_res = enMap(input,l,b,n,isfile);
     }else{
         //尝试解密
-        cout<<deMap(input)<<endl;
+        Res = deMap(input); //如果输入的是文件，解密后的“字符串”未必是字符串，只是类字符数组，若不指定输出路径，直接命令行输出必乱码
+        Process_res = Res.output;
+        OutputData = Res.output_B;
     }
 
+    if(o != NULL_STR){ //如果指定了输出文件
+        try{
+            outfile.open(o.c_str(), ios::out | ios::trunc | ios::binary);
+        }catch(...){
+            cout<<"Error Creating/Openning Output File."<<endl;
+            cout<<"Check your command and try again."<<endl;
+            return 0;
+        }
+        if(OutputData.size() != 0){ //有字节码就直接写出字节码
+             outfile.write(reinterpret_cast<const char*>(OutputData.data()),OutputData.size()); //输出到文件
+        }else{ //没字节码才写字符串
+            outfile<<Process_res;
+        }
+       
+    }else{//如果没有指定输出，那么直接输出到命令行
+        cout<<Process_res<<endl;
+    }
 
     return 0;
 }
@@ -216,15 +290,11 @@ PreCheckResult preCheck(string input){
     return Result;
 }
 
-string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect){
-
+string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect,bool isfile){
     string OriginStr = input.output;
     string TempStr1;
-    
     string temp,temp2,group;
     string::size_type idx; 
-
-
     if(input.isUnNormal && forceDirect){//如果给定的字符串包括特殊字符且指定不处理特殊字符，解决矛盾
         forceDirect = false;
         forceLink = false;
@@ -238,8 +308,9 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
         OriginStr = base64::encode(input.output);
         forceBase64 = true;
     }
-
-
+    if(isfile){
+        forceBase64 = true;
+    }
     int size = OriginStr.length();
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
@@ -377,7 +448,7 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
     return TempStr1;
 }
 
-string deMap(PreCheckResult input){
+DemapResult deMap(PreCheckResult input){
     string OriginStr = input.output;
     string TempStr1,TempStrz;
     
@@ -460,15 +531,19 @@ string deMap(PreCheckResult input){
     }
     //到这儿应该能还原出预先处理过的原文
 
+    DemapResult Res;
+    
     if(input.isBase64){//如果是Base64加密后的文本，那么解密
     std::vector<uint8_t> TempStr2Int;
     TempStr2Int = base64::decode(TempStr1);
     string TempStr2(TempStr2Int.begin(),TempStr2Int.end());
-    return TempStr2;
+    Res.output = TempStr2;
+    Res.output_B = TempStr2Int;
+    return Res;
     } //不进行urldecode
 
-
-    return TempStr1;
+    Res.output = TempStr1;
+    return Res;
 }
 string GetLinkCryptedText(string text){//查表，检查是否有任何预配置的关键词
     string s = text; //源文本
@@ -674,48 +749,6 @@ string UrlEncode(const string& szToEncode)
 	}
 	return dst;
 }
-string UrlDecode(const string& szToDecode)
-{
-	string result;
-	int hex = 0;
-	for (size_t i = 0; i < szToDecode.length(); ++i)
-	{
-		switch (szToDecode[i])
-		{
-		case '+':
-			result += ' ';
-			break;
-		case '%':
-			if (isxdigit(szToDecode[i + 1]) && isxdigit(szToDecode[i + 2]))
-			{
-				string hexStr = szToDecode.substr(i + 1, 2);
-				hex = strtol(hexStr.c_str(), 0, 16);
-				//字母和数字[0-9a-zA-Z]、一些特殊符号[$-_.+!*'(),] 、以及某些保留字[$&+,/:;=?@]
-				//可以不经过编码直接用于URL
-				if (!((hex >= 48 && hex <= 57) ||	//0-9
-					(hex >=97 && hex <= 122) ||	//a-z
-					(hex >=65 && hex <= 90) ||	//A-Z
-					//一些特殊符号及保留字[$-_.+!*'(),]  [$&+,/:;=?@]
-					hex == 0x21 || hex == 0x24 || hex == 0x26 || hex == 0x27 || hex == 0x28 || hex == 0x29
-					|| hex == 0x2a || hex == 0x2b|| hex == 0x2c || hex == 0x2d || hex == 0x2e || hex == 0x2f
-					|| hex == 0x3A || hex == 0x3B|| hex == 0x3D || hex == 0x3f || hex == 0x40 || hex == 0x5f
-					))
-				{
-					result += char(hex);
-					i += 2;
-				}
-				else result += '%';
-			}else {
-				result += '%';
-			}
-			break;
-		default:
-			result += szToDecode[i];
-			break;
-		}
-	}
-	return result;
-}
 std::string GbkToUtf8(const char* src_str)
 {
     std::string result;
@@ -734,4 +767,14 @@ std::string GbkToUtf8(const char* src_str)
     if (szRes)
         delete[]szRes;
     return result;
+}
+
+std::vector<BYTE> readFile(const char* filename)
+{
+    // open the file:
+    std::ifstream file(filename, std::ios::binary);
+
+    // read the data:
+    return std::vector<BYTE>((std::istreambuf_iterator<char>(file)),
+                              std::istreambuf_iterator<char>());
 }
