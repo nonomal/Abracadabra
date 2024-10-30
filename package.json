@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "vite": "^5.4.9"
+  },
+  "dependencies": {
+    "js-base64": "^3.7.7"
   }
 }
