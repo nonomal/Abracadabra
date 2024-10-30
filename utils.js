@@ -26,7 +26,16 @@ function GetRandomIndex(length) {
   return Rand2;
 }
 
-class PreCheckResult {
+function insertStringAtIndex(str, value, index) {
+  // 分割字符串为两部分，并在中间插入新值
+  return str.slice(0, index) + value + str.slice(index);
+}
+
+function difference(arr1, arr2) {
+  return arr1.filter((item) => !arr2.includes(item));
+}
+
+export class PreCheckResult {
   constructor(
     output,
     isUnNormal = false,
@@ -96,8 +105,8 @@ export function preCheck(inp) {
       }
     }
   }
-  let Result = PreCheckResult(
-    output,
+  let Result = new PreCheckResult(
+    input,
     isUnNormal,
     isLink,
     isNormal,
@@ -108,7 +117,109 @@ export function preCheck(inp) {
   return Result;
 }
 
-export function enMap(PreCheckResult, l, b, n, f) {}
+export function enMap(input, forceLink, forceBase64, forceDirect, isfile) {
+  let OriginStr = String(input.output);
+  let TempStr1 = "",
+    temp = "",
+    temp2 = "",
+    group = "";
+
+  if (input.isUnNormal && forceDirect) {
+    //如果给定的字符串包括特殊字符且指定不处理特殊字符，解决矛盾
+    forceDirect = false;
+    forceLink = false;
+    forceBase64 = true;
+  }
+  if (forceLink) {
+    //链接模式前置URLencode处理
+    OriginStr = getLinkCryptText(encodeURI(input.output));
+  } else if (forceBase64) {
+    //Base64模式前置base64处理
+    OriginStr = btoa(input.output); //注意，这里传进来的必须是字符串而不是Buffer
+  } else if (input.isUnNormal) {
+    //包含特殊字符，默认Base64
+    OriginStr = btoa(input.output);
+    forceBase64 = true;
+  }
+  if (isfile) {
+    forceBase64 = true;
+  }
+
+  let size = OriginStr.length;
+  for (let i = 0; i < size; i++) {
+    temp = OriginStr[i];
+    if (i != size - 1) {
+      //一次遍历两个字符，遇到倒数第一个的时候防止越界
+      temp2 = OriginStr[i + 1];
+    } else {
+      temp2 = NULL_STR;
+    }
+    group = temp + temp2;
+    if (Normal_Characters.indexOf(temp) == -1) {
+      //如果在表内找不到某个字符
+      TempStr1 = TempStr1 + temp; //把这个字符加到结果字符串的后面
+      continue; //直接跳过
+    }
+    TempStr1 = TempStr1 + getCryptText(temp); //把加密字符加到结果字符串的后面
+  }
+
+  //第一个循环结束后，TempStr1应当是完全的密文，但是缺少标志位
+  let RandIndex, RandIndex2;
+  let Avoid = new Array();
+  for (let q = 0; q < 2; q++) {
+    //分两次大循环
+    let PosToInset = new Array();
+    let size = TempStr1.length;
+    for (let i = 0; i < size; i++) {
+      PosToInset.push(i);
+    }
+    if (q == 0) {
+      //第一次大循环插入模式标志位
+      RandIndex = PosToInset[GetRandomIndex(PosToInset.length)];
+      if (forceDirect) {
+        //无处理特殊字符标志位
+        RandIndex2 = GetRandomIndex(
+          Map_Obj["special"]["TYPE"]["NORMAL"].length
+        );
+        let stemp = Map_Obj["special"]["TYPE"]["NORMAL"][RandIndex2];
+        TempStr1 = insertStringAtIndex(TempStr1, stemp, RandIndex);
+        for (let z = RandIndex + 1; z < RandIndex + stemp.length; z++) {
+          Avoid.push(z);
+        }
+      } else if (forceLink) {
+        //链接模式标志位
+        RandIndex2 = GetRandomIndex(Map_Obj["special"]["TYPE"]["LINK"].length);
+        let stemp = Map_Obj["special"]["TYPE"]["LINK"][RandIndex2];
+        TempStr1 = insertStringAtIndex(TempStr1, stemp, RandIndex);
+        for (let z = RandIndex + 1; z < RandIndex + stemp.length; z++) {
+          Avoid.push(z);
+        }
+      } else if (forceBase64) {
+        //Base64模式标志位
+        RandIndex2 = GetRandomIndex(
+          Map_Obj["special"]["TYPE"]["BASE64"].length
+        );
+        let stemp = Map_Obj["special"]["TYPE"]["BASE64"][RandIndex2];
+        TempStr1 = insertStringAtIndex(TempStr1, stemp, RandIndex);
+        for (let z = RandIndex + 1; z < RandIndex + stemp.length; z++) {
+          Avoid.push(z);
+        }
+      }
+    } else if (q == 1) {
+      let AvailPos = new Array();
+      AvailPos = difference(PosToInset, Avoid);
+
+      RandIndex = AvailPos[GetRandomIndex(AvailPos.length)];
+      RandIndex2 = GetRandomIndex(Map_Obj["special"]["TYPE"]["DECRYPT"].length);
+      TempStr1 = insertStringAtIndex(
+        TempStr1,
+        Map_Obj["special"]["TYPE"]["DECRYPT"][RandIndex2],
+        RandIndex
+      );
+    }
+  }
+  return TempStr1;
+}
 
 export function deMap() {}
 
@@ -121,7 +232,7 @@ export function getLinkCryptText(text) {
     if (Map_Obj["link"].hasOwnProperty(key) && s.indexOf(key) != -1) {
       RandIndex = GetRandomIndex(Map_Obj["link"][key].length);
       s2 = Map_Obj["link"][key][RandIndex];
-      s = s.replace(key, s2);
+      s = s.replaceAll(key, s2);
     }
   }
   return s;
@@ -180,4 +291,48 @@ export function getCryptText(text) {
   return NULL_STR;
 }
 
-export function findOriginText() {}
+export function findOriginText(text) {
+  let letter = String(text);
+  let res;
+  let res2;
+  Map_Obj["special"]["BIG"].forEach((item) => {
+    if (letter == item) {
+      res2 = "BIG";
+    }
+  });
+  for (let key in Map_Obj["basic"]["alphabet"]) {
+    Map_Obj["basic"]["alphabet"][key].forEach((item) => {
+      if (letter == item) {
+        res = key;
+      }
+    });
+  }
+  for (let key in Map_Obj["basic"]["number"]) {
+    Map_Obj["basic"]["number"][key].forEach((item) => {
+      if (letter == item) {
+        res = key;
+      }
+    });
+  }
+  for (let key in Map_Obj["basic"]["symbol"]) {
+    Map_Obj["basic"]["symbol"][key].forEach((item) => {
+      if (letter == item) {
+        res = key;
+      }
+    });
+  }
+  for (let key in Map_Obj["link"]) {
+    Map_Obj["link"][key].forEach((item) => {
+      if (letter == item) {
+        res = key;
+      }
+    });
+  }
+  if (res2) {
+    return res2;
+  } else if (res) {
+    return res;
+  } else {
+    return NULL_STR;
+  }
+}
