@@ -558,18 +558,17 @@ string GetLinkCryptedText(string text){//查表，检查是否有任何预配置
         s1 = el.key();
         if(s.find(s1) != string::npos){//找到关键词
             el.value().get_to(CipherArray);
-            
-            //返回密本中的随机字符
-            RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
-            int i = 0 ;
-            for (auto it : Map_Obj["link"][s1]){
-                if (i == RandIndex){//找到下标
-                    s2 = (string)it;
-                    break;
-                }
-                i++;
-            }
             while(s.find(s1)<s.size()){
+                //返回密本中的随机字符
+                RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
+                int i = 0 ;
+                for (auto it : Map_Obj["link"][s1]){
+                    if (i == RandIndex){//找到下标
+                        s2 = (string)it;
+                        break;
+                    }
+                    i++;
+                }
                 int pos = s.find(s1);
                 s.replace(pos, s1.size(), s2);
             }

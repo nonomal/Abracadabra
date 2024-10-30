@@ -73,6 +73,8 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 项目在 Windows 11 和 Ubuntu 22.04 LTS 上通过了编译测试。
 
+在嵌入式平台(armv7a, armv8a)上通过了运行测试。
+
 ### 已知问题
 
 #### 处理文件耗时指数级增加
@@ -81,7 +83,7 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 原则上不能以牺牲随机性为代价换取执行速度，且本项目之目的并不是将文件转换为上百万个汉字，故搁置该问题。
 
-小于 100kb 的文件均能在可控时间内得到处理。 
+小于 100kb 的文件均能在可控时间内得到处理。
 
 #### 密本随机性不足
 
@@ -96,6 +98,10 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 - [nlohmann/json](https://github.com/nlohmann/json)
 - [cppcodec](https://github.com/tplgy/cppcodec)
 - [CLI11](https://github.com/CLIUtils/CLI11)
+
+另外，请确保您的环境中安装了 C++11 标准库。
+
+本项目并不复杂，推荐直接用指令调用 g++ 进行构建。如果您愿意，也可以尝试 CMake。
 
 ## 细节
 
