@@ -270,10 +270,9 @@ export function deMap(input) {
     }
   }
   //到这儿应该能还原出预先处理过的原文
-
+  let Res = new Object();
   if (input.isBase64) {
     let BaseBuf = new Uint8Array();
-    let Res = new Object();
     BaseBuf = Base64.toUint8Array(TempStr1);
 
     Res.output_B = BaseBuf;

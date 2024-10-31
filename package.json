@@ -1,7 +1,7 @@
 {
-  "name": "abracadabra_cn",
+  "name": "abracadabra-cn",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.4.9"
+    "vite": "^5.4.9",
+    "terser": "^5.36.0"
   },
   "dependencies": {
     "js-base64": "^3.7.7"
