@@ -2,11 +2,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Abracadabra** 是一个多表加密之小项目，使用汉字作为密文，支持自定义密文映射和关键词映射，基于 C++ 17。未来会增加更多语言的实现。
+**Abracadabra** 是一个多表加密之小项目，使用汉字作为密文，支持自定义密文映射和关键词映射，基于 C++ 11。未来会增加更多语言的实现。
 
 Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
+
+**在线体验**: [**Web DEMO Page**](https://sheepchef.github.io/Abracadabra/)
+
+**查阅 Web 实现**: [**dev_node Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_nodejs)
 
 ## 特性
 
@@ -130,5 +134,5 @@ Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
 - [x] ~~实现更规范地解析命令参数~~
 - [x] ~~实现加密任意文件，输出文本文档~~
 - [ ] 用 Python 完整实现 Abracadabra 的轮子
-- [ ] 用 Node.js 完整实现 Abracadabra 的轮子
+- [x] ~~用 Node.js 完整实现 Abracadabra 的轮子~~
 - [ ] 实现让嵌入自定义密本更具灵活性
