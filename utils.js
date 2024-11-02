@@ -137,10 +137,10 @@ export function enMap(input, forceLink, forceBase64, forceDirect, isfile) {
     OriginStr = getLinkCryptText(encodeURI(input.output));
   } else if (forceBase64) {
     //Base64模式前置base64处理
-    OriginStr = Base64.btoa(input.output); //注意，这里传进来的必须是字符串而不是文件Buffer
+    OriginStr = Base64.encode(input.output); //注意，这里传进来的必须是字符串而不是文件Buffer
   } else if (input.isUnNormal) {
     //包含特殊字符，默认Base64
-    OriginStr = Base64.btoa(input.output);
+    OriginStr = Base64.encode(input.output);
     forceBase64 = true;
   }
   if (isfile) {
@@ -276,7 +276,7 @@ export function deMap(input) {
     BaseBuf = Base64.toUint8Array(TempStr1);
 
     Res.output_B = BaseBuf;
-    Res.output = Base64.atob(TempStr1);
+    Res.output = Base64.decode(TempStr1);
 
     return Res;
   }
