@@ -17,9 +17,94 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 ## 快速使用
 
-Node.js 实现的核心功能尚未完工
+使用 npm 下载 Abracadabra 库。
 
-敬请期待
+```
+npm install abracadabra-cn
+```
+
+然后，在项目中引入库文件
+
+```
+import { Abracadabra } from 'abracadabra-cn'
+```
+
+如果你想在网页中全量引入本库，可以导入 `abracadabra-cn.umd.cjs`
+
+## 部署说明
+
+Abracadabra 库仅包含一个类型，即`Abracadabra`
+
+使用前，你需要实例化该类型，实例化时需要两个参数来指定输入输出的方式，如果不附带参数，则自动使用默认值 `TEXT`。
+
+```Javascript
+import { Abracadabra } from 'abracadabra-cn'
+
+let Abra = new Abracadabra(); //不附带参数，
+
+/*
+Abracadabra.TEXT = "TEXT"
+Abracadabra.UINT8 = "UINT8"
+*/
+let Abra = new Abracadabra(InputMode,OutputMode);
+//参数必须是上述二者中的一个，传入其他值会导致错误。
+```
+
+`TEXT` 表明将来的输入/输出为 `String`，`UINT8` 表明将来的输入/输出为 `Uint8Array`，你可以灵活使用两种不同的类型。
+
+### Input()
+
+Abracadabra 库中仅有两个方法，`Input()` 是其中一个。
+
+```Javascript
+import { Abracadabra } from 'abracadabra-cn'
+
+let Abra = new Abracadabra(); //不附带参数，
+
+/*
+Abracadabra.LINK = "LINK";
+强制以链接模式加密
+
+Abracadabra.DECRYPT = "DECRYPT";
+强制解密(一定条件下)
+
+Abracadabra.AUTO = "AUTO";
+自动(遵循自动逻辑)
+
+Abracadabra.BASE64 = "BASE64";
+强制用Base64模式加密
+
+Abracadabra.DIRECT = "DIRECT";
+强制用普通模式加密(一定条件下)
+*/
+Abra.Input(input,mode)
+```
+
+第一个参数 `input` 接受两种类型的输入，分别是 `String` 和 `Uint8Array`，这是此前在实例化的时候指定的输入类型。
+
+如果你指定了 `UINT8` 却传入 `String`，将抛出错误，反之亦然。
+
+第二个参数 `mode` 接受五种特定字符串的输入，任何其他输入都将被视为 `AUTO` 并被忽略。
+
+如果你指定了 `DIRECT` 或者 `DECRYPT`，且给定输入存在特殊字符，那么将被视为 `AUTO` 并被忽略。
+
+在无错误的情况下， `Input()` 函数的返回值通常是 `0`
+
+### Output()
+
+```Javascript
+import { Abracadabra } from 'abracadabra-cn'
+
+let Abra = new Abracadabra(); //不附带参数，
+
+Abra.Input(input,mode)
+
+let Result = Abra.Output() //获取输出
+```
+
+在调用 `Output()` 之前，你需要至少调用过一次 `Input()`，否则将会抛出错误。
+
+调用 `Output()` 将获得此前输入的处理结果，其返回类型可能是 `String` 或 `Uint8Array`，取决于对象实例化时指定了何种输出模式。
 
 ## 注意
 
@@ -74,5 +159,5 @@ Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
 - [x] ~~实现更规范地解析命令参数~~
 - [x] ~~实现加密任意文件，输出文本文档~~
 - [ ] 用 Python 完整实现 Abracadabra 的轮子
-- [ ] 用 Node.js 完整实现 Abracadabra 的轮子
+- [x] ~~用 Node.js 完整实现 Abracadabra 的轮子~~
 - [ ] 实现让嵌入自定义密本更具灵活性

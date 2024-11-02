@@ -1,7 +1,9 @@
 {
   "name": "abracadabra-cn",
-  "private": true,
-  "version": "0.0.1",
+  "description": "Use Chinese to Encode Everything",
+  "private": false,
+  "version": "1.0.1",
+  "main": "./dist/abracadabra-cn.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,5 +16,12 @@
   },
   "dependencies": {
     "js-base64": "^3.7.7"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SheepChef/Abracadabra.git"
   }
 }
