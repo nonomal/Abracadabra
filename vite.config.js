@@ -8,7 +8,7 @@ export default defineConfig({
     minify: "eslint", // 使用 terser 进行压缩
     lib: {
       entry: "./main.js",
-      name: "Abracadabra",
+      name: "abracadabra-cn",
       fileName: "abracadabra-cn",
     },
   },

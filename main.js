@@ -144,7 +144,7 @@ export class Abracadabra {
         //如果要输出UINT8
         if (this.#res.output_B != null) {
           //如果有现成的可用，直接输出现成的。
-          return this.#res.output.output_B;
+          return this.#res.output_B;
         } else {
           //如果没有现成的，那么就要转换一下再输出
           const encoder = new TextEncoder();
