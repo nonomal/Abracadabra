@@ -6,6 +6,7 @@
 #include <codecvt>
 #include <random>
 #include <Windows.h>
+#include <ctime>
 #include <nlohmann/json.hpp>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <CLI11.hpp>
@@ -27,6 +28,10 @@ const string SIG_BASE64 = "奂込,妍桜,姾凪,娂辺,奂飴,妍仮,姾実,娂�
 const string SIG_DECRYPT = "飞込,电桜,亖凪,冇辺,亖飴,电仮,飞実,冇雫,亖気,电抜,飞杁";//加密字符串的标志位列表
 const string NULL_STR = "孎"; //默认忽略的占位字符，一个生僻字。
 
+random_device rd;
+mt19937 generator(rd());
+uniform_int_distribution<int> distribution(0, 10000);
+
 struct PreCheckResult { // 专门用来打包传递预检的结果
     string output;
     bool isUnNormal = false; // 判断是否含有特殊符号(表外内容)
@@ -47,8 +52,8 @@ DemapResult deMap(PreCheckResult input);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
 string GetLinkCryptedText(string text);
+int GetRandomIndex(int length);
 string UrlEncode(const string& szToEncode);
-string UrlDecode(const string& szToDecode);
 std::string GbkToUtf8(const char* src_str);
 std::vector<BYTE> readFile(const char* filename);
 PreCheckResult preCheck(string input);
@@ -56,7 +61,7 @@ PreCheckResult preCheck(string input);
 
 int main(int argc, char *argv[]){
     SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
-    CLI::App app{"***Abracadabra v0.2.1***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v0.2.5***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -65,8 +70,8 @@ int main(int argc, char *argv[]){
     string::size_type idx; 
     ofstream outfile;
     vector<BYTE> inputfiledata;
-    
 
+    
     //定义命令行参数
     CLI::Option* i2flag = app.add_option("DEFAULT", i2, "Input text, if there is no given option besides.");
     CLI::Option* lflag = app.add_flag("-l", l, "Force to encrypt using url mode");
@@ -312,25 +317,14 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
         forceBase64 = true;
     }
     int size = OriginStr.length();
+
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
-        int cplen2 = 1;
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
         if((i + cplen) > OriginStr.length()) cplen = 1;
-
-        if((OriginStr[i+cplen] & 0xf8) == 0xf0) cplen2 = 4;
-        else if((OriginStr[i+cplen] & 0xf0) == 0xe0) cplen2 = 3;
-        else if((OriginStr[i+cplen] & 0xe0) == 0xc0) cplen2 = 2;
-        if((i + cplen + cplen) > OriginStr.length()) cplen2 = 1;
         temp = OriginStr.substr(i, cplen);
-        if(i != size - cplen2){ //一次遍历两个字符，遇到倒数第一个的时候防止越界
-            temp2 = OriginStr.substr(i+cplen, cplen2);
-        }else{
-            temp2 = NULL_STR;
-        }
-        group = temp + temp2;
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
@@ -345,13 +339,7 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
         TempStr1 = TempStr1 + GetCryptedText(temp); //把加密字符加到结果字符串的后面
         i += cplen;
     }
-
     //第一个循环结束后，TempStr1应当是完全的密文，但是缺少标志位
-    //随机选择一个下标
-    random_device rd;
-    unsigned int seed = rd();
-    mt19937 mt_r(seed);
-    uniform_int_distribution<long long> dist(1, 10000);
     int RandIndex,RandIndex2;
     vector<int> Avoid;
     for(int q=0;q<2;q++){//分两次大循环
@@ -372,78 +360,40 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
             i += cplen;
             PosToInset.push_back(i);
         }
-        vector<string> CipherArray,CipherArray2;
         int i;
         if(q==0){//第一次大循环插入模式标志位
-            RandIndex = PosToInset.at(dist(mt_r) % PosToInset.size());//在所有可插入位置中随便选一个
+            RandIndex = PosToInset.at(GetRandomIndex(PosToInset.size()));//在所有可插入位置中随便选一个
             if(forceDirect){//无处理特殊字符标志位
-                Map_Obj["special"]["TYPE"]["NORMAL"].get_to(CipherArray);
-                RandIndex2 = dist(mt_r) % CipherArray.size();//随机获取一个下标
-                i = 0;
-                for (auto el : Map_Obj["special"]["TYPE"]["NORMAL"]){//遍历列表
-                    if(i == RandIndex2){
-                        TempStr1.insert(RandIndex,(string)el);
-                        string stemp = (string)el;
-                        for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
-                            Avoid.push_back(z);
-                        }
-                        break;
-                    }
-                    i++;
-                }
+                RandIndex2 = GetRandomIndex(Map_Obj["special"]["TYPE"]["NORMAL"].size());//随机获取一个下标
+               string stemp = (string)Map_Obj["special"]["TYPE"]["NORMAL"][RandIndex2];
+               TempStr1.insert(RandIndex,stemp);
+               for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
+                    Avoid.push_back(z);
+               }
             }else if(forceLink){ //链接模式标志位
-                Map_Obj["special"]["TYPE"]["LINK"].get_to(CipherArray);
-                RandIndex2 = dist(mt_r) % CipherArray.size();//随机获取一个下标
-                i = 0;
-                for (auto el : Map_Obj["special"]["TYPE"]["LINK"]){//遍历列表
-                    if(i == RandIndex2){
-                        TempStr1.insert(RandIndex,(string)el);
-                        string stemp = (string)el;
-                        for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
-                            Avoid.push_back(z);
-                        }
-                        break;
-                    }
-                    i++;
-                }
+                RandIndex2 = GetRandomIndex(Map_Obj["special"]["TYPE"]["LINK"].size());//随机获取一个下标
+               string stemp = (string)Map_Obj["special"]["TYPE"]["LINK"][RandIndex2];
+               TempStr1.insert(RandIndex,stemp);
+               for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
+                    Avoid.push_back(z);
+               }
             }else if(forceBase64){ //Base64模式标志位
-                Map_Obj["special"]["TYPE"]["BASE64"].get_to(CipherArray);
-                RandIndex2 = dist(mt_r) % CipherArray.size();//随机获取一个下标
-                i = 0;
-                for (auto el : Map_Obj["special"]["TYPE"]["BASE64"]){//遍历列表
-                    if(i == RandIndex2){
-                        TempStr1.insert(RandIndex,(string)el);
-                        string stemp = (string)el;
-                        for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
-                            Avoid.push_back(z);
-                        }
-                        break;
-                    }
-                    i++;
-                }
+                RandIndex2 = GetRandomIndex(Map_Obj["special"]["TYPE"]["BASE64"].size());//随机获取一个下标
+               string stemp = (string)Map_Obj["special"]["TYPE"]["BASE64"][RandIndex2];
+               TempStr1.insert(RandIndex,stemp);
+               for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
+                    Avoid.push_back(z);
+               }
             }
         }
         else if(q==1){ // 第二次大循环插入加密标志位
-
-        
             vector<int> AvailPos;
             AvailPos.resize(max(PosToInset.size(),Avoid.size()));
-
             vector<int>::iterator itEnd = set_difference(PosToInset.begin(), PosToInset.end(), Avoid.begin(), Avoid.end(), AvailPos.begin());
-
             AvailPos.erase(std::remove(AvailPos.begin(), AvailPos.end(), 0), AvailPos.end());
-            RandIndex = AvailPos.at(dist(mt_r) % AvailPos.size());//在所有可插入位置中随便选一个
-            
-            Map_Obj["special"]["TYPE"]["DECRYPT"].get_to(CipherArray2);
-            RandIndex2 = dist(mt_r) % CipherArray2.size();//随机获取一个下标
-            i = 0;
-            for (auto el : Map_Obj["special"]["TYPE"]["DECRYPT"]){//遍历列表
-                if(i == RandIndex2){
-                    TempStr1.insert(RandIndex,(string)el);
-                    break;
-                }
-                i++;
-            }
+            RandIndex = AvailPos.at(GetRandomIndex(AvailPos.size()));//在所有可插入位置中随便选一个
+            RandIndex2 = GetRandomIndex(Map_Obj["special"]["TYPE"]["DECRYPT"].size());//随机获取一个下标
+           TempStr1.insert(RandIndex,(string)Map_Obj["special"]["TYPE"]["DECRYPT"][RandIndex2]);
         }
     }
  
@@ -453,7 +403,6 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
 DemapResult deMap(PreCheckResult input){
     string OriginStr = input.output;
     string TempStr1,TempStrz;
-    
     string temp,temp2,group,findtemp;
     string::size_type idx; 
     int size = OriginStr.length();
@@ -550,28 +499,15 @@ DemapResult deMap(PreCheckResult input){
 string GetLinkCryptedText(string text){//查表，检查是否有任何预配置的关键词
     string s = text; //源文本
     string s1,s2;
-    random_device rd;
-    unsigned int seed = rd();
-    mt19937 mt_r(seed);
-    uniform_int_distribution<long long> dist(1, 10000);
-    vector<string> CipherArray;
     int RandIndex; 
 
     for (auto& el : Map_Obj["link"].items()){//遍历关键词列表
         s1 = el.key();
         if(s.find(s1) != string::npos){//找到关键词
-            el.value().get_to(CipherArray);
             while(s.find(s1)<s.size()){
                 //返回密本中的随机字符
-                RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
-                int i = 0 ;
-                for (auto it : Map_Obj["link"][s1]){
-                    if (i == RandIndex){//找到下标
-                        s2 = (string)it;
-                        break;
-                    }
-                    i++;
-                }
+                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
+                s2 = (string)Map_Obj["link"][s1][RandIndex];
                 int pos = s.find(s1);
                 s.replace(pos, s1.size(), s2);
             }
@@ -583,87 +519,33 @@ string GetLinkCryptedText(string text){//查表，检查是否有任何预配置
 
 }
 string GetCryptedText(string letter){//查表返回加密之后的字符串
-    random_device rd;
-    unsigned int seed = rd();
-    mt19937 mt_r(seed);
-    uniform_int_distribution<long long> dist(1, 10000);
-
-    string::size_type idx,idx2,idx3,idx4; 
     int RandIndex,RandIndex2;
-
-    idx = LETTERS.find(letter); //是否是小写字母
-    idx2 = BIG_LETTERS.find(letter); //是否是大写字母
-    idx3 = NUMBERS.find(letter); //是否是数字
-    idx4 = SYMBOLS.find(letter); //是否是符号
-    
-    if(idx != string::npos || idx2 != string::npos){//判断给定字符的类型
-        string key,keyU;
+    if(LETTERS.find(letter) != string::npos || BIG_LETTERS.find(letter) != string::npos){//判断给定字符的类型
         for (auto& el : Map_Obj["basic"]["alphabet"].items())
-        {
-            vector<string> CipherArray;
-            vector<string> CipherArrayBIG;
-            key = el.key();
-            keyU = (string)key;
-            if(key == letter){
-                el.value().get_to(CipherArray); //把密本存进容器里
-                RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
-                int i = 0 ;
-                for (auto it : Map_Obj["basic"]["alphabet"][letter]){
-                    if (i == RandIndex){
-                        return (string)it;
-                    }
-                    i++;
-                }
-            }else if(strupr((char*)keyU.c_str()) == letter){//碰到大写字母
-                el.value().get_to(CipherArray);
-                Map_Obj["special"]["BIG"].get_to(CipherArrayBIG);
-                RandIndex = dist(mt_r) % CipherArray.size();
-                RandIndex2 = dist(mt_r) % CipherArrayBIG.size();
-                int i = 0;
-                for (auto it : Map_Obj["basic"]["alphabet"][key]){
-                    if (i == RandIndex){//选中小写字符的密文
-                        int t=0;
-                        for (auto tt : Map_Obj["special"]["BIG"]){
-                            if(t == RandIndex2){//随机选一个大写标志位
-                                return (string)tt + (string)it; //组合标志位和小写字符密文，返回回去
-                            }
-                            t++;
-                        }
-                    }
-                    i++;
-                }
+        {   
+            if(el.key() == letter){
+                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
+                return Map_Obj["basic"]["alphabet"][letter][RandIndex];
+            }else if(letter[0] == toupper(el.key()[0])){//碰到大写字母
+                RandIndex = GetRandomIndex(el.value().size());
+                RandIndex2 = GetRandomIndex(Map_Obj["special"]["BIG"].size());
+                return (string)Map_Obj["special"]["BIG"][RandIndex2] + (string)Map_Obj["basic"]["alphabet"][el.key()][RandIndex];
             }
         }
-    }else if(idx3 != string::npos){
+    }else if(NUMBERS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["number"].items())
         {
-        vector<string> CipherArray;
-        if(el.key() == letter){
-            el.value().get_to(CipherArray); //把密本存进容器里
-            RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
-            int i = 0 ;
-            for (auto it : Map_Obj["basic"]["number"][letter]){
-                if (i == RandIndex){
-                    return it;
-                }
-                i++;
+            if(el.key() == letter){
+                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
+                return Map_Obj["basic"]["number"][letter][RandIndex];
             }
         }
-        }
-    }else if(idx4 != string::npos){
+    }else if(SYMBOLS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["symbol"].items())
         {
-            vector<string> CipherArray;
             if(el.key() == letter){
-                el.value().get_to(CipherArray); //把密本存进容器里
-                RandIndex = dist(mt_r) % CipherArray.size(); //随机获取一个下标
-                int i = 0 ;
-                for (auto it : Map_Obj["basic"]["symbol"][letter]){
-                    if (i == RandIndex){
-                        return it;
-                    }
-                    i++;
-                }
+                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
+               return Map_Obj["basic"]["symbol"][letter][RandIndex];
             }
         }
     }
@@ -778,4 +660,8 @@ std::vector<BYTE> readFile(const char* filename)
     // read the data:
     return std::vector<BYTE>((std::istreambuf_iterator<char>(file)),
                               std::istreambuf_iterator<char>());
+}
+inline int GetRandomIndex(int length){
+    int Rand = distribution(generator);
+    return Rand % length;
 }
