@@ -59,7 +59,7 @@ PreCheckResult preCheck(string input);
 
 
 int main(int argc, char *argv[]){
-    CLI::App app{"***Abracadabra v0.2.5***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v1.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -328,13 +328,15 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
         //temp是前一个字，temp2是后一个字
         idx = Normal_Characters.find(temp);
         if (idx == string::npos){ //如果在表内找不到某个字符
-            TempStr1 = TempStr1 + temp; //把这个字符加到结果字符串的后面
+            TempStr1.append(temp); //把这个字符加到结果字符串的后面
             i += cplen; //直接跳过
             continue;
         }
 
         //加密操作开始
-        TempStr1 = TempStr1 + GetCryptedText(temp); //把加密字符加到结果字符串的后面
+        //把加密字符加到结果字符串的后面
+        TempStr1.append(GetCryptedText(temp));
+
         i += cplen;
     }
     //第一个循环结束后，TempStr1应当是完全的密文，但是缺少标志位
@@ -406,23 +408,11 @@ DemapResult deMap(PreCheckResult input){
     int size = OriginStr.length();
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
-        int cplen2 = 1;
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
         if((i + cplen) > OriginStr.length()) cplen = 1;
-
-        if((OriginStr[i+cplen] & 0xf8) == 0xf0) cplen2 = 4;
-        else if((OriginStr[i+cplen] & 0xf0) == 0xe0) cplen2 = 3;
-        else if((OriginStr[i+cplen] & 0xe0) == 0xc0) cplen2 = 2;
-        if((i + cplen + cplen) > OriginStr.length()) cplen2 = 1;
         temp = OriginStr.substr(i, cplen);
-        if(i != size - cplen2){ //一次遍历两个字符，遇到倒数第一个的时候防止越界
-            temp2 = OriginStr.substr(i+cplen, cplen2);
-        }else{
-            temp2 = NULL_STR;
-        }
-        group = temp + temp2;
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
@@ -430,7 +420,7 @@ DemapResult deMap(PreCheckResult input){
             i+=cplen; 
             continue;
         }else{//如果不是
-            TempStrz = TempStrz + temp; //加上
+            TempStrz.append(temp); //加上
             i+=cplen; 
             continue;
         }
@@ -458,21 +448,19 @@ DemapResult deMap(PreCheckResult input){
         }else{
             temp2 = NULL_STR;
         }
-        group = temp + temp2;
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
         findtemp = FindOriginText(temp); //查找第一个字符的原文
         if(findtemp == "BIG"){ //如果这是一个大写标志位
-            findtemp = FindOriginText(temp2); //那么找第二个字符的原文
-            string BIGA = findtemp;
-            BIGA = toupper(BIGA[0]);
-            //BIGA = strupr((char*)BIGA.c_str());
-            TempStr1 = TempStr1 + BIGA; //把找到的原文增加到字符串上
+            findtemp = toupper(FindOriginText(temp2)[0]); //那么找第二个字符的原文
+           
+            //把找到的原文增加到字符串上
+            TempStr1.append(findtemp);
             i = i + cplen + cplen2; //跳过两个字段
             continue;
         }else{
-            TempStr1 = TempStr1 + findtemp; //把找到的原文增加到字符串上
+            TempStr1.append(findtemp); //把找到的原文增加到字符串上
             i+=cplen; 
             continue;
         }
