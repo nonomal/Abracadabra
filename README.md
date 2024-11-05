@@ -31,7 +31,7 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 ```shell
 PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v1.0 , by SheepChef***
+***Abracadabra v1.0.3 , by SheepChef***
 Usage: G:\Code-projects\Abracadabra\abracadabra.exe [OPTIONS] [DEFAULT]
 
 Positionals:
