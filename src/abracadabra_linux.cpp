@@ -18,9 +18,12 @@ const json Map_Obj = json::parse(Map); //JSON字符串映射表对象
 
 const string Normal_Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t1234567890"; //表内有映射的所有字符组成的字符串
 const string LETTERS = "abcdefghijklmnopqrstuvwxyz";
+string LETTERS_ROUND = "abcdefghijklmnopqrstuvwxyz";
 const string BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const string NUMBERS = "1234567890";
+string NUMBERS_ROUND = "1234567890";
 const string SYMBOLS = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
+string SYMBOLS_ROUND = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
 const string SIG_LINK = "应畑,的凪,开辺,录込,飞飴,应仮,的実,开雫,录気,飞抜,应杁";//链接类型的标志位列表
 const string SIG_NORMAL = "钟込,均桜,错桜,妳桜,钟飴,均仮,错実,妳雫,钟気,均抜,错杁";//普通类型的标志位列表
 const string SIG_BASE64 = "奂込,妍桜,姾凪,娂辺,奂飴,妍仮,姾実,娂雫,奂気,妍抜,姾杁";//Base64类型的标志位列表
@@ -56,10 +59,14 @@ string UrlEncode(const string& szToEncode);
 std::string GbkToUtf8(const char* src_str);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(string input);
+void rotateString(std::string& str);
+inline string RoundKeyMatch(string keyIn);
+inline string DRoundKeyMatch(string keyIn);
+inline void RoundKey();
 
 
 int main(int argc, char *argv[]){
-    CLI::App app{"***Abracadabra v1.0.3***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v1.2.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -336,6 +343,7 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
         //加密操作开始
         //把加密字符加到结果字符串的后面
         TempStr1.append(GetCryptedText(temp));
+        RoundKey();
 
         i += cplen;
     }
@@ -457,10 +465,16 @@ DemapResult deMap(PreCheckResult input){
            
             //把找到的原文增加到字符串上
             TempStr1.append(findtemp);
+            if(findtemp.length() <= 1){
+                RoundKey();//轮换密钥
+            }
             i = i + cplen + cplen2; //跳过两个字段
             continue;
         }else{
             TempStr1.append(findtemp); //把找到的原文增加到字符串上
+            if(findtemp.length() <= 1){
+                RoundKey();//轮换密钥
+            }
             i+=cplen; 
             continue;
         }
@@ -511,28 +525,28 @@ string GetCryptedText(string letter){//查表返回加密之后的字符串
         for (auto& el : Map_Obj["basic"]["alphabet"].items())
         {
             if(el.key() == letter){
-                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
-                return Map_Obj["basic"]["alphabet"][letter][RandIndex];
+                RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
+                return Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())][RandIndex];
             }else if(letter[0] == toupper(el.key()[0])){//碰到大写字母
-                RandIndex = GetRandomIndex(el.value().size());
+                RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())].size());
                 RandIndex2 = GetRandomIndex(Map_Obj["special"]["BIG"].size());
-                return (string)Map_Obj["special"]["BIG"][RandIndex2] + (string)Map_Obj["basic"]["alphabet"][el.key()][RandIndex];
+                return (string)Map_Obj["special"]["BIG"][RandIndex2] + (string)Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())][RandIndex];
             }
         }
     }else if(NUMBERS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["number"].items())
         {
             if(el.key() == letter){
-                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
-                return Map_Obj["basic"]["number"][letter][RandIndex];
+                RandIndex = GetRandomIndex(Map_Obj["basic"]["number"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
+                return Map_Obj["basic"]["number"][RoundKeyMatch(el.key())][RandIndex];
             }
         }
     }else if(SYMBOLS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["symbol"].items())
         {
             if(el.key() == letter){
-                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
-               return Map_Obj["basic"]["symbol"][letter][RandIndex];
+                RandIndex = GetRandomIndex(Map_Obj["basic"]["symbol"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
+               return Map_Obj["basic"]["symbol"][RoundKeyMatch(el.key())][RandIndex];
             }
         }
     }
@@ -549,7 +563,7 @@ string FindOriginText(string letter){
         for (auto ell : el.value()){
             string str = (string)ell;
             if(letter == str){
-                return el.key();
+                return DRoundKeyMatch(el.key());
             }
         }
     }
@@ -557,7 +571,7 @@ string FindOriginText(string letter){
         for (auto ell : el.value()){
             string str = (string)ell;
             if(letter == str){
-                return el.key();
+                return DRoundKeyMatch(el.key());
             }
         }
     }
@@ -565,7 +579,7 @@ string FindOriginText(string letter){
         for (auto ell : el.value()){
             string str = (string)ell;
             if(letter == str){
-                return el.key();
+                return DRoundKeyMatch(el.key());
             }
         }
     }
@@ -630,6 +644,61 @@ std::vector<uint8_t> readFile(const char* filename)
     return std::vector<uint8_t>((std::istreambuf_iterator<char>(file)),
                               std::istreambuf_iterator<char>());
 }
+
+void rotateString(std::string& str) { //循环右移字符串
+    str.append(str, 0, 1); // 将字符串的前n个字符追加到字符串的末尾
+    str.erase(0, 1); // 从字符串开头删除前n个字符
+}
+
+inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
+
+    size_t idx,idx2,idx3;
+
+    idx = LETTERS.find(keyIn);
+    idx2 = NUMBERS.find(keyIn);
+    idx3 = SYMBOLS.find(keyIn);
+
+    if(idx != string::npos){//判断给定字符的类型
+        return LETTERS_ROUND.substr(idx,1);
+
+    }else if(idx2 != string::npos){
+        return NUMBERS_ROUND.substr(idx2,1);
+
+    }else if(idx3 != string::npos){
+        string temp = SYMBOLS_ROUND.substr(idx3,1);
+        return temp;
+    }
+
+    return NULL_STR;
+
+}
+
+inline string DRoundKeyMatch(string keyIn){ //查询轮换密钥的键值
+
+    size_t idx,idx2,idx3;
+
+    idx = LETTERS_ROUND.find(keyIn);
+    idx2 = NUMBERS_ROUND.find(keyIn);
+    idx3 = SYMBOLS_ROUND.find(keyIn);
+
+    if(idx != string::npos){//判断给定字符的类型
+        return LETTERS.substr(idx,1);
+
+    }else if(idx2 != string::npos){
+        return NUMBERS.substr(idx2,1);
+
+    }else if(idx3 != string::npos){
+        return SYMBOLS.substr(idx3,1);
+    }
+    return NULL_STR;
+}
+inline void RoundKey(){ //轮换密钥
+    rotateString(LETTERS_ROUND);
+    rotateString(NUMBERS_ROUND);
+    rotateString(SYMBOLS_ROUND);
+}
+
+
 inline int GetRandomIndex(int length){
     int Rand = distribution(generator);
     return Rand % length;
