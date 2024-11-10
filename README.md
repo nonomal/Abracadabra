@@ -20,7 +20,7 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 - 随机，加密结果具有随机性。
 - 无序，加密的文本如咒语般不可阅读。
 - 安心，密码表中已剔除敏感汉字。
-- 快速，C++ 快如闪电。
+- 安全，转轮加密更添破译难度。
 
 ## 快速使用
 
@@ -31,7 +31,7 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 ```shell
 PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v1.0.3 , by SheepChef***
+***Abracadabra v1.2.0 , by SheepChef***
 Usage: G:\Code-projects\Abracadabra\abracadabra.exe [OPTIONS] [DEFAULT]
 
 Positionals:
@@ -103,9 +103,30 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 ### 加密实现
 
-Abracadabra 使用古老的多表加密，以最常用的 500 个汉字(剔除了可能随机组成敏感词的汉字)为密本，对大小写拉丁字母，阿拉伯数字和部分符号进行映射。
+Abracadabra 使用古老的多表加密，以最常用的 3000 个汉字(剔除了可能随机组成敏感词的汉字)为密本，对大小写拉丁字母，阿拉伯数字和部分符号进行映射。
 
 大写字母的映射方式为在小写字母前添加一个汉字的标志位，元音字母有更多的映射可能。
+
+### 单重转轮
+
+模拟古老的转轮加密，每次加密均会对密本映射进行偏移。
+
+密本先向右偏移两位，再向左偏移一位。字母、符号、数字分开轮换。
+
+```
+abcdefghijklmnopqrstuvwxyz <-- 原始映射 / 加密第一个字符
+
+cdefghijklmnopqrstuvwxyzab <-- 加密第二个字符 / 右移两位
+例如，此时要加密字母a，那么会映射到字母c，再查表。
+
+bcdefghijklmnopqrstuvwxyza <-- 加密第三个字符 / 左移一位
+例如，此时要加密字母a，那么会映射到字母b，再查表。
+
+以此类推，循环往复。
+
+```
+
+转轮增加了密文的安全性，可以有效抵抗多种攻击。
 
 ### 标志位
 
