@@ -675,8 +675,7 @@ inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
         return NUMBERS_ROUND.substr(idx2,1);
 
     }else if(idx3 != string::npos){
-        string temp = SYMBOLS_ROUND.substr(idx3,1);
-        return temp;
+        return SYMBOLS_ROUND.substr(idx3,1);
     }
 
     return NULL_STR;

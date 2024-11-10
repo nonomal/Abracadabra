@@ -690,13 +690,10 @@ inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
 
     if(idx != string::npos){//判断给定字符的类型
         return LETTERS_ROUND.substr(idx,1);
-
     }else if(idx2 != string::npos){
         return NUMBERS_ROUND.substr(idx2,1);
-
     }else if(idx3 != string::npos){
-        string temp = SYMBOLS_ROUND.substr(idx3,1);
-        return temp;
+        return SYMBOLS_ROUND.substr(idx3,1);
     }
 
     return NULL_STR;
