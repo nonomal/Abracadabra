@@ -2,12 +2,17 @@ import { Base64 } from "js-base64";
 
 const Map =
   '{"basic":{"alphabet":{"a":["请","上","中","之","等","人","到","年","个","将"],"b":["得","可","并","发","过","协","曲","闭","斋","峦"],"c":["页","于","而","被","无","挽","裕","斜","绪","镜"],"d":["由","把","好","从","会","帕","莹","盈","敬","粒"],"e":["的","在","了","是","为","有","和","我","一","与"],"f":["站","最","号","及","能","迟","鸭","呈","玻","据"],"g":["着","很","此","但","看","浩","附","侃","汐","绸"],"h":["名","呢","又","图","啊","棉","畅","蒸","玫","添"],"i":["对","地","您","给","这","下","网","也","来","你"],"j":["更","天","去","用","只","矽","萌","镁","芯","夸"],"k":["第","者","所","两","里","氢","羟","纽","夏","春"],"l":["自","做","前","二","他","氦","汀","兰","竹","捷"],"m":["家","点","路","至","十","锂","羧","暑","夕","振"],"n":["区","想","向","主","四","铍","烃","惠","芳","岩"],"o":["就","新","吗","该","不","多","还","要","让","大"],"p":["小","如","成","位","其","硼","酞","褔","苑","笋"],"q":["吧","每","机","几","总","碳","铂","涓","绣","悦"],"r":["起","它","内","高","次","氮","铵","奏","鲤","淳"],"s":["非","元","类","五","使","氧","醇","迷","霁","琅"],"t":["首","进","即","没","市","氖","酯","琳","绫","濑"],"u":["后","三","本","都","时","月","或","说","已","以"],"v":["种","快","那","篇","万","钠","炔","柯","睿","琼"],"w":["长","按","报","比","信","硅","烷","静","欣","束"],"x":["再","带","才","全","呀","磷","烯","柔","雪","冰"],"y":["业","却","版","美","们","硫","桉","寒","冻","玖"],"z":["像","走","文","各","当","氯","缬","妃","琉","璃"]},"number":{"0":["卡","风","水","放","花","钾","宏","谊","探","棋"],"1":["需","头","话","曾","楼","钙","吾","恋","菲","遥"],"2":["连","系","门","力","量","钛","苗","氛","鹤","雀"],"3":["书","亿","跟","深","方","钒","鸳","鸯","纸","鸢"],"4":["若","低","谈","明","百","铬","羯","尧","舜","兆"],"5":["关","客","读","双","回","锰","熙","瀚","渊","灯"],"6":["较","品","嘛","单","价","钴","阑","珊","雁","鹂"],"7":["山","西","动","厂","热","锌","鹃","鸠","昆","仑"],"8":["言","笑","度","易","身","镓","乾","坤","澈","饺"],"9":["份","星","千","仍","办","锗","彗","聪","慧","磋"]},"symbol":{"+":["集","费","传","室","拉","瑞","琴","森","辉"],"/":["难","界","指","管","具","善","智","蔬","缎"],"?":["相","儿","李","早","拿"],"-":["科","白","段","飞","住"],".":["利","红","板","光","约"],"(":["变","款","林","夹","院"],")":["服","句","声","务","游"],"[":["股","南","社","阿","远"],"]":["意","换","些","必","赛"],"<":["届","完","乐","彩","讲"],">":["展","帮","且","物","班"],",":["何","流","密","某","房"],"|":["语","亚","常","除","装"],"=":["极","载","题","刚","气","程","舒","雅","益"],"@":["米","影","德","世","坐"],"#":["北","招","短","活","斯"],"!":["值","店","树","哪","余"],"~":["盘","速","座","求","创"],"`":["梦","足","半","视","安"],"$":["空","歌","派","顶","登"],"%":["夜","云","感","啦","欲"],"^":["边","工","眼","街","奖"],"&":["获","占","理","任","实"],"*":["知","掉","色","讯","克"],"_":["直","评","往","层","园"],"{":["留","靠","亦","罗","营"],"}":["合","尚","产","诚","汨"],":":["曱","朩","杉","杸","歩"],";":["毋","氕","気","氘","氙"]," ":["叧","叺","叻","叾","吅","叿","吙","呡","呤","呮","呭","呾","呟","吂","吤"],"\\t":["圠","圡","圢","圤","圥","圦","坆","夨","夨","夬","夳","夶","奀","夻","夼"],"\\n":["孒","孖","尐","尛","尢","尣","巛","巜","幷","弐","彑","彡","彳","忄","扖"]}},"link":{"http":["贴","则","老","生","达"],"://":["商","行","周","证","经"],"magnet":["事","场","同","化","找"],"udp":["建","手","道","间","式"],"tcp":["特","城","型","定","接"],"ftp":["局","问","重","叫","通"],":?xt=urn:btih:":["件","少","面","金","近"],"torrent":["买","听","学","见","称"],"www":["写","选","片","体","组"],"mailto":["先","仅","别","表","现"]},"special":{"BIG":["未","哦","部","项","谁","分","转","字","数","心","子","处","作","因","设","环","青","雨","泊","注","织","赴","茶"],"TYPE":{"LINK":["应畑","的凪","开辺","录込","飞飴","应仮","的実","开雫","录気","飞抜","应杁"],"NORMAL":["钟込","均桜","错桜","妳桜","钟飴","均仮","错実","妳雫","钟気","均抜","错杁"],"BASE64":["奂込","妍桜","姾凪","娂辺","奂飴","妍仮","姾実","娂雫","奂気","妍抜","姾杁"],"DECRYPT":["飞込","电桜","亖凪","冇辺","亖飴","电仮","飞実","冇雫","亖気","电抜","飞杁"]}}}';
+
+var RoundFlip = 0;
 const Normal_Characters =
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t1234567890"; //表内有映射的所有字符组成的字符串
 const LETTERS = "abcdefghijklmnopqrstuvwxyz";
+var LETTERS_ROUND = "abcdefghijklmnopqrstuvwxyz";
 const BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const NUMBERS = "1234567890";
+var NUMBERS_ROUND = "1234567890";
 const SYMBOLS = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
+var SYMBOLS_ROUND = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
 const SIG_LINK = "应畑,的凪,开辺,录込,飞飴,应仮,的実,开雫,录気,飞抜,应杁"; //链接类型的标志位列表
 const SIG_NORMAL = "钟込,均桜,错桜,妳桜,钟飴,均仮,错実,妳雫,钟気,均抜,错杁"; //普通类型的标志位列表
 const SIG_BASE64 = "奂込,妍桜,姾凪,娂辺,奂飴,妍仮,姾実,娂雫,奂気,妍抜,姾杁"; //Base64类型的标志位列表
@@ -35,7 +40,78 @@ function insertStringAtIndex(str, value, index) {
 function difference(arr1, arr2) {
   return arr1.filter((item) => !arr2.includes(item));
 }
+function rotateString(str) {
+  return str.slice(2) + str.slice(0, 2);
+}
 
+function LrotateString(str) {
+  return str.slice(str.length - 1) + str.slice(0, str.length - 1);
+}
+function RoundKeyMatch(keyIn) {
+  //查询轮换密钥的键值
+
+  let idx, idx2, idx3;
+
+  idx = LETTERS.indexOf(keyIn);
+  idx2 = NUMBERS.indexOf(keyIn);
+  idx3 = SYMBOLS.indexOf(keyIn);
+
+  if (idx != -1) {
+    //判断给定字符的类型
+    return LETTERS_ROUND[idx];
+  } else if (idx2 != -1) {
+    return NUMBERS_ROUND[idx2];
+  } else if (idx3 != -1) {
+    return SYMBOLS_ROUND[idx3];
+  }
+  return NULL_STR;
+}
+
+function DRoundKeyMatch(keyIn) {
+  //查询轮换密钥的键值
+
+  let idx, idx2, idx3;
+
+  idx = LETTERS_ROUND.indexOf(keyIn);
+  idx2 = NUMBERS_ROUND.indexOf(keyIn);
+  idx3 = SYMBOLS_ROUND.indexOf(keyIn);
+
+  if (idx != -1) {
+    //判断给定字符的类型
+    return LETTERS[idx];
+  } else if (idx2 != -1) {
+    return NUMBERS[idx2];
+  } else if (idx3 != -1) {
+    return SYMBOLS[idx3];
+  }
+  return NULL_STR;
+}
+
+function RoundKey() {
+  //轮换密钥
+  if (RoundFlip == 0) {
+    //先向右移两位
+    LETTERS_ROUND = rotateString(LETTERS_ROUND);
+    NUMBERS_ROUND = rotateString(NUMBERS_ROUND);
+    SYMBOLS_ROUND = rotateString(SYMBOLS_ROUND);
+    RoundFlip = 1;
+    return;
+  } else if (RoundFlip == 1) {
+    //再向左移一位
+    LETTERS_ROUND = LrotateString(LETTERS_ROUND);
+    NUMBERS_ROUND = LrotateString(NUMBERS_ROUND);
+    SYMBOLS_ROUND = LrotateString(SYMBOLS_ROUND);
+    RoundFlip = 0;
+    return;
+  }
+}
+
+function RoundReset() {
+  RoundFlip = 0;
+  LETTERS_ROUND = "abcdefghijklmnopqrstuvwxyz";
+  NUMBERS_ROUND = "1234567890";
+  SYMBOLS_ROUND = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
+}
 export class PreCheckResult {
   constructor(
     output,
@@ -162,6 +238,7 @@ export function enMap(input, forceLink, forceBase64, forceDirect, isfile) {
       continue; //直接跳过
     }
     TempStr1 = TempStr1 + getCryptText(temp); //把加密字符加到结果字符串的后面
+    RoundKey();
   }
 
   //第一个循环结束后，TempStr1应当是完全的密文，但是缺少标志位
@@ -219,6 +296,7 @@ export function enMap(input, forceLink, forceBase64, forceDirect, isfile) {
       );
     }
   }
+  RoundReset();
   return TempStr1;
 }
 
@@ -260,10 +338,16 @@ export function deMap(input) {
       //如果这是一个大写标志位
       findtemp = findOriginText(temp2).toUpperCase(); //那么找第二个字符的原文
       TempStr1 = TempStr1 + findtemp; //把找到的原文增加到字符串上
+      if (findtemp.length <= 1) {
+        RoundKey(); //轮换密钥
+      }
       i = i + 2;
       continue;
     } else {
       TempStr1 = TempStr1 + findtemp; //把找到的原文增加到字符串上
+      if (findtemp.length <= 1) {
+        RoundKey(); //轮换密钥
+      }
       i++;
       continue;
     }
@@ -276,11 +360,13 @@ export function deMap(input) {
 
     Res.output_B = BaseBuf;
     Res.output = Base64.decode(TempStr1);
-
+    RoundReset();
     return Res;
   }
   Res.output = TempStr1;
   Res.output_B = null;
+
+  RoundReset();
   return Res;
 }
 
@@ -314,12 +400,18 @@ export function getCryptText(text) {
     for (let key in Map_Obj["basic"]["alphabet"]) {
       if (Map_Obj["basic"]["alphabet"].hasOwnProperty(key)) {
         if (key == letter) {
-          RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][key].length);
-          let s2 = Map_Obj["basic"]["alphabet"][key][RandIndex];
+          RandIndex = GetRandomIndex(
+            Map_Obj["basic"]["alphabet"][RoundKeyMatch(key)].length
+          );
+          let s2 = Map_Obj["basic"]["alphabet"][RoundKeyMatch(key)][RandIndex];
           return s2;
         } else if (key.toUpperCase() == letter) {
-          RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][key].length);
-          let s2 = String(Map_Obj["basic"]["alphabet"][key][RandIndex]);
+          RandIndex = GetRandomIndex(
+            Map_Obj["basic"]["alphabet"][RoundKeyMatch(key)].length
+          );
+          let s2 = String(
+            Map_Obj["basic"]["alphabet"][RoundKeyMatch(key)][RandIndex]
+          );
 
           RandIndex2 = GetRandomIndex(Map_Obj["special"]["BIG"].length);
           let s = String(Map_Obj["special"]["BIG"][RandIndex2]);
@@ -332,8 +424,10 @@ export function getCryptText(text) {
     for (let key in Map_Obj["basic"]["number"]) {
       if (Map_Obj["basic"]["number"].hasOwnProperty(key)) {
         if (key == letter) {
-          RandIndex = GetRandomIndex(Map_Obj["basic"]["number"][key].length);
-          let s2 = Map_Obj["basic"]["number"][key][RandIndex];
+          RandIndex = GetRandomIndex(
+            Map_Obj["basic"]["number"][RoundKeyMatch(key)].length
+          );
+          let s2 = Map_Obj["basic"]["number"][RoundKeyMatch(key)][RandIndex];
           return s2;
         }
       }
@@ -342,8 +436,10 @@ export function getCryptText(text) {
     for (let key in Map_Obj["basic"]["symbol"]) {
       if (Map_Obj["basic"]["symbol"].hasOwnProperty(key)) {
         if (key == letter) {
-          RandIndex = GetRandomIndex(Map_Obj["basic"]["symbol"][key].length);
-          let s2 = Map_Obj["basic"]["symbol"][key][RandIndex];
+          RandIndex = GetRandomIndex(
+            Map_Obj["basic"]["symbol"][RoundKeyMatch(key)].length
+          );
+          let s2 = Map_Obj["basic"]["symbol"][RoundKeyMatch(key)][RandIndex];
           return s2;
         }
       }
@@ -361,24 +457,27 @@ export function findOriginText(text) {
       res2 = "BIG";
     }
   });
+  if (res2) {
+    return res2;
+  }
   for (let key in Map_Obj["basic"]["alphabet"]) {
     Map_Obj["basic"]["alphabet"][key].forEach((item) => {
       if (letter == item) {
-        res = key;
+        res = DRoundKeyMatch(key);
       }
     });
   }
   for (let key in Map_Obj["basic"]["number"]) {
     Map_Obj["basic"]["number"][key].forEach((item) => {
       if (letter == item) {
-        res = key;
+        res = DRoundKeyMatch(key);
       }
     });
   }
   for (let key in Map_Obj["basic"]["symbol"]) {
     Map_Obj["basic"]["symbol"][key].forEach((item) => {
       if (letter == item) {
-        res = key;
+        res = DRoundKeyMatch(key);
       }
     });
   }
@@ -389,9 +488,7 @@ export function findOriginText(text) {
       }
     });
   }
-  if (res2) {
-    return res2;
-  } else if (res) {
+  if (res) {
     return res;
   } else {
     return NULL_STR;

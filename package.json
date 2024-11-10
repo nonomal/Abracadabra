@@ -2,7 +2,7 @@
   "name": "abracadabra-cn",
   "description": "Use Chinese to Encode Everything",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.2.0",
   "main": "./dist/abracadabra-cn.js",
   "type": "module",
   "scripts": {
