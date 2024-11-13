@@ -7,9 +7,19 @@
 #include <random>
 #include <Windows.h>
 #include <ctime>
+#include <cstdint>
+#include <iomanip>
+#include <sstream>
+
 #include <nlohmann/json.hpp>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <CLI11.hpp>
+#include <tinyaes/aes.hpp>
+#include <tinyaes/aes.c>
+#include <picosha2.h>
+
+
+
 using namespace std;
 using json = nlohmann::json;
 using base64 = cppcodec::base64_rfc4648;
@@ -47,7 +57,7 @@ struct PreCheckResult { // 专门用来打包传递预检的结果
 
 struct DemapResult { // 专门用来打包解密的结果
     string output;
-    vector<BYTE> output_B;
+    vector<uint8_t> output_B;
 };
 
 
@@ -59,13 +69,19 @@ string GetLinkCryptedText(string text);
 int GetRandomIndex(int length);
 string UrlEncode(const string& szToEncode);
 std::string GbkToUtf8(const char* src_str);
-std::vector<BYTE> readFile(const char* filename);
+std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(string input);
 void rotateString(std::string& str);
 void LrotateString(std::string& str);
 inline string RoundKeyMatch(string keyIn);
 inline string DRoundKeyMatch(string keyIn);
 inline void RoundKey();
+
+std::vector<uint8_t> hexString2Uint8T(const std::string& hexStr);
+std::string Uint8T2HexString(const std::vector<uint8_t>& container);
+std::vector<uint8_t> String2Uint8T(const std::string& str);
+std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data);
+string SHA256(vector<uint8_t> data);
 
 
 int main(int argc, char *argv[]){
@@ -75,7 +91,7 @@ int main(int argc, char *argv[]){
     string arg1 = "";
     PreCheckResult input;
     bool l = false, b = false, n = false, d = false,isfile = false;
-    string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR;//给定的文件路径和输入
+    string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR,k = "ABRACADABRA";//给定的文件路径和输入
     string::size_type idx; 
     ofstream outfile;
     vector<BYTE> inputfiledata;
@@ -90,6 +106,7 @@ int main(int argc, char *argv[]){
     CLI::Option* fflag = app.add_option("-f", f, "Input an arbitrary given file.");
     CLI::Option* oflag = app.add_option("-o", o, "Declare an output file to save the result.");
     CLI::Option* iflag = app.add_option("-i", i, "Input text, expected if -f is not used.");
+    CLI::Option* kflag = app.add_option("-k", k, "Key to encrypt, ABRACADABRA in default.");
 
 
     i2flag
@@ -129,6 +146,8 @@ int main(int argc, char *argv[]){
     iflag
         ->take_last()
         ->excludes("-f");
+    kflag
+        ->take_last();
     try{
         CLI11_PARSE(app, argc, argv);
     }catch(...){
@@ -189,7 +208,7 @@ int main(int argc, char *argv[]){
 
     string Process_res; //变量用来存储处理结束后的对象
     DemapResult Res;
-    vector<BYTE> OutputData;
+    vector<uint8_t> OutputData;
 
     if(!d || l || b || n){
         Process_res = enMap(input,l,b,n,isfile);
@@ -303,7 +322,6 @@ PreCheckResult preCheck(string input){
 
     return Result;
 }
-
 string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDirect,bool isfile){
     string OriginStr = input.output;
     string TempStr1;
@@ -411,7 +429,6 @@ string enMap(PreCheckResult input,bool forceLink,bool forceBase64,bool forceDire
  
     return TempStr1;
 }
-
 DemapResult deMap(PreCheckResult input){
     string OriginStr = input.output;
     string TempStr1,TempStrz;
@@ -656,22 +673,19 @@ std::string GbkToUtf8(const char* src_str)
         delete[]szRes;
     return result;
 }
-
-std::vector<BYTE> readFile(const char* filename)
+std::vector<uint8_t> readFile(const char* filename)
 {
     // open the file:
     std::ifstream file(filename, std::ios::binary);
 
     // read the data:
-    return std::vector<BYTE>((std::istreambuf_iterator<char>(file)),
+    return std::vector<uint8_t>((std::istreambuf_iterator<char>(file)),
                               std::istreambuf_iterator<char>());
 }
-
 void rotateString(std::string& str) { //循环右移字符串
     str.append(str, 0, 2); // 将字符串的前2个字符追加到字符串的末尾
     str.erase(0, 2); // 从字符串开头删除前2个字符
 }
-
 void LrotateString(std::string& str) { //循环左移字符串
      // 将字符串分为两部分
     int size = str.length(); 
@@ -679,7 +693,6 @@ void LrotateString(std::string& str) { //循环左移字符串
     str.append(str.substr(0,size-1));
     str.erase(0,size-1);
 }
-
 inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
 
     size_t idx,idx2,idx3;
@@ -699,7 +712,6 @@ inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
     return NULL_STR;
 
 }
-
 inline string DRoundKeyMatch(string keyIn){ //查询轮换密钥的键值
 
     size_t idx,idx2,idx3;
@@ -734,9 +746,74 @@ inline void RoundKey(){ //轮换密钥
         return;
     }
 }
-
-
 inline int GetRandomIndex(int length){
     int Rand = distribution(generator);
     return Rand % length;
+}
+
+std::string Uint8T2HexString(const std::vector<uint8_t>& container) { //把任意一个字节数组转换成十六进制字符串
+    std::stringstream hexStream;
+    hexStream << std::hex << std::setfill('0');
+    for (const auto& byte : container) {
+        hexStream << std::setw(2) << static_cast<int>(byte);
+    }
+    return hexStream.str();
+}
+
+std::vector<uint8_t> hexString2Uint8T(const std::string& hexStr) { //把任意十六进制字符串转换成一个字节数组
+    std::vector<uint8_t> byteArray;
+    for (size_t i = 0; i < hexStr.length(); i += 2) {
+        std::string byteString = hexStr.substr(i, 2);
+        unsigned int byte = 0;
+        std::stringstream ss;
+        ss << std::hex << byteString;
+        ss >> byte;
+        byteArray.push_back(static_cast<uint8_t>(byte));
+    }
+    return byteArray;
+}
+
+std::vector<uint8_t> String2Uint8T(const std::string& str) { //把字符串拆解成字节数组
+    std::vector<uint8_t> result(str.begin(), str.end());
+    
+    return result;
+}
+
+string SHA256(vector<uint8_t> data){ //计算给定字节数组的哈希
+    std::vector<unsigned char> hash(picosha2::k_digest_size);
+    picosha2::hash256(data.begin(), data.end(), hash.begin(), hash.end());
+    std::string hex_str = picosha2::bytes_to_hex_string(hash.begin(), hash.end());
+    return hex_str;
+}
+
+std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data){ //执行AES_256_CTR加密，返回字节码
+    AES_ctx ctx;
+    vector<uint8_t> KeyHashV = String2Uint8T(SHA256(String2Uint8T(key)));
+    vector<uint8_t> KeyHashHash = String2Uint8T(SHA256(KeyHashV)); //对密钥的第二次哈希
+
+    uint8_t KeyHash[KeyHashV.size()];
+    for (size_t i = 0; i < KeyHashV.size(); ++i) {
+        KeyHash[i] = KeyHashV[i];
+    }
+
+    uint8_t iv[16];
+    for(int i=0;i<16;i++){
+        iv[i] = KeyHashHash[i]; //初始化向量直接使用密钥两次哈希的前16字节，这么做不是最佳实践。
+        //但是，本项目不会特别把初始化向量另外保存，这样会显著增加密文长度。
+    }
+
+    AES_init_ctx_iv(&ctx,KeyHash,iv);
+
+    uint8_t Data[data.size()];
+    for(int i=0;i<data.size();i++){
+        Data[i] = data[i];
+    }
+
+    AES_CTR_xcrypt_buffer(&ctx, Data, data.size());
+
+    for(int i=0;i<data.size();i++){ //把字符序列反转回去
+        data[i] = Data[i];
+    }
+
+    return data;
 }
