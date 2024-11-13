@@ -773,7 +773,6 @@ std::vector<uint8_t> hexString2Uint8T(const std::string& hexStr) { //把任意�
 
 std::vector<uint8_t> String2Uint8T(const std::string& str) { //把字符串拆解成字节数组
     std::vector<uint8_t> result(str.begin(), str.end());
-    
     return result;
 }
 
@@ -786,8 +785,8 @@ string SHA256(vector<uint8_t> data){ //计算给定字节数组的哈希
 
 std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data){ //执行AES_256_CTR加密，返回字节码
     AES_ctx ctx;
-    vector<uint8_t> KeyHashV = String2Uint8T(SHA256(String2Uint8T(key)));
-    vector<uint8_t> KeyHashHash = String2Uint8T(SHA256(KeyHashV)); //对密钥的第二次哈希
+    vector<uint8_t> KeyHashV = hexString2Uint8T(SHA256(String2Uint8T(key)));
+    vector<uint8_t> KeyHashHash = hexString2Uint8T(SHA256(KeyHashV)); //对密钥的第二次哈希
 
     uint8_t KeyHash[KeyHashV.size()];
     for (size_t i = 0; i < KeyHashV.size(); ++i) {
