@@ -18,8 +18,6 @@
 #include <tinyaes/aes.c>
 #include <picosha2.h>
 
-
-
 using namespace std;
 using json = nlohmann::json;
 using base64 = cppcodec::base64_rfc4648;
