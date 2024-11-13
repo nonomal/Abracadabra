@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <codecvt>
 #include <random>
-//#include <Windows.h>
 #include <ctime>
 #include <cstdint>
 #include <iomanip>
@@ -16,8 +15,6 @@
 #include <tinyaes/aes.hpp>
 #include <tinyaes/aes.c>
 #include <picosha2.h>
-
-
 
 using namespace std;
 using json = nlohmann::json;
