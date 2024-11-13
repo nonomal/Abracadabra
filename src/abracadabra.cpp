@@ -92,7 +92,7 @@ int main(int argc, char *argv[]){
     string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR,k = "ABRACADABRA";//给定的文件路径和输入
     string::size_type idx; 
     ofstream outfile;
-    vector<BYTE> inputfiledata;
+    vector<uint8_t> inputfiledata;
 
     
     //定义命令行参数
