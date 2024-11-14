@@ -31,41 +31,38 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
 
 ```shell
 PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v1.2.0 , by SheepChef***
-Usage: G:\Code-projects\Abracadabra\abracadabra.exe [OPTIONS] [DEFAULT]
+***Abracadabra v2.0.0***
+Usage: C:\Abracadabra\abracadabra.exe [OPTIONS] [DEFAULT]
 
 Positionals:
-  DEFAULT TEXT Excludes: -l -b -n -d -f -o -i
+  DEFAULT TEXT Excludes: -l -e -d -f -i
                               Input text, if there is no given option besides.
 
 Options:
   -h,--help                   Print this help message and exit
-  -l Excludes: DEFAULT -b -n -d
-                              Force to encrypt using url mode
-  -b Excludes: DEFAULT -l -n -d
-                              Force to encrypt using base64 mode
-  -n Excludes: DEFAULT -l -b -d
-                              Force to encrypt the input directly
-  -d Excludes: DEFAULT -l -b -n
-                              Force to decrypt the given input
+  -l Excludes: DEFAULT -e -d  Force to encrypt using url mode.
+  -e Excludes: DEFAULT -l -d  Force to encrypt normally.
+  -d Excludes: DEFAULT -l -e  Force to decrypt the given input.
+  -g                          Ignore any data checks.
   -f TEXT Excludes: DEFAULT -i
                               Input an arbitrary given file.
-  -o TEXT Excludes: DEFAULT   Declare an output file to save the result.
+  -o TEXT                     Declare an output file to save the result.
   -i TEXT Excludes: DEFAULT -f
                               Input text, expected if -f is not used.
+  -k TEXT                     Key to encrypt, ABRACADABRA in default.
 ```
 
 程序的输入和输出分离，输入可以是 `-i` 后跟一串字符串，也可以是 `-f` 后指定任意文件。 默认情况下结果输出在控制台，也可以 `-o` 后指定一个输出文件。
 
 **理论上本程序可以处理任何文件，解密慢于加密。** 如果指定文件仅包括英文字母，数字和部分符号，那么你可以指定处理方式。文件加密的处理依赖标志位，去除标志位可能导致文件无法解密。
 
-使用 base64 模式 `-b` 处理字符串可以提供最高的兼容性、但如果输入中没有宽字符，则可能显著降低效率。
-
 如果要处理链接，使用链接模式 `-l` 可以提高效率、因为一些常用短语可以直接加密为单个字符。不会自动检测给定文本是否是链接，链接模式需要手动指定。
 
-如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
+你可以在 `-k` 后附带密钥来增加密文的安全性，安全性由多重因素保证，详情请见下方加密一节。
 
-如果给定的字符串不存在宽字符，则不会用 base64 预处理字符串，提高效率。
+如果你没有指定密钥，那么将使用默认密钥 `ABRACADABRA`。
+
+如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
 
 ## 注意
 
@@ -79,64 +76,65 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 在嵌入式平台(armv7a, armv8a)上通过了运行测试。
 
-### 已知问题
-
-#### 密本随机性不足
-
-密本亟待扩充，后续会增加汉字映射。
-
-已有的映射不会删减，只会在此基础上增加，以确保未来版本的向下兼容性。
-
 ### 依赖
 
 如果你想自行编译 Abracadabra，请确保正确添加了以下依赖库：
 
-- [nlohmann/json](https://github.com/nlohmann/json)
-- [cppcodec](https://github.com/tplgy/cppcodec)
-- [CLI11](https://github.com/CLIUtils/CLI11)
+- [nlohmann/json](https://github.com/nlohmann/json) 用于 JSON 密本的解析
+- [cppcodec](https://github.com/tplgy/cppcodec) 用于 Base64 编解码
+- [CLI11](https://github.com/CLIUtils/CLI11) 用于解析命令行参数
+- [tiny-AES-c](https://github.com/kokke/tiny-AES-c) 用于 AES 加密
+- [PicoSHA2](https://github.com/okdshin/PicoSHA2) 用于计算哈希
 
 另外，请确保您的环境中安装了 C++11 标准库。
 
 本项目并不复杂，推荐直接用指令调用 g++ 进行构建。如果您愿意，也可以尝试 CMake。
 
-## 细节
+## 加密细节
 
-### 加密实现
+### 加密过程
+
+```
+原数据 -> AES-256-CTR -> Base64 -> 三重转轮 / 映射汉字 -> 密文
+```
+
+### 映射表
 
 Abracadabra 使用古老的多表加密，以最常用的 3000 个汉字(剔除了可能随机组成敏感词的汉字)为密本，对大小写拉丁字母，阿拉伯数字和部分符号进行映射。
 
-大写字母的映射方式为在小写字母前添加一个汉字的标志位，元音字母有更多的映射可能。
+大写字母的映射方式为在小写字母前添加一个汉字的标志位。
 
-### 单重转轮
+你可以自行修改映射表，制造独属于你的加密程序。
+
+### AES-256-CTR
+
+核心安全性由久经考验的 AES 加密算法提供，我们不打算重新发明密码学。
+
+AES 加密密钥和转轮密钥是同一个。
+
+### 三重转轮
 
 模拟古老的转轮加密，每次加密均会对密本映射进行偏移。
 
-密本先向右偏移两位，再向左偏移一位。字母、符号、数字分开轮换。
+简言之，程序会将给定的密钥进行 SHA256，得到一个长度为 32 的 Uint8_t 数组。
 
-```
-abcdefghijklmnopqrstuvwxyz <-- 原始映射 / 加密第一个字符
+这个数组中的每个数字，都会决定三重转轮中每个转轮每次迭代的转动方向和转动距离，其复杂程度堪比甚至胜过 Enigma 机。
 
-cdefghijklmnopqrstuvwxyzab <-- 加密第二个字符 / 右移两位
-例如，此时要加密字母a，那么会映射到字母c，再查表。
+数字，字母和符号分别拥有一套转轮，即总共九个转轮，改变密钥相当于更换一套完全不同的转轮。
 
-bcdefghijklmnopqrstuvwxyza <-- 加密第三个字符 / 左移一位
-例如，此时要加密字母a，那么会映射到字母b，再查表。
+转轮显著增加了 Base64 密文的安全性，可以有效抵抗多种攻击，如果你对具体实现方法感兴趣，欢迎查阅代码。
 
-以此类推，循环往复。
+### 随机性
 
-```
+在映射为汉字的时候，每个字母/数字/符号均有多种可能性，完全随机选择。
 
-转轮增加了密文的安全性，可以有效抵抗多种攻击。
+这进一步降低了密文的规律性，让它看起来像毫无逻辑的乱码。
 
 ### 标志位
 
-使用 日本和制汉字 与 部分生僻字 组成二字标志位，用于标记密文的类型。
+使用 日本和制汉字 与 汉语停用字 组成二字标志位，用于标记密文的类型。
 
-和制汉字和选定的生僻字，在正常情况下不可能同时出现，杜绝类型判断错误的问题。
-
-### 密码表
-
-密码表公开可见，你可以自行修改密码表，编译出属于你自己的 Abracadabra。
+标志位隐蔽，在密文中随机位置插入，不易察觉。
 
 ### 灵感
 
@@ -146,6 +144,5 @@ Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
 
 - [x] ~~实现更规范地解析命令参数~~
 - [x] ~~实现加密任意文件，输出文本文档~~
-- [ ] 用 Python 完整实现 Abracadabra 的轮子
 - [x] ~~用 Node.js 完整实现 Abracadabra 的轮子~~
-- [ ] 实现让嵌入自定义密本更具灵活性
+- [x] ~~实现让嵌入自定义密本更具灵活性~~
