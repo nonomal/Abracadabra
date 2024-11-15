@@ -10,8 +10,7 @@ export class Abracadabra {
   static LINK = "LINK";
   static DECRYPT = "DECRYPT";
   static AUTO = "AUTO";
-  static BASE64 = "BASE64";
-  static DIRECT = "DIRECT";
+  static NORMAL = "NORMAL";
   #input = ""; //输入类型，可以是 BLOB 或者 TEXT
   #output = ""; //输出类型，可以是 BLOB 或者 TEXT
 
@@ -45,13 +44,11 @@ export class Abracadabra {
    *
    * **LINK** 强制加密，使用链接模式，将输入强制转换为字符串，进行UrlEncode，再加密。
    *
-   * **BASE64** 强制加密，使用BASE64模式，将输入先进行BASE64转码，再加密。
-   *
-   * **DIRECT** 强制加密，使用默认模式，请确保输入数据不存在任何特殊字符，否则指定该模式将被自动逻辑忽略。
+   * **NORMAL** 强制加密，使用默认模式。
    * @param{string | Uint8Array}input 输入的数据，根据此前指定的输入类型，可能是字符串或字节数组
    * @param{string}mode 指定模式，可以是 DECRYPT AUTO LINK BASE64 DIRECT 中的一种;
    */
-  Input(input, mode) {
+  Input(input, mode, key = "ABRACADABRA") {
     if (this.#input == Abracadabra.UINT8) {
       //如果指定输入类型是UINT8
       if (Object.prototype.toString.call(input) != "[object Uint8Array]") {
@@ -76,34 +73,28 @@ export class Abracadabra {
         if (
           (preCheckRes.isEncrypted &&
             mode != Abracadabra.LINK &&
-            mode != Abracadabra.BASE64) ||
+            mode != Abracadabra.NORMAL) ||
           mode == Abracadabra.DECRYPT
         ) {
           //如果是加密的字符串且没有强制指定要再次加密，或者强制执行解密,自动执行解密
           //注意，DEFAULT此时不可用(即使指定)，在这里如果指定DEFAULT，也会自动执行解密
           //如果是加密的字符串,指定AUTO在此处会自动解密
-          this.#res = Util.deMap(preCheckRes);
+          this.#res = Util.deMap(preCheckRes, key);
         } else {
           this.#res = Util.enMap(
             preCheckRes,
             mode == Abracadabra.LINK ? true : false,
-            mode == Abracadabra.BASE64 ? true : false,
-            mode == Abracadabra.DIRECT ? true : false,
-            false
+            key
           ); //在字符串可解码的情况下，加密时不采用文件模式
         }
       } else {
-        //如果给定的数据不可预检(不可能是密文，此时强制解密无效)，直接对数据进行base64编码，传递给加密函数，忽略所有模式指令，强制Base64模式。
-        inputString = Base64.fromUint8Array(input);
-        preCheckRes = new Util.PreCheckResult(
-          inputString,
-          false,
-          false,
-          true,
-          false,
-          false
+        //如果给定的数据不可预检(不可能是密文，此时强制解密无效)，直接对数据传递给加密函数
+        preCheckRes = new Util.PreCheckResult(input, true, false);
+        this.#res = Util.enMap(
+          preCheckRes,
+          mode == Abracadabra.LINK ? true : false,
+          key
         );
-        this.#res = Util.enMap(preCheckRes, false, false, false, true); //在字符串可解码的情况下，加密时不采用文件模式
       }
     } else if (this.#input == Abracadabra.TEXT) {
       //如果指定输入类型是TEXT
@@ -114,20 +105,17 @@ export class Abracadabra {
       if (
         (preCheckRes.isEncrypted &&
           mode != Abracadabra.LINK &&
-          mode != Abracadabra.BASE64) ||
+          mode != Abracadabra.NORMAL) ||
         mode == Abracadabra.DECRYPT
       ) {
         //如果是加密的字符串且没有强制指定要再次加密，或者强制执行解密,自动执行解密
-        //注意，DEFAULT此时不可用(即使指定)，在这里如果指定DEFAULT，也会自动执行解密
         //如果是加密的字符串,指定AUTO在此处会自动解密
-        this.#res = Util.deMap(preCheckRes);
+        this.#res = Util.deMap(preCheckRes, key);
       } else {
         this.#res = Util.enMap(
           preCheckRes,
           mode == Abracadabra.LINK ? true : false,
-          mode == Abracadabra.BASE64 ? true : false,
-          mode == Abracadabra.DIRECT ? true : false,
-          false
+          key
         ); //在字符串可解码的情况下，加密时不采用文件模式
       }
     }
