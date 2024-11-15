@@ -44,6 +44,7 @@ Options:
   -e Excludes: DEFAULT -l -d  Force to encrypt normally.
   -d Excludes: DEFAULT -l -e  Force to decrypt the given input.
   -g                          Ignore any data checks.
+  -t                          Test/Debug mode, output more informations.
   -f TEXT Excludes: DEFAULT -i
                               Input an arbitrary given file.
   -o TEXT                     Declare an output file to save the result.
@@ -54,13 +55,17 @@ Options:
 
 程序的输入和输出分离，输入可以是 `-i` 后跟一串字符串，也可以是 `-f` 后指定任意文件。 默认情况下结果输出在控制台，也可以 `-o` 后指定一个输出文件。
 
-**理论上本程序可以处理任何文件，解密慢于加密。** 如果指定文件仅包括英文字母，数字和部分符号，那么你可以指定处理方式。文件加密的处理依赖标志位，去除标志位可能导致文件无法解密。
+**理论上本程序可以处理任何文件，解密显著慢于加密。** 文件加密的处理依赖标志位，去除标志位可能导致文件无法解密。
 
 如果要处理链接，使用链接模式 `-l` 可以提高效率、因为一些常用短语可以直接加密为单个字符。不会自动检测给定文本是否是链接，链接模式需要手动指定。
 
-你可以在 `-k` 后附带密钥来增加密文的安全性，安全性由多重因素保证，详情请见下方加密一节。
+你可以在 `-k` 后附带密钥来增加密文的安全性，安全性由多重因素保证，详情请见下方加密细节。
 
-如果你没有指定密钥，那么将使用默认密钥 `ABRACADABRA`。
+如果你没有指定密钥，那么将使用默认密钥 `ABRACADABRA`，这会降低安全性。
+
+`-t` 用于额外输出加/解密的中间步骤(Base64)结果，由此你可以查看密钥对转轮步骤的影响。
+
+`-g` 用于忽略解密过程中的数据合法性检查。
 
 如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
 
@@ -146,3 +151,4 @@ Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
 - [x] ~~实现加密任意文件，输出文本文档~~
 - [x] ~~用 Node.js 完整实现 Abracadabra 的轮子~~
 - [x] ~~实现让嵌入自定义密本更具灵活性~~
+- [ ] 数据的可靠压缩
