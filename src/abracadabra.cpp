@@ -30,16 +30,16 @@ uint8_t RoundControl[32]; //一个数组，用密钥哈希来控制轮转的行�
 const string Normal_Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t1234567890"; //表内有映射的所有字符组成的字符串
 const string LETTERS = "abcdefghijklmnopqrstuvwxyz";
 string LETTERS_ROUND_1 = "abcdefghijklmnopqrstuvwxyz";
-string LETTERS_ROUND_2 = "abcdefghijklmnopqrstuvwxyz";
+string LETTERS_ROUND_2 = "tdgxnvyscmahlqwopjzeiurbfk"; //手动随机打乱的乱序轮
 string LETTERS_ROUND_3 = "abcdefghijklmnopqrstuvwxyz";
 const string BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const string NUMBERS = "1234567890";
 string NUMBERS_ROUND_1 = "1234567890";
-string NUMBERS_ROUND_2 = "1234567890";
-string NUMBERS_ROUND_3 = "1234567890";
+string NUMBERS_ROUND_2 = "3709641852"; //手动随机打乱的乱序轮
+string NUMBERS_ROUND_3 = "1234567890"; 
 const string SYMBOLS = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
 string SYMBOLS_ROUND_1 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
-string SYMBOLS_ROUND_2 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
+string SYMBOLS_ROUND_2 = "@,$\t~&<[%{`#:|/*(=]?\n+.;>} _)-!^"; //手动随机打乱的乱序轮
 string SYMBOLS_ROUND_3 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
 
 const string SIG_DECRYPT_JP = "桜込凪雫実沢";
@@ -62,8 +62,8 @@ struct DemapResult { // 专门用来打包解密的结果
 };
 
 
-string enMap(PreCheckResult input,bool l,string key);
-DemapResult deMap(PreCheckResult input,string key,bool g);
+string enMap(PreCheckResult input,bool l,string key,bool t);
+DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
 string GetLinkCryptedText(string text);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){
 
     string arg1 = "";
     PreCheckResult input;
-    bool l = false,e = false, d = false,g = false;
+    bool l = false,e = false, d = false,g = false,t = false;
     string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR,k = "ABRACADABRA";//给定的文件路径和输入
     string::size_type idx; 
     ofstream outfile;
@@ -102,6 +102,7 @@ int main(int argc, char *argv[]){
     CLI::Option* eflag = app.add_flag("-e", e, "Force to encrypt normally.");
     CLI::Option* dflag = app.add_flag("-d", d, "Force to decrypt the given input.");
     CLI::Option* gflag = app.add_flag("-g", g, "Ignore any data checks.");
+    CLI::Option* tflag = app.add_flag("-t", t, "Test/Debug mode, output more informations.");
     CLI::Option* fflag = app.add_option("-f", f, "Input an arbitrary given file.");
     CLI::Option* oflag = app.add_option("-o", o, "Declare an output file to save the result.");
     CLI::Option* iflag = app.add_option("-i", i, "Input text, expected if -f is not used.");
@@ -135,6 +136,8 @@ int main(int argc, char *argv[]){
         ->take_last()
         ->excludes("-f");
     kflag
+        ->take_last();
+    tflag
         ->take_last();
     try{
         CLI11_PARSE(app, argc, argv);
@@ -188,10 +191,10 @@ int main(int argc, char *argv[]){
     vector<uint8_t> OutputData;
 
     if(!d || l || e){
-        Process_res = enMap(input,l,k);
+        Process_res = enMap(input,l,k,t);
     }else{
         //尝试解密
-        Res = deMap(input,k,g); //如果输入的是文件，解密后的“字符串”未必是字符串，只是类字符数组，若不指定输出路径，直接命令行输出必乱码
+        Res = deMap(input,k,g,t); //如果输入的是文件，解密后的“字符串”未必是字符串，只是类字符数组，若不指定输出路径，直接命令行输出必乱码
         Process_res = Res.output;
         OutputData = Res.output_B;
     }
@@ -275,7 +278,7 @@ PreCheckResult preCheck(vector<uint8_t> Input){
     Result.isEncrypted = isEncrypted;
     return Result;
 }
-string enMap(PreCheckResult input,bool l,string key){
+string enMap(PreCheckResult input,bool l,string key,bool t){
 
     vector<uint8_t> OriginalData = input.output;
     string TempS(input.output.begin(),input.output.end());
@@ -293,6 +296,9 @@ string enMap(PreCheckResult input,bool l,string key){
 
     OriginalData = AES_256_CTR(key,OriginalData); //AES加密
     string OriginStr = base64::encode(OriginalData); //用Base64编码AES的加密结果
+    if(t){
+        cout<<"AES -> Base64: "<< OriginStr << endl;
+    }
 
     string TempStr1;
     string temp,temp2,group;
@@ -358,7 +364,7 @@ string enMap(PreCheckResult input,bool l,string key){
     
     return TempStr1;
 }
-DemapResult deMap(PreCheckResult input,string key,bool g){
+DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     string OriginStr(input.output.begin(),input.output.end());
     string TempStr1,TempStrz;
     string temp,temp2,group,findtemp;
@@ -426,6 +432,9 @@ DemapResult deMap(PreCheckResult input,string key,bool g){
         }
 
         
+    }
+    if(t){
+        cout<<"Round -> Base64: " << TempStr1 << endl;
     }
     //到这儿应该能还原出预先处理过的原文（肯定是个Base64）
     std::vector<uint8_t> TempStr2Int;
