@@ -84,7 +84,7 @@ Abracadabra.DECRYPT = "DECRYPT";
 Abracadabra.AUTO = "AUTO";
 自动(遵循自动逻辑)
 
-Abracadabra.BASE64 = "NORMAL";
+Abracadabra.NORMAL = "NORMAL";
 强制普通加密
 
 */
