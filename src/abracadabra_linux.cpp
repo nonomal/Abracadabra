@@ -301,7 +301,7 @@ string enMap(PreCheckResult input,bool l,string key,bool t){
     string temp,temp2,group;
     string::size_type idx; 
     int size = OriginStr.length();
-
+    RoundKey();
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
@@ -389,7 +389,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     //TempStrz为去除了标志位/占位符的密文
     size = TempStrz.length();
     OriginStr = TempStrz;
-
+    RoundKey();
 
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
