@@ -307,6 +307,7 @@ export function enMap(input, l, key) {
     group = "";
 
   let size = OriginStr.length;
+  RoundKey();
   for (let i = 0; i < size; i++) {
     temp = OriginStr[i];
     if (i != size - 1) {
@@ -382,7 +383,7 @@ export function deMap(input, key) {
   }
   size = TempStrz.length;
   OriginStr = TempStrz;
-
+  RoundKey();
   for (let i = 0; i < size; ) {
     temp = OriginStr[i];
     if (i != size - 1) {

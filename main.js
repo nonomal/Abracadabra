@@ -46,7 +46,8 @@ export class Abracadabra {
    *
    * **NORMAL** 强制加密，使用默认模式。
    * @param{string | Uint8Array}input 输入的数据，根据此前指定的输入类型，可能是字符串或字节数组
-   * @param{string}mode 指定模式，可以是 DECRYPT AUTO LINK BASE64 DIRECT 中的一种;
+   * @param{string}mode 指定模式，可以是 DECRYPT AUTO LINK NORMAL 中的一种;
+   * @param{string}key 指定密钥，默认是 ABRADACABRA;
    */
   Input(input, mode, key = "ABRACADABRA") {
     if (this.#input == Abracadabra.UINT8) {
