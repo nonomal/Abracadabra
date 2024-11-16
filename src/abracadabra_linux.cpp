@@ -83,7 +83,7 @@ vector<uint8_t> SHA256(vector<uint8_t> data);
 
 
 int main(int argc, char *argv[]){
-    CLI::App app{"***Abracadabra v1.2.0***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.0.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
