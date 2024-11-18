@@ -14,6 +14,8 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 **查阅 Web 实现**: [**dev_node Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_nodejs)
 
+Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
+
 ## 特性
 
 ![动画](https://github.com/user-attachments/assets/7ec6e01c-230d-4d27-a0b1-80015307c5f4)
