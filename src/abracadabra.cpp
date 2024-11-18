@@ -1,4 +1,4 @@
-#include <iostream>
+#include <iostream> //Basic Libs
 #include <fstream>
 #include <String.h>
 #include <stdio.h>
@@ -11,39 +11,43 @@
 #include <iomanip>
 #include <sstream>
 
-#include <nlohmann/json.hpp>
-#include <cppcodec/base64_rfc4648.hpp>
-#include <CLI11.hpp>
-#include <tinyaes/aes.hpp>
+#include <nlohmann/json.hpp> //JSON processing
+#include <cppcodec/base64_rfc4648.hpp> //Base64 Proccessing
+#include <CLI11.hpp> //CLI Support
+#include <tinyaes/aes.hpp> //AES Support
 #include <tinyaes/aes.c>
-#include <picosha2.h>
+#include <picosha2.h> //SHA256 Support
+
+#include <gzip/compress.hpp> //Compression Support
+#include <gzip/decompress.hpp>
+#include <gzip/utils.hpp>
+#include <unishox2.h>
+#include <unishox2.c>
 
 using namespace std;
 using json = nlohmann::json;
 using base64 = cppcodec::base64_rfc4648;
 
-const string Map = "{\"basic\":{\"alphabet\":{\"a\":[\"请\",\"上\",\"中\",\"之\",\"等\",\"人\",\"到\",\"年\",\"个\",\"将\"],\"b\":[\"得\",\"可\",\"并\",\"发\",\"过\",\"协\",\"曲\",\"闭\",\"斋\",\"峦\"],\"c\":[\"页\",\"于\",\"而\",\"被\",\"无\",\"挽\",\"裕\",\"斜\",\"绪\",\"镜\"],\"d\":[\"由\",\"把\",\"好\",\"从\",\"会\",\"帕\",\"莹\",\"盈\",\"敬\",\"粒\"],\"e\":[\"的\",\"在\",\"了\",\"是\",\"为\",\"有\",\"和\",\"我\",\"一\",\"与\"],\"f\":[\"站\",\"最\",\"号\",\"及\",\"能\",\"迟\",\"鸭\",\"呈\",\"玻\",\"据\"],\"g\":[\"着\",\"很\",\"此\",\"但\",\"看\",\"浩\",\"附\",\"侃\",\"汐\",\"绸\"],\"h\":[\"名\",\"呢\",\"又\",\"图\",\"啊\",\"棉\",\"畅\",\"蒸\",\"玫\",\"添\"],\"i\":[\"对\",\"地\",\"您\",\"给\",\"这\",\"下\",\"网\",\"也\",\"来\",\"你\"],\"j\":[\"更\",\"天\",\"去\",\"用\",\"只\",\"矽\",\"萌\",\"镁\",\"芯\",\"夸\"],\"k\":[\"第\",\"者\",\"所\",\"两\",\"里\",\"氢\",\"羟\",\"纽\",\"夏\",\"春\"],\"l\":[\"自\",\"做\",\"前\",\"二\",\"他\",\"氦\",\"汀\",\"兰\",\"竹\",\"捷\"],\"m\":[\"家\",\"点\",\"路\",\"至\",\"十\",\"锂\",\"羧\",\"暑\",\"夕\",\"振\"],\"n\":[\"区\",\"想\",\"向\",\"主\",\"四\",\"铍\",\"烃\",\"惠\",\"芳\",\"岩\"],\"o\":[\"就\",\"新\",\"吗\",\"该\",\"不\",\"多\",\"还\",\"要\",\"让\",\"大\"],\"p\":[\"小\",\"如\",\"成\",\"位\",\"其\",\"硼\",\"酞\",\"褔\",\"苑\",\"笋\"],\"q\":[\"吧\",\"每\",\"机\",\"几\",\"总\",\"碳\",\"铂\",\"涓\",\"绣\",\"悦\"],\"r\":[\"起\",\"它\",\"内\",\"高\",\"次\",\"氮\",\"铵\",\"奏\",\"鲤\",\"淳\"],\"s\":[\"非\",\"元\",\"类\",\"五\",\"使\",\"氧\",\"醇\",\"迷\",\"霁\",\"琅\"],\"t\":[\"首\",\"进\",\"即\",\"没\",\"市\",\"氖\",\"酯\",\"琳\",\"绫\",\"濑\"],\"u\":[\"后\",\"三\",\"本\",\"都\",\"时\",\"月\",\"或\",\"说\",\"已\",\"以\"],\"v\":[\"种\",\"快\",\"那\",\"篇\",\"万\",\"钠\",\"炔\",\"柯\",\"睿\",\"琼\"],\"w\":[\"长\",\"按\",\"报\",\"比\",\"信\",\"硅\",\"烷\",\"静\",\"欣\",\"束\"],\"x\":[\"再\",\"带\",\"才\",\"全\",\"呀\",\"磷\",\"烯\",\"柔\",\"雪\",\"冰\"],\"y\":[\"业\",\"却\",\"版\",\"美\",\"们\",\"硫\",\"桉\",\"寒\",\"冻\",\"玖\"],\"z\":[\"像\",\"走\",\"文\",\"各\",\"当\",\"氯\",\"缬\",\"妃\",\"琉\",\"璃\"]},\"number\":{\"0\":[\"卡\",\"风\",\"水\",\"放\",\"花\",\"钾\",\"宏\",\"谊\",\"探\",\"棋\"],\"1\":[\"需\",\"头\",\"话\",\"曾\",\"楼\",\"钙\",\"吾\",\"恋\",\"菲\",\"遥\"],\"2\":[\"连\",\"系\",\"门\",\"力\",\"量\",\"钛\",\"苗\",\"氛\",\"鹤\",\"雀\"],\"3\":[\"书\",\"亿\",\"跟\",\"深\",\"方\",\"钒\",\"鸳\",\"鸯\",\"纸\",\"鸢\"],\"4\":[\"若\",\"低\",\"谈\",\"明\",\"百\",\"铬\",\"羯\",\"尧\",\"舜\",\"兆\"],\"5\":[\"关\",\"客\",\"读\",\"双\",\"回\",\"锰\",\"熙\",\"瀚\",\"渊\",\"灯\"],\"6\":[\"较\",\"品\",\"嘛\",\"单\",\"价\",\"钴\",\"阑\",\"珊\",\"雁\",\"鹂\"],\"7\":[\"山\",\"西\",\"动\",\"厂\",\"热\",\"锌\",\"鹃\",\"鸠\",\"昆\",\"仑\"],\"8\":[\"言\",\"笑\",\"度\",\"易\",\"身\",\"镓\",\"乾\",\"坤\",\"澈\",\"饺\"],\"9\":[\"份\",\"星\",\"千\",\"仍\",\"办\",\"锗\",\"彗\",\"聪\",\"慧\",\"磋\"]},\"symbol\":{\"+\":[\"集\",\"费\",\"传\",\"室\",\"拉\",\"瑞\",\"琴\",\"森\",\"辉\"],\"/\":[\"难\",\"界\",\"指\",\"管\",\"具\",\"善\",\"智\",\"蔬\",\"缎\"],\"?\":[\"相\",\"儿\",\"李\",\"早\",\"拿\"],\"-\":[\"科\",\"白\",\"段\",\"飞\",\"住\"],\".\":[\"利\",\"红\",\"板\",\"光\",\"约\"],\"(\":[\"变\",\"款\",\"林\",\"夹\",\"院\"],\")\":[\"服\",\"句\",\"声\",\"务\",\"游\"],\"[\":[\"股\",\"南\",\"社\",\"阿\",\"远\"],\"]\":[\"意\",\"换\",\"些\",\"必\",\"赛\"],\"<\":[\"届\",\"完\",\"乐\",\"彩\",\"讲\"],\">\":[\"展\",\"帮\",\"且\",\"物\",\"班\"],\",\":[\"何\",\"流\",\"密\",\"某\",\"房\"],\"|\":[\"语\",\"亚\",\"常\",\"除\",\"装\"],\"=\":[\"极\",\"载\",\"题\",\"刚\",\"气\",\"程\",\"舒\",\"雅\",\"益\"],\"@\":[\"米\",\"影\",\"德\",\"世\",\"坐\"],\"#\":[\"北\",\"招\",\"短\",\"活\",\"斯\"],\"!\":[\"值\",\"店\",\"树\",\"哪\",\"余\"],\"~\":[\"盘\",\"速\",\"座\",\"求\",\"创\"],\"`\":[\"梦\",\"足\",\"半\",\"视\",\"安\"],\"$\":[\"空\",\"歌\",\"派\",\"顶\",\"登\"],\"%\":[\"夜\",\"云\",\"感\",\"啦\",\"欲\"],\"^\":[\"边\",\"工\",\"眼\",\"街\",\"奖\"],\"&\":[\"获\",\"占\",\"理\",\"任\",\"实\"],\"*\":[\"知\",\"掉\",\"色\",\"讯\",\"克\"],\"_\":[\"直\",\"评\",\"往\",\"层\",\"园\"],\"{\":[\"留\",\"靠\",\"亦\",\"罗\",\"营\"],\"}\":[\"合\",\"尚\",\"产\",\"诚\",\"汨\"],\":\":[\"曱\",\"朩\",\"杉\",\"杸\",\"歩\"],\";\":[\"毋\",\"氕\",\"気\",\"氘\",\"氙\"],\" \":[\"叧\",\"叺\",\"叻\",\"叾\",\"吅\",\"叿\",\"吙\",\"呡\",\"呤\",\"呮\",\"呭\",\"呾\",\"呟\",\"吂\",\"吤\"],\"\\t\":[\"圠\",\"圡\",\"圢\",\"圤\",\"圥\",\"圦\",\"坆\",\"夨\",\"夨\",\"夬\",\"夳\",\"夶\",\"奀\",\"夻\",\"夼\"],\"\\n\":[\"孒\",\"孖\",\"尐\",\"尛\",\"尢\",\"尣\",\"巛\",\"巜\",\"幷\",\"弐\",\"彑\",\"彡\",\"彳\",\"忄\",\"扖\"]}},\"link\":{\"http\":[\"贴\",\"则\",\"老\",\"生\",\"达\"],\"://\":[\"商\",\"行\",\"周\",\"证\",\"经\"],\"magnet\":[\"事\",\"场\",\"同\",\"化\",\"找\"],\"udp\":[\"建\",\"手\",\"道\",\"间\",\"式\"],\"tcp\":[\"特\",\"城\",\"型\",\"定\",\"接\"],\"ftp\":[\"局\",\"问\",\"重\",\"叫\",\"通\"],\":?xt=urn:btih:\":[\"件\",\"少\",\"面\",\"金\",\"近\"],\"torrent\":[\"买\",\"听\",\"学\",\"见\",\"称\"],\"www\":[\"写\",\"选\",\"片\",\"体\",\"组\"],\"mailto\":[\"先\",\"仅\",\"别\",\"表\",\"现\"]},\"special\":{\"BIG\":[\"未\",\"哦\",\"部\",\"项\",\"谁\",\"分\",\"转\",\"字\",\"数\",\"心\",\"子\",\"处\",\"作\",\"因\",\"设\",\"环\",\"青\",\"雨\",\"泊\",\"注\",\"织\",\"赴\",\"茶\"],\"DECRYPT\":{\"JP\":[\"桜\",\"込\",\"凪\",\"雫\",\"実\",\"沢\"],\"CN\":[\"汢\",\"垈\",\"玊\",\"欤\",\"瞐\",\"囧\"]}}}"; //字符串映射表
+const string Map = "{\"basic\":{\"alphabet\":{\"a\":[\"请\",\"上\",\"中\",\"之\",\"等\",\"人\",\"到\",\"年\",\"个\",\"将\"],\"b\":[\"得\",\"可\",\"并\",\"发\",\"过\",\"协\",\"曲\",\"闭\",\"斋\",\"峦\"],\"c\":[\"页\",\"于\",\"而\",\"被\",\"无\",\"挽\",\"裕\",\"斜\",\"绪\",\"镜\"],\"d\":[\"由\",\"把\",\"好\",\"从\",\"会\",\"帕\",\"莹\",\"盈\",\"敬\",\"粒\"],\"e\":[\"的\",\"在\",\"了\",\"是\",\"为\",\"有\",\"和\",\"我\",\"一\",\"与\"],\"f\":[\"站\",\"最\",\"号\",\"及\",\"能\",\"迟\",\"鸭\",\"呈\",\"玻\",\"据\"],\"g\":[\"着\",\"很\",\"此\",\"但\",\"看\",\"浩\",\"附\",\"侃\",\"汐\",\"绸\"],\"h\":[\"名\",\"呢\",\"又\",\"图\",\"啊\",\"棉\",\"畅\",\"蒸\",\"玫\",\"添\"],\"i\":[\"对\",\"地\",\"您\",\"给\",\"这\",\"下\",\"网\",\"也\",\"来\",\"你\"],\"j\":[\"更\",\"天\",\"去\",\"用\",\"只\",\"矽\",\"萌\",\"镁\",\"芯\",\"夸\"],\"k\":[\"第\",\"者\",\"所\",\"两\",\"里\",\"氢\",\"羟\",\"纽\",\"夏\",\"春\"],\"l\":[\"自\",\"做\",\"前\",\"二\",\"他\",\"氦\",\"汀\",\"兰\",\"竹\",\"捷\"],\"m\":[\"家\",\"点\",\"路\",\"至\",\"十\",\"锂\",\"羧\",\"暑\",\"夕\",\"振\"],\"n\":[\"区\",\"想\",\"向\",\"主\",\"四\",\"铍\",\"烃\",\"惠\",\"芳\",\"岩\"],\"o\":[\"就\",\"新\",\"吗\",\"该\",\"不\",\"多\",\"还\",\"要\",\"让\",\"大\"],\"p\":[\"小\",\"如\",\"成\",\"位\",\"其\",\"硼\",\"酞\",\"褔\",\"苑\",\"笋\"],\"q\":[\"吧\",\"每\",\"机\",\"几\",\"总\",\"碳\",\"铂\",\"涓\",\"绣\",\"悦\"],\"r\":[\"起\",\"它\",\"内\",\"高\",\"次\",\"氮\",\"铵\",\"奏\",\"鲤\",\"淳\"],\"s\":[\"非\",\"元\",\"类\",\"五\",\"使\",\"氧\",\"醇\",\"迷\",\"霁\",\"琅\"],\"t\":[\"首\",\"进\",\"即\",\"没\",\"市\",\"氖\",\"酯\",\"琳\",\"绫\",\"濑\"],\"u\":[\"后\",\"三\",\"本\",\"都\",\"时\",\"月\",\"或\",\"说\",\"已\",\"以\"],\"v\":[\"种\",\"快\",\"那\",\"篇\",\"万\",\"钠\",\"炔\",\"柯\",\"睿\",\"琼\"],\"w\":[\"长\",\"按\",\"报\",\"比\",\"信\",\"硅\",\"烷\",\"静\",\"欣\",\"束\"],\"x\":[\"再\",\"带\",\"才\",\"全\",\"呀\",\"磷\",\"烯\",\"柔\",\"雪\",\"冰\"],\"y\":[\"业\",\"却\",\"版\",\"美\",\"们\",\"硫\",\"桉\",\"寒\",\"冻\",\"玖\"],\"z\":[\"像\",\"走\",\"文\",\"各\",\"当\",\"氯\",\"缬\",\"妃\",\"琉\",\"璃\"],\"A\":[\"贴\",\"则\",\"老\",\"生\",\"达\",\"商\",\"行\",\"周\",\"证\",\"经\"],\"B\":[\"事\",\"场\",\"同\",\"化\",\"找\",\"建\",\"手\",\"道\",\"间\",\"式\"],\"C\":[\"特\",\"城\",\"型\",\"定\",\"接\",\"局\",\"问\",\"重\",\"叫\",\"通\"],\"D\":[\"件\",\"少\",\"面\",\"金\",\"近\",\"买\",\"听\",\"学\",\"见\",\"称\"],\"E\":[\"写\",\"选\",\"片\",\"体\",\"组\",\"先\",\"仅\",\"别\",\"表\",\"现\"],\"F\":[\"雨\",\"泊\",\"注\",\"织\",\"赴\",\"茶\",\"因\",\"设\",\"环\",\"青\"],\"G\":[\"数\",\"心\",\"子\",\"处\",\"作\",\"项\",\"谁\",\"分\",\"转\",\"字\"],\"H\":[\"砂\",\"妥\",\"鹦\",\"课\",\"栗\",\"霞\",\"鹉\",\"翌\",\"蕴\",\"憩\"],\"I\":[\"畔\",\"珑\",\"咫\",\"瑞\",\"玲\",\"郊\",\"蛟\",\"昱\",\"祉\",\"菁\"],\"J\":[\"铁\",\"宙\",\"耕\",\"琴\",\"铃\",\"瑰\",\"旬\",\"茉\",\"砺\",\"莅\"],\"K\":[\"钇\",\"莉\",\"筱\",\"森\",\"曳\",\"苹\",\"踵\",\"晰\",\"砥\",\"舀\"],\"L\":[\"锆\",\"粟\",\"魄\",\"辉\",\"谜\",\"馅\",\"醋\",\"甄\",\"韶\",\"泪\"],\"M\":[\"钌\",\"倘\",\"祥\",\"善\",\"泉\",\"惦\",\"铠\",\"骏\",\"韵\",\"泣\"],\"N\":[\"铑\",\"筑\",\"铿\",\"智\",\"禀\",\"磊\",\"桨\",\"檀\",\"荧\",\"铭\"],\"O\":[\"钯\",\"骐\",\"烛\",\"蔬\",\"凛\",\"溯\",\"困\",\"炯\",\"酿\",\"瑕\"],\"P\":[\"银\",\"榻\",\"驿\",\"缎\",\"澟\",\"绒\",\"莺\",\"萤\",\"桅\",\"枕\"],\"Q\":[\"镉\",\"赞\",\"瑾\",\"程\",\"怡\",\"漱\",\"穗\",\"湍\",\"栀\",\"皆\"],\"R\":[\"碘\",\"礼\",\"饴\",\"舒\",\"芷\",\"麟\",\"沥\",\"描\",\"锄\",\"墩\"],\"S\":[\"锡\",\"彰\",\"瞻\",\"雅\",\"贮\",\"喵\",\"翊\",\"闪\",\"翎\",\"婉\"],\"T\":[\"钨\",\"咨\",\"涌\",\"益\",\"嵩\",\"御\",\"饶\",\"纺\",\"栩\",\"稔\"],\"U\":[\"铋\",\"骆\",\"橘\",\"未\",\"泰\",\"频\",\"琥\",\"囍\",\"浣\",\"裳\"],\"V\":[\"钕\",\"飒\",\"浇\",\"哦\",\"途\",\"瓢\",\"珀\",\"涨\",\"仓\",\"棠\"],\"W\":[\"祁\",\"蓬\",\"灿\",\"部\",\"涧\",\"舫\",\"曙\",\"航\",\"礁\",\"渡\"],\"X\":[\"旺\",\"嫦\",\"漫\",\"佑\",\"钥\",\"谧\",\"葵\",\"咩\",\"诵\",\"绮\"],\"Y\":[\"阐\",\"译\",\"锻\",\"茜\",\"坞\",\"砌\",\"靛\",\"猫\",\"芮\",\"绚\"],\"Z\":[\"拌\",\"皎\",\"笙\",\"沃\",\"悟\",\"拓\",\"遨\",\"揽\",\"昼\",\"蔗\"]},\"numbersymbol\":{\"0\":[\"卡\",\"风\",\"水\",\"放\",\"花\",\"钾\",\"宏\",\"谊\",\"探\",\"棋\"],\"1\":[\"需\",\"头\",\"话\",\"曾\",\"楼\",\"钙\",\"吾\",\"恋\",\"菲\",\"遥\"],\"2\":[\"连\",\"系\",\"门\",\"力\",\"量\",\"钛\",\"苗\",\"氛\",\"鹤\",\"雀\"],\"3\":[\"书\",\"亿\",\"跟\",\"深\",\"方\",\"钒\",\"鸳\",\"鸯\",\"纸\",\"鸢\"],\"4\":[\"若\",\"低\",\"谈\",\"明\",\"百\",\"铬\",\"羯\",\"尧\",\"舜\",\"兆\"],\"5\":[\"关\",\"客\",\"读\",\"双\",\"回\",\"锰\",\"熙\",\"瀚\",\"渊\",\"灯\"],\"6\":[\"较\",\"品\",\"嘛\",\"单\",\"价\",\"钴\",\"阑\",\"珊\",\"雁\",\"鹂\"],\"7\":[\"山\",\"西\",\"动\",\"厂\",\"热\",\"锌\",\"鹃\",\"鸠\",\"昆\",\"仑\"],\"8\":[\"言\",\"笑\",\"度\",\"易\",\"身\",\"镓\",\"乾\",\"坤\",\"澈\",\"饺\"],\"9\":[\"份\",\"星\",\"千\",\"仍\",\"办\",\"锗\",\"彗\",\"聪\",\"慧\",\"磋\"],\"+\":[\"集\",\"费\",\"传\",\"室\",\"拉\"],\"/\":[\"难\",\"界\",\"指\",\"管\",\"具\"],\"?\":[\"相\",\"儿\",\"李\",\"早\",\"拿\"],\"-\":[\"科\",\"白\",\"段\",\"飞\",\"住\"],\".\":[\"利\",\"红\",\"板\",\"光\",\"约\"],\"(\":[\"变\",\"款\",\"林\",\"夹\",\"院\"],\")\":[\"服\",\"句\",\"声\",\"务\",\"游\"],\"[\":[\"股\",\"南\",\"社\",\"阿\",\"远\"],\"]\":[\"意\",\"换\",\"些\",\"必\",\"赛\"],\"<\":[\"届\",\"完\",\"乐\",\"彩\",\"讲\"],\">\":[\"展\",\"帮\",\"且\",\"物\",\"班\"],\",\":[\"何\",\"流\",\"密\",\"某\",\"房\"],\"|\":[\"语\",\"亚\",\"常\",\"除\",\"装\"],\"=\":[\"极\",\"载\",\"题\",\"刚\",\"气\"],\"@\":[\"米\",\"影\",\"德\",\"世\",\"坐\"],\"#\":[\"北\",\"招\",\"短\",\"活\",\"斯\"],\"!\":[\"值\",\"店\",\"树\",\"哪\",\"余\"],\"~\":[\"盘\",\"速\",\"座\",\"求\",\"创\"],\"`\":[\"梦\",\"足\",\"半\",\"视\",\"安\"],\"$\":[\"空\",\"歌\",\"派\",\"顶\",\"登\"],\"%\":[\"夜\",\"云\",\"感\",\"啦\",\"欲\"],\"^\":[\"边\",\"工\",\"眼\",\"街\",\"奖\"],\"&\":[\"获\",\"占\",\"理\",\"任\",\"实\"],\"*\":[\"知\",\"掉\",\"色\",\"讯\",\"克\"],\"_\":[\"直\",\"评\",\"往\",\"层\",\"园\"],\"{\":[\"留\",\"靠\",\"亦\",\"罗\",\"营\"],\"}\":[\"合\",\"尚\",\"产\",\"诚\",\"汨\"],\":\":[\"曱\",\"朩\",\"杉\",\"杸\",\"歩\"],\";\":[\"毋\",\"氕\",\"気\",\"氘\",\"氙\"]}},\"special\":{\"DECRYPT\":{\"JP\":[\"桜\",\"込\",\"凪\",\"雫\",\"実\",\"沢\"],\"CN\":[\"韭\",\"垈\",\"玊\",\"欤\",\"瞐\",\"囧\"]}}}"; //字符串映射表
 const json Map_Obj = json::parse(Map); //JSON字符串映射表对象
 
 int RoundFlip = 0; //标志现在到哪了
 uint8_t RoundControl[32]; //一个数组，用密钥哈希来控制轮转的行为
-const string Normal_Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t1234567890"; //表内有映射的所有字符组成的字符串
-const string LETTERS = "abcdefghijklmnopqrstuvwxyz";
-string LETTERS_ROUND_1 = "abcdefghijklmnopqrstuvwxyz";
-string LETTERS_ROUND_2 = "tdgxnvyscmahlqwopjzeiurbfk"; //手动随机打乱的乱序轮
-string LETTERS_ROUND_3 = "abcdefghijklmnopqrstuvwxyz";
+const string Normal_Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+=_-/?.>,<|`~!@#$%^&*(){}[];:1234567890"; //表内有映射的所有字符组成的字符串
+const string LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+string LETTERS_ROUND_1 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+string LETTERS_ROUND_2 = "FbPoDRStyJKAUcdahfVXlqwnOGpHZejzvmrBCigQILxkYMuWTEsN"; //手动随机打乱的乱序轮
+string LETTERS_ROUND_3 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const string BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const string SYMBOLS = "+=_-/?.>,<|`~!@#$%^&*(){}[];:";
 const string NUMBERS = "1234567890";
-string NUMBERS_ROUND_1 = "1234567890";
-string NUMBERS_ROUND_2 = "3709641852"; //手动随机打乱的乱序轮
-string NUMBERS_ROUND_3 = "1234567890"; 
-const string SYMBOLS = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
-string SYMBOLS_ROUND_1 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
-string SYMBOLS_ROUND_2 = "@,$\t~&<[%{`#:|/*(=]?\n+.;>} _)-!^"; //手动随机打乱的乱序轮
-string SYMBOLS_ROUND_3 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
+const string NUMBERSYMBOL = "1234567890+=_-/?.>,<|`~!@#$%^&*(){}[];:";
+string NUMBERSYMBOL_ROUND_1 = "1234567890+=_-/?.>,<|`~!@#$%^&*(){}[];:";
+string NUMBERSYMBOL_ROUND_2 = "~3{8}_-$[6(2^&#5|1*%0,<9:`+@7/?.>4=];!)"; //手动随机打乱的乱序轮
+string NUMBERSYMBOL_ROUND_3 = "1234567890+=_-/?.>,<|`~!@#$%^&*(){}[];:";
 
 const string SIG_DECRYPT_JP = "桜込凪雫実沢";
-const string SIG_DECRYPT_CN = "汢垈玊欤瞐囧";
+const string SIG_DECRYPT_CN = "玚俟玊欤瞐珏";
 const string NULL_STR = "孎"; //默认忽略的占位字符，一个生僻字。
 
 random_device rd;
@@ -52,7 +56,6 @@ uniform_int_distribution<int> distribution(0, 10000);
 
 struct PreCheckResult { // 专门用来打包传递预检的结果
     vector<uint8_t> output;
-    bool isUnNormal = false; // 判断是否含有特殊符号(表外内容)
     bool isEncrypted = false;
 };
 
@@ -62,35 +65,37 @@ struct DemapResult { // 专门用来打包解密的结果
 };
 
 
-string enMap(PreCheckResult input,bool l,string key,bool t);
+string enMap(PreCheckResult input,string key,bool t,bool q);
 DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
-string GetLinkCryptedText(string text);
-string FindLinkOrigin(string letter);
 int GetRandomIndex(int length);
 string UrlEncode(const string& szToEncode);
 std::string GbkToUtf8(const char* src_str);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(vector<uint8_t> Input);
-void rotateString(std::string& str);
-void LrotateString(std::string& str);
+void rotateString(std::string& str,int n);
+void LrotateString(std::string& str,int n) ;
 inline string RoundKeyMatch(string keyIn);
 inline string DRoundKeyMatch(string keyIn);
 inline void RoundKey();
 
 std::vector<uint8_t> String2Uint8T(const std::string& str);
-std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data);
+std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data,int* randomByte);
 vector<uint8_t> SHA256(vector<uint8_t> data);
+std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data);
+std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data);
+std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data);
+std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data);
 
 
 int main(int argc, char *argv[]){
     SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
-    CLI::App app{"***Abracadabra v2.0.0***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.5.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
-    bool l = false,e = false, d = false,g = false,t = false;
+    bool e = false, d = false,q = false,g = false,t = false;
     string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR,k = "ABRACADABRA";//给定的文件路径和输入
     string::size_type idx; 
     ofstream outfile;
@@ -98,9 +103,9 @@ int main(int argc, char *argv[]){
 
     //定义命令行参数
     CLI::Option* i2flag = app.add_option("DEFAULT", i2, "Input text, if there is no given option besides.");
-    CLI::Option* lflag = app.add_flag("-l", l, "Force to encrypt using url mode.");
-    CLI::Option* eflag = app.add_flag("-e", e, "Force to encrypt normally.");
-    CLI::Option* dflag = app.add_flag("-d", d, "Force to decrypt the given input.");
+    CLI::Option* eflag = app.add_flag("-e", e, "Force to encrypt.");
+    CLI::Option* dflag = app.add_flag("-d", d, "Force to decrypt.");
+    CLI::Option* qflag = app.add_flag("-q", q, "Skip appending encrypt marks.");
     CLI::Option* gflag = app.add_flag("-g", g, "Ignore any data checks.");
     CLI::Option* tflag = app.add_flag("-t", t, "Test/Debug mode, output more informations.");
     CLI::Option* fflag = app.add_option("-f", f, "Input an arbitrary given file.");
@@ -110,23 +115,17 @@ int main(int argc, char *argv[]){
 
     i2flag
         ->take_last()
-        ->excludes("-d")
-        ->excludes("-e")
         ->excludes("-f")
-        ->excludes("-l")
         ->excludes("-i");
-    lflag
-        ->take_last()
-        ->excludes("-d")
-        ->excludes("-e");
     dflag
         ->take_last()
-        ->excludes("-l")
         ->excludes("-e");
     eflag
         ->take_last()
-        ->excludes("-d")
-        ->excludes("-l");
+        ->excludes("-d");
+    qflag
+        ->take_last()
+        ->excludes("-d");
     fflag
         ->take_last()
         ->excludes("-i");
@@ -190,8 +189,8 @@ int main(int argc, char *argv[]){
     DemapResult Res;
     vector<uint8_t> OutputData;
 
-    if(!d || l || e){
-        Process_res = enMap(input,l,k,t);
+    if(!d || e){
+        Process_res = enMap(input,k,t,q);
     }else{
         //尝试解密
         Res = deMap(input,k,g,t); //如果输入的是文件，解密后的“字符串”未必是字符串，只是类字符数组，若不指定输出路径，直接命令行输出必乱码
@@ -225,8 +224,7 @@ PreCheckResult preCheck(vector<uint8_t> Input){
     string input(Input.begin(),Input.end());
     int size = input.length(); //第一次遍历字符数组的函数，负责判断给定的输入类型。
     string temp;
-    string::size_type idx; 
-    bool isUnNormal = false; // 判断是否含有特殊符号(表外内容)
+    string::size_type idx;
     bool isEncrypted = false;//判定该文本是否为加密文本
 
     bool isJPFound = false;//如果检查出一个日语标志位，则标记为真
@@ -240,33 +238,27 @@ PreCheckResult preCheck(vector<uint8_t> Input){
         if((i + cplen) > input.length()) cplen = 1;
         temp = input.substr(i, cplen);
 
-        idx = Normal_Characters.find(temp);
-        if (idx == string::npos){ //如果在表内找不到某个字符
-            isUnNormal = true; //判断含有特殊符号
+        //判断这个符号是不是标识符，标识符用空字符进行占位操作
+        if(temp.length()<3){
+           i += cplen;
+           continue;
+        }
+        if(SIG_DECRYPT_JP.find(temp) != string::npos){
 
-            //判断这个符号是不是标识符，标识符用空字符进行占位操作
-            if(temp.length()<3){
-               i += cplen;
-               continue;
-            }
-            if(SIG_DECRYPT_JP.find(temp) != string::npos){
+           input.replace(i, cplen ,NULL_STR);
+           isJPFound = true;
+           i += cplen;
+           continue;
+        }
+        if(SIG_DECRYPT_CN.find(temp) != string::npos){
 
-               input.replace(i, cplen ,NULL_STR);
-               isJPFound = true;
-               i += cplen;
-               continue;
-            }
-            if(SIG_DECRYPT_CN.find(temp) != string::npos){
-
-               input.replace(i, cplen ,NULL_STR);
-               isCNFound = true;
-               i += cplen;
-               continue;
-            }
+           input.replace(i, cplen ,NULL_STR);
+           isCNFound = true;
+           i += cplen;
+           continue;
         }
         i += cplen;
     }
-
     PreCheckResult Result;
     if(isJPFound&&isCNFound){
         isEncrypted=true;
@@ -274,32 +266,41 @@ PreCheckResult preCheck(vector<uint8_t> Input){
     }else{
         Result.output = Input;
     }
-    Result.isUnNormal = isUnNormal;
     Result.isEncrypted = isEncrypted;
     return Result;
 }
-string enMap(PreCheckResult input,bool l,string key,bool t){
+string enMap(PreCheckResult input,string key,bool t,bool q){
 
     vector<uint8_t> OriginalData = input.output;
     string TempS(input.output.begin(),input.output.end());
 
-    if(l){ //链接模式先进行urlencode,再代换，再换回字节数组
-      OriginalData = String2Uint8T(GetLinkCryptedText(UrlEncode(TempS)));
-      OriginalData.push_back(1); //在末尾加入三个字节的标志位 111
-      OriginalData.push_back(1);
-      OriginalData.push_back(1);
+    OriginalData.push_back(2); //在末尾加入三个字节的标志位 222
+    OriginalData.push_back(2);
+    OriginalData.push_back(2);
+    
+    int* RandomByte = new int[2]; //取两个随机数作为初始化向量的随机性
+    RandomByte[0] = GetRandomIndex(256);
+    RandomByte[1] = GetRandomIndex(256);
+
+    if(OriginalData.size() <= 1024){
+        int SizeBefore = OriginalData.size();
+        OriginalData = UNISHOX_COMPRESS(OriginalData);
+
+        if(OriginalData.size() == SizeBefore){
+            OriginalData = GZIP_COMPRESS(OriginalData); //Gzip压缩
+        }
     }else{
-      OriginalData.push_back(2); //在末尾加入三个字节的标志位 222
-      OriginalData.push_back(2);
-      OriginalData.push_back(2);
+        OriginalData = GZIP_COMPRESS(OriginalData); //Gzip压缩
     }
 
-    OriginalData = AES_256_CTR(key,OriginalData); //AES加密
+    OriginalData = AES_256_CTR(key,OriginalData,RandomByte); //AES加密
+    OriginalData.push_back(RandomByte[0]); //压进最后两个比特
+    OriginalData.push_back(RandomByte[1]);
     string OriginStr = base64::encode(OriginalData); //用Base64编码AES的加密结果
     if(t){
         cout<<"AES -> Base64: "<< OriginStr << endl;
     }
-
+    delete[] RandomByte;
     string TempStr1;
     string temp,temp2,group;
     string::size_type idx;
@@ -321,6 +322,10 @@ string enMap(PreCheckResult input,bool l,string key,bool t){
         i += cplen;
     }
     //第一个循环结束后，TempStr1应当是完全的密文，但是缺少标志位
+
+    if(q){
+        return TempStr1;
+    }
 
     int RandIndex,RandIndex2;
     vector<int> Avoid;
@@ -416,70 +421,42 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
         findtemp = FindOriginText(temp); //查找第一个字符的原文
-        if(findtemp == "BIG"){ //如果这是一个大写标志位
-            findtemp = FindOriginText(temp2); //那么找第二个字符的原文
-            strupr((char*)findtemp.c_str());
-            //把找到的原文增加到字符串上
-            TempStr1.append(findtemp);
-            RoundKey();//轮换密钥
-            i = i + cplen + cplen2; //跳过两个字段
-            continue;
-        }else{
-            TempStr1.append(findtemp); //把找到的原文增加到字符串上
-            RoundKey();//轮换密钥
-            i+=cplen; 
-            continue;
-        }
-
-        
+        TempStr1.append(findtemp); //把找到的原文增加到字符串上
+        RoundKey();//轮换密钥
+        i+=cplen; 
+        continue;
     }
+
     if(t){
         cout<<"Round -> Base64: " << TempStr1 << endl;
     }
     //到这儿应该能还原出预先处理过的原文（肯定是个Base64）
     std::vector<uint8_t> TempStr2Int;
+    int* RandomByte = new int[2];
     try{
         TempStr2Int = base64::decode(TempStr1); //解码出来的AES加密后的字节码。
-        TempStr2Int = AES_256_CTR(key,TempStr2Int); // 原字节码
+        RandomByte[1] = TempStr2Int.at(TempStr2Int.size()-1);
+        RandomByte[0] = TempStr2Int.at(TempStr2Int.size()-2);
+        TempStr2Int.pop_back();
+        TempStr2Int.pop_back();
+        TempStr2Int = AES_256_CTR(key,TempStr2Int,RandomByte); // 原字节码
+        TempStr2Int = GZIP_DECOMPRESS(TempStr2Int); //解压缩
+        TempStr2Int = UNISHOX_DECOMPRESS(TempStr2Int); //解压缩
     }catch(...){
         if(!g){
             cout<<"Error Decoding. Bad Input or Incorrect Key."<<endl;
+            delete[] RandomByte;
             throw;
         }
     }
+    delete[] RandomByte;
 
-   if(TempStr2Int.at(TempStr2Int.size()-1) == 1 && 
-      TempStr2Int.at(TempStr2Int.size()-2) == 1 && 
-      TempStr2Int.at(TempStr2Int.size()-3) == 1){
-    //链接
-    TempStr2Int.pop_back();
-    TempStr2Int.pop_back();
-    TempStr2Int.pop_back();
-
-    string OriginStr2(TempStr2Int.begin(),TempStr2Int.end()); //理应是一串Urlencode之后的，中英文夹杂的字符串
-    size = OriginStr2.length();
-    string TempStr3;
-    for(int i=0;i<size;){
-        int cplen = 1; //该死的C++，处理中文字符贼繁琐
-        if((OriginStr2[i] & 0xf8) == 0xf0) cplen = 4;
-        else if((OriginStr2[i] & 0xf0) == 0xe0) cplen = 3;
-        else if((OriginStr2[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr2.length()) cplen = 1;
-        temp = OriginStr2.substr(i, cplen);
-
-        findtemp = FindLinkOrigin(temp); //查找字符原文
-        TempStr3.append(findtemp); //把找到的原文增加到字符串上
-        i+=cplen; 
-    }
-    //查完表之后还原回去
-    TempStr2Int = String2Uint8T(TempStr3);
-
-   }else if(TempStr2Int.at(TempStr2Int.size()-1) == 2 && 
-            TempStr2Int.at(TempStr2Int.size()-2) == 2 && 
-            TempStr2Int.at(TempStr2Int.size()-3) == 2){
-    TempStr2Int.pop_back();
-    TempStr2Int.pop_back();
-    TempStr2Int.pop_back();
+   if(TempStr2Int.at(TempStr2Int.size()-1) == 2 && 
+      TempStr2Int.at(TempStr2Int.size()-2) == 2 && 
+      TempStr2Int.at(TempStr2Int.size()-3) == 2){
+        TempStr2Int.pop_back();
+        TempStr2Int.pop_back();
+        TempStr2Int.pop_back();
    }else{
         if(!g){
             cout<<"Error Decrypting. Incorrect key."<<endl;
@@ -494,65 +471,43 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     Res.output_B = TempStr2Int;
     return Res;
 }
-string GetLinkCryptedText(string text){//查表，检查是否有任何预配置的关键词
-    string s = text; //源文本
-    string s1,s2;
-    int RandIndex; 
-    for (auto& el : Map_Obj["link"].items()){//遍历关键词列表
-        s1 = el.key();
-        if(s.find(s1) != string::npos){//找到关键词
-            while(s.find(s1)<s.size()){
-                //返回密本中的随机字符
-                RandIndex = GetRandomIndex(el.value().size()); //随机获取一个下标
-                s2 = (string)Map_Obj["link"][s1][RandIndex];
-                int pos = s.find(s1);
-                s.replace(pos, s1.size(), s2);
-            }
-        }
-
-    }
-    return s;
-}
 string GetCryptedText(string letter){//查表返回加密之后的字符串
     int RandIndex,RandIndex2;
-    if(LETTERS.find(letter) != string::npos || BIG_LETTERS.find(letter) != string::npos){//判断给定字符的类型
+    if(LETTERS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["alphabet"].items())
         {   
             if(el.key() == letter){
                 RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
                 return Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())][RandIndex];
             }else if(letter[0] == toupper(el.key()[0])){//碰到大写字母
-                RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())].size());
-                RandIndex2 = GetRandomIndex(Map_Obj["special"]["BIG"].size());
-                return (string)Map_Obj["special"]["BIG"][RandIndex2] + (string)Map_Obj["basic"]["alphabet"][RoundKeyMatch(el.key())][RandIndex];
+                string upstr = "a";
+                upstr[0] = toupper(el.key()[0]);
+                RandIndex = GetRandomIndex(Map_Obj["basic"]["alphabet"][RoundKeyMatch(upstr)].size());
+                return Map_Obj["basic"]["alphabet"][RoundKeyMatch(upstr)][RandIndex];
             }
         }
-    }else if(NUMBERS.find(letter) != string::npos){
-        for (auto& el : Map_Obj["basic"]["number"].items())
-        {
-            if(el.key() == letter){
-                RandIndex = GetRandomIndex(Map_Obj["basic"]["number"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
-                return Map_Obj["basic"]["number"][RoundKeyMatch(el.key())][RandIndex];
+    }else if(NUMBERSYMBOL.find(letter) != string::npos){
+        if(NUMBERS.find(letter) != string::npos){ //数字正着查速度快
+            for (auto& el : Map_Obj["basic"]["numbersymbol"].items())
+            {
+                if(el.key() == letter){
+                    RandIndex = GetRandomIndex(Map_Obj["basic"]["numbersymbol"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
+                    return Map_Obj["basic"]["numbersymbol"][RoundKeyMatch(el.key())][RandIndex];
+                }
             }
-        }
-    }else if(SYMBOLS.find(letter) != string::npos){
-        for (auto& el : Map_Obj["basic"]["symbol"].items())
-        {
-            if(el.key() == letter){
-                RandIndex = GetRandomIndex(Map_Obj["basic"]["symbol"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
-               return Map_Obj["basic"]["symbol"][RoundKeyMatch(el.key())][RandIndex];
+        }else{
+            for (auto el =  Map_Obj["basic"]["numbersymbol"].rbegin(); el != Map_Obj["basic"]["numbersymbol"].rend(); ++el)
+            {
+                if(el.key() == letter){
+                    RandIndex = GetRandomIndex(Map_Obj["basic"]["numbersymbol"][RoundKeyMatch(el.key())].size()); //随机获取一个下标
+                    return Map_Obj["basic"]["numbersymbol"][RoundKeyMatch(el.key())][RandIndex];
+                }
             }
         }
     }
     return NULL_STR;
 }
 string FindOriginText(string letter){
-    for (auto el : Map_Obj["special"]["BIG"]){
-        string str = (string)el;
-        if(letter == str){
-            return "BIG";
-        }
-    }
     for (auto& el : Map_Obj["basic"]["alphabet"].items()){
         for (auto ell : el.value()){
             string str = (string)ell;
@@ -561,15 +516,7 @@ string FindOriginText(string letter){
             }
         }
     }
-    for (auto& el : Map_Obj["basic"]["number"].items()){
-        for (auto ell : el.value()){
-            string str = (string)ell;
-            if(letter == str){
-                return DRoundKeyMatch(el.key());
-            }
-        }
-    }
-    for (auto& el : Map_Obj["basic"]["symbol"].items()){
+    for (auto& el : Map_Obj["basic"]["numbersymbol"].items()){
         for (auto ell : el.value()){
             string str = (string)ell;
             if(letter == str){
@@ -578,17 +525,6 @@ string FindOriginText(string letter){
         }
     }
     return "";
-}
-string FindLinkOrigin(string letter){
-    for (auto& el : Map_Obj["link"].items()){
-        for (auto ell : el.value()){
-            string str = (string)ell;
-            if(letter == str){
-                return el.key();
-            }
-        }
-    }
-    return letter;
 }
 string UrlEncode(const string& szToEncode)
 {
@@ -670,56 +606,47 @@ void LrotateString(std::string& str,int n) { //循环左移字符串
 }
 inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
 
-    size_t idx1,idx2,idx3;
-    size_t idx1_1,idx2_1,idx3_1;
-    size_t idx1_2,idx2_2,idx3_2;
+    size_t idx1,idx2;
+    size_t idx1_1,idx2_1;
+    size_t idx1_2,idx2_2;
 
     idx1 = LETTERS.find(keyIn);
-    idx2 = NUMBERS.find(keyIn);
-    idx3 = SYMBOLS.find(keyIn);
+    idx2 = NUMBERSYMBOL.find(keyIn);
 
     idx1_1 = LETTERS.find(LETTERS_ROUND_1[idx1]);
-    idx2_1 = NUMBERS.find(NUMBERS_ROUND_1[idx2]);
-    idx3_1 = SYMBOLS.find(SYMBOLS_ROUND_1[idx3]);
+    idx2_1 = NUMBERSYMBOL.find(NUMBERSYMBOL_ROUND_1[idx2]);
 
     idx1_2 = LETTERS.find(LETTERS_ROUND_2[idx1_1]);
-    idx2_2 = NUMBERS.find(NUMBERS_ROUND_2[idx2_1]);
-    idx3_2 = SYMBOLS.find(SYMBOLS_ROUND_2[idx3_1]);
+    idx2_2 = NUMBERSYMBOL.find(NUMBERSYMBOL_ROUND_2[idx2_1]);
 
     if(idx1 != string::npos){//判断给定字符的类型
         return LETTERS_ROUND_3.substr(idx1_2,1);
     }else if(idx2 != string::npos){
-        return NUMBERS_ROUND_3.substr(idx2_2,1);
-    }else if(idx3 != string::npos){
-        return SYMBOLS_ROUND_3.substr(idx3_2,1);
+        return NUMBERSYMBOL_ROUND_3.substr(idx2_2,1);
     }
 
     return NULL_STR;
 }
 inline string DRoundKeyMatch(string keyIn){ //查询轮换密钥的键值
 
-    size_t idx1,idx2,idx3;
-    size_t idx1_1,idx2_1,idx3_1;
-    size_t idx1_2,idx2_2,idx3_2;
+    size_t idx1,idx2;
+    size_t idx1_1,idx2_1;
+    size_t idx1_2,idx2_2;
 
     idx1 = LETTERS_ROUND_3.find(keyIn);
-    idx2 = NUMBERS_ROUND_3.find(keyIn);
-    idx3 = SYMBOLS_ROUND_3.find(keyIn);
+    idx2 = NUMBERSYMBOL_ROUND_3.find(keyIn);
 
     idx1_1 = LETTERS_ROUND_2.find(LETTERS[idx1]);
-    idx2_1 = NUMBERS_ROUND_2.find(NUMBERS[idx2]);
-    idx3_1 = SYMBOLS_ROUND_2.find(SYMBOLS[idx3]);
+    idx2_1 = NUMBERSYMBOL_ROUND_2.find(NUMBERSYMBOL[idx2]);
 
     idx1_2 = LETTERS_ROUND_1.find(LETTERS[idx1_1]);
-    idx2_2 = NUMBERS_ROUND_1.find(NUMBERS[idx2_1]);
-    idx3_2 = SYMBOLS_ROUND_1.find(SYMBOLS[idx3_1]);
+    idx2_2 = NUMBERSYMBOL_ROUND_1.find(NUMBERSYMBOL[idx2_1]);
+
 
     if(idx1 != string::npos){//判断给定字符的类型
         return LETTERS.substr(idx1_2,1);
     }else if(idx2 != string::npos){
-        return NUMBERS.substr(idx2_2,1);
-    }else if(idx3 != string::npos){
-        return SYMBOLS.substr(idx3_2,1);
+        return NUMBERSYMBOL.substr(idx2_2,1);
     }
 
     return NULL_STR;
@@ -734,29 +661,23 @@ inline void RoundKey(){ //轮换密钥
     }
 
     if(ControlNum % 2 == 0){ //操作数是偶数
-        rotateString(LETTERS_ROUND_1,1); //将第一个密钥轮向右轮一位
-        rotateString(NUMBERS_ROUND_1,1);
-        rotateString(SYMBOLS_ROUND_1,1);
+        rotateString(LETTERS_ROUND_1,6); //将第一个密钥轮向右轮6位
+        rotateString(NUMBERSYMBOL_ROUND_1,6);
 
-        LrotateString(LETTERS_ROUND_2, ControlNum/2); //将第二个密钥轮向左轮ControlNum/2位
-        LrotateString(NUMBERS_ROUND_2, ControlNum/2);
-        LrotateString(SYMBOLS_ROUND_2, ControlNum/2);
+        LrotateString(LETTERS_ROUND_2, ControlNum*2); //将第二个密钥轮向左轮ControlNum*2位
+        LrotateString(NUMBERSYMBOL_ROUND_2, ControlNum*2);
 
         rotateString(LETTERS_ROUND_3, (ControlNum/2)+1); //将第三个密钥轮向右轮ControlNum/2+1位
-        rotateString(NUMBERS_ROUND_3, (ControlNum/2)+1);
-        rotateString(SYMBOLS_ROUND_3, (ControlNum/2)+1);
+        rotateString(NUMBERSYMBOL_ROUND_3, (ControlNum/2)+1);
     }else{ //操作数是奇数
-        LrotateString(LETTERS_ROUND_1,2); //将第一个密钥轮向左轮2位
-        LrotateString(NUMBERS_ROUND_1,2);
-        LrotateString(SYMBOLS_ROUND_1,2);
+        LrotateString(LETTERS_ROUND_1,3); //将第一个密钥轮向左轮3位
+        LrotateString(NUMBERSYMBOL_ROUND_1,3);
 
         rotateString(LETTERS_ROUND_2, ControlNum); //将第二个密钥轮向右轮ControlNum位
-        rotateString(NUMBERS_ROUND_2, ControlNum);
-        rotateString(SYMBOLS_ROUND_2, ControlNum);
+        rotateString(NUMBERSYMBOL_ROUND_2, ControlNum);
 
-        LrotateString(LETTERS_ROUND_3, (ControlNum+3)/2); //将第三个密钥轮向左轮(ControlNum+3)/2位
-        LrotateString(NUMBERS_ROUND_3, (ControlNum+3)/2);
-        LrotateString(SYMBOLS_ROUND_3, (ControlNum+3)/2);
+        LrotateString(LETTERS_ROUND_3, (ControlNum+7)/2); //将第三个密钥轮向左轮(ControlNum+5)/2位
+        LrotateString(NUMBERSYMBOL_ROUND_3, (ControlNum+7)/2);
     }
    RoundFlip++;
 }
@@ -764,8 +685,6 @@ inline int GetRandomIndex(int length){
     int Rand = distribution(generator);
     return Rand % length;
 }
-
-
 std::vector<uint8_t> String2Uint8T(const std::string& str) { //把字符串拆解成字节数组
     std::vector<uint8_t> result(str.begin(), str.end());
     return result;
@@ -777,16 +696,18 @@ vector<uint8_t> SHA256(vector<uint8_t> data){ //计算给定字节数组的哈�
     return hash;
 }
 
-std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data){ //执行AES_256_CTR加密，返回字节码
+std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data,int* randomByte){ //执行AES_256_CTR加密，返回字节码
     AES_ctx ctx;
     vector<uint8_t> KeyHashV = SHA256(String2Uint8T(key));
-    vector<uint8_t> KeyHashHash = SHA256(KeyHashV); //对密钥的第二次哈希
-
     uint8_t* KeyHash = new uint8_t[KeyHashV.size()];
     for (size_t i = 0; i < KeyHashV.size(); ++i) {
         KeyHash[i] = KeyHashV[i];
     }
 
+    KeyHashV.push_back(randomByte[0]);
+    KeyHashV.push_back(randomByte[1]);
+    
+    vector<uint8_t> KeyHashHash = SHA256(KeyHashV); //对密钥的第二次哈希
     uint8_t* iv = new uint8_t[16];
     for(int i=0;i<16;i++){
         iv[i] = KeyHashHash[i]; //初始化向量直接使用密钥两次哈希的前16字节，这么做不是最佳实践。
@@ -813,4 +734,68 @@ std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data){ //执行AES_2
     delete[] iv;
 
     return data;
+}
+
+std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data){
+    string RawStringData(Data.begin(),Data.end());
+    string compressedData = gzip::compress(RawStringData.c_str(),RawStringData.size());
+
+    if(RawStringData.size() < compressedData.size()){
+        return Data; //如果压缩出来的东西反而更大，那么直接返回原数据。
+    }
+    return String2Uint8T(compressedData);
+}
+
+std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data){
+
+    string RawStringData(Data.begin(),Data.end());
+
+    if(gzip::is_compressed(RawStringData.c_str(),RawStringData.size()) == false){
+        return Data; //如果数据没压缩，那么直接原样返回回去
+    }
+
+    string compressedData = gzip::decompress(RawStringData.c_str(),RawStringData.size());
+    return String2Uint8T(compressedData);
+}
+
+std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
+    string Datastr(Data.begin(),Data.end());
+    const char* DataStrCharArray = Datastr.c_str();
+    char* CompressedStrCharArray = new char[2048]; //此压缩法的上限是1kb, 额外1kb冗余
+
+    int CompressedStrCharLength = unishox2_compress_simple(DataStrCharArray ,Datastr.length(), CompressedStrCharArray);
+    if(CompressedStrCharLength > Datastr.length()){
+        return Data;
+    }
+    std::vector<uint8_t> DataOut;
+    DataOut.reserve(CompressedStrCharLength);
+    for(int i=0;i<CompressedStrCharLength;i++){
+       DataOut.push_back(CompressedStrCharArray[i]); //把压缩之后的字节写进容器。
+    }
+    DataOut.push_back(255);
+    DataOut.push_back(255); //两个标志位
+    delete[] CompressedStrCharArray;
+    return DataOut;
+}
+
+std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data){
+    if(Data.at(Data.size()-1) != 255 || 
+      Data.at(Data.size()-2) != 255){ //没查到标志位即表示没有压缩。
+        return Data;
+    }
+    Data.pop_back();
+    Data.pop_back();
+
+    string Datastr(Data.begin(),Data.end());
+    const char* DataStrCharArray = Datastr.c_str();
+    char* DecompressedStrCharArray = new char[2048]; //此压缩法的上限是1kb, 额外1kb冗余
+
+    int DecompressedStrCharLength = unishox2_decompress_simple(DataStrCharArray ,Datastr.length(), DecompressedStrCharArray);
+    std::vector<uint8_t> DataOut;
+    DataOut.reserve(DecompressedStrCharLength);
+    for(int i=0;i<DecompressedStrCharLength;i++){
+       DataOut.push_back(DecompressedStrCharArray[i]); //把压缩之后的字节写进容器。
+    }
+    delete[] DecompressedStrCharArray;
+    return DataOut;
 }
