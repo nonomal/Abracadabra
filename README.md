@@ -21,6 +21,7 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 ![动画](https://github.com/user-attachments/assets/7ec6e01c-230d-4d27-a0b1-80015307c5f4)
 
 - 方便，密文可以描述自身。
+- 简短，密文简短方便传播。
 - 随机，加密结果具有随机性。
 - 无序，加密的文本如咒语般不可阅读。
 - 安心，密码表中已剔除敏感汉字。
