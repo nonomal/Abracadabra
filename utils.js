@@ -98,7 +98,7 @@ function UNISHOX_COMPRESS(Data) {
     Data.byteLength,
     CompressedStrCharArray
   );
-  let ResStrCharArray = new Uint8Array(CompressedStrCharArray, 0, Outlen);
+  let ResStrCharArray = CompressedStrCharArray.subarray(0, Outlen);
   if (ResStrCharArray.byteLength >= Data.byteLength) {
     return Data;
   }
