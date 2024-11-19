@@ -119,7 +119,11 @@ std::vector<uint8_t> CliString2Uint8T(const std::string& str) {
 
 
 int main(int argc, char *argv[]){
-    SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
+#ifdef _WIN32
+    // Windows 特定修正
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
     CLI::App app{"***Abracadabra v2.5.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
