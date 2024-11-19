@@ -81,7 +81,7 @@ inline string DRoundKeyMatch(string keyIn);
 inline void RoundKey();
 
 std::vector<uint8_t> String2Uint8T(const std::string& str);
-std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data,int* randomByte);
+void AES_256_CTR(string key,vector<uint8_t>& data, const uint8_t* randomByte);
 vector<uint8_t> SHA256(vector<uint8_t> data);
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data);
@@ -307,9 +307,11 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
     OriginalData.push_back(2);
     OriginalData.push_back(2);
     
-    int* RandomByte = new int[2]; //取两个随机数作为初始化向量的随机性
-    RandomByte[0] = GetRandomIndex(256);
-    RandomByte[1] = GetRandomIndex(256);
+    std::array<uint8_t, 2> RandomByte {
+        //取两个随机数作为初始化向量的随机性
+        GetRandomIndex(256),
+        GetRandomIndex(256),
+    };
 
     if(OriginalData.size() <= 1024){
         int SizeBefore = OriginalData.size();
@@ -322,14 +324,14 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         OriginalData = GZIP_COMPRESS(OriginalData); //Gzip压缩
     }
 
-    OriginalData = AES_256_CTR(key,OriginalData,RandomByte); //AES加密
+    AES_256_CTR(key,OriginalData,RandomByte.data()); //AES加密
     OriginalData.push_back(RandomByte[0]); //压进最后两个比特
     OriginalData.push_back(RandomByte[1]);
     string OriginStr = base64::encode(OriginalData); //用Base64编码AES的加密结果
     if(t){
         cout<<"AES -> Base64: "<< OriginStr << endl;
     }
-    delete[] RandomByte;
+
     string TempStr1;
     string temp,temp2,group;
     string::size_type idx;
@@ -468,7 +470,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         RandomByte[0] = TempStr2Int.at(TempStr2Int.size()-2);
         TempStr2Int.pop_back();
         TempStr2Int.pop_back();
-        TempStr2Int = AES_256_CTR(key,TempStr2Int,RandomByte); // 原字节码
+        AES_256_CTR(key,TempStr2Int,RandomByte); // 原字节码
         TempStr2Int = GZIP_DECOMPRESS(TempStr2Int); //解压缩
         TempStr2Int = UNISHOX_DECOMPRESS(TempStr2Int); //解压缩
     }catch(...){
@@ -707,44 +709,20 @@ vector<uint8_t> SHA256(vector<uint8_t> data){ //计算给定字节数组的哈�
     return hash;
 }
 
-std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data,int* randomByte){ //执行AES_256_CTR加密，返回字节码
+void AES_256_CTR(string key,vector<uint8_t>& data, const uint8_t* randomByte) { //执行AES_256_CTR加密
     AES_ctx ctx;
     vector<uint8_t> KeyHashV = SHA256(String2Uint8T(key));
-    uint8_t* KeyHash = new uint8_t[KeyHashV.size()];
-    for (size_t i = 0; i < KeyHashV.size(); ++i) {
-        KeyHash[i] = KeyHashV[i];
-    }
+    vector<uint8_t> KeyHash{KeyHash};
 
     KeyHashV.push_back(randomByte[0]);
     KeyHashV.push_back(randomByte[1]);
     
-    vector<uint8_t> KeyHashHash = SHA256(KeyHashV); //对密钥的第二次哈希
-    uint8_t* iv = new uint8_t[16];
-    for(int i=0;i<16;i++){
-        iv[i] = KeyHashHash[i]; //初始化向量直接使用密钥两次哈希的前16字节，这么做不是最佳实践。
-        //但是，本项目不会特别把初始化向量另外保存，这样会显著增加密文长度。
-    }
+    vector<uint8_t> iv = SHA256(KeyHashV); //对密钥的第二次哈希
+    //初始化向量直接使用密钥两次哈希的前16字节，这么做不是最佳实践。
+    //但是，本项目不会特别把初始化向量另外保存，这样会显著增加密文长度。
 
-    AES_init_ctx_iv(&ctx,KeyHash,iv);
-
-    int size = data.size();
-
-    uint8_t* Data = new uint8_t[size]; //开辟空间
-    for(int i=0;i<size;i++){
-        Data[i] = data[i];
-    }
-
-    AES_CTR_xcrypt_buffer(&ctx, Data, size);
-
-    for(int i=0;i<size;i++){ //把字符序列反转回去
-        data[i] = Data[i];
-    }
-
-    delete[] Data; //删掉开辟的空间
-    delete[] KeyHash;
-    delete[] iv;
-
-    return data;
+    AES_init_ctx_iv(&ctx,KeyHash.data(),iv.data());
+    AES_CTR_xcrypt_buffer(&ctx, data.data(), data.size());
 }
 
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data){
