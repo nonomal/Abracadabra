@@ -3,13 +3,9 @@
 #include <String.h>
 #include <stdio.h>
 #include <cstdlib>
-#include <codecvt>
 #include <random>
-#include <Windows.h>
 #include <ctime>
 #include <cstdint>
-#include <iomanip>
-#include <sstream>
 
 #include <nlohmann/json.hpp> //JSON processing
 #include <cppcodec/base64_rfc4648.hpp> //Base64 Proccessing
@@ -23,6 +19,11 @@
 #include <gzip/utils.hpp>
 #include <unishox2.h>
 #include <unishox2.c>
+#include <vector>
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 using namespace std;
 using json = nlohmann::json;
@@ -71,7 +72,6 @@ string FindOriginText(string letter);
 string GetCryptedText(string letter);
 int GetRandomIndex(int length);
 string UrlEncode(const string& szToEncode);
-std::string GbkToUtf8(const char* src_str);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(vector<uint8_t> Input);
 void rotateString(std::string& str,int n);
@@ -87,6 +87,35 @@ std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data);
+
+#ifdef _WIN32
+std::string GbkToUtf8(const std::string& src_str)
+{
+    std::string result;
+    wchar_t* strSrc;
+    char* szRes;
+    int len = MultiByteToWideChar(CP_ACP, 0, src_str.c_str(), -1, NULL, 0);
+    strSrc = new wchar_t[len + 1];
+    MultiByteToWideChar(CP_ACP, 0, src_str.c_str(), -1, strSrc, len);
+ 
+    len = WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, NULL, 0, NULL, NULL);
+    szRes = new char[len + 1];
+    WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, szRes, len, NULL, NULL);
+    result = szRes;
+    if (strSrc)
+        delete[]strSrc;
+    if (szRes)
+        delete[]szRes;
+    return result;
+}
+#endif
+
+std::vector<uint8_t> CliString2Uint8T(const std::string& str) {
+    #ifdef _WIN32
+    return String2Uint8T(GbkToUtf8(str));
+    #endif
+    return String2Uint8T(str);
+}
 
 
 int main(int argc, char *argv[]){
@@ -146,7 +175,7 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    vector<uint8_t> KeyHashVec = SHA256(String2Uint8T(GbkToUtf8(k.c_str())));
+    vector<uint8_t> KeyHashVec = SHA256(CliString2Uint8T(k));
     for(int i=0;i<32;i++){
         RoundControl[i] = KeyHashVec[i];
     }
@@ -154,14 +183,14 @@ int main(int argc, char *argv[]){
     //这里处理所有输入的逻辑
     if (i2 != NULL_STR){//如果i2存在，即只有一个参数
         PreCheckResult Result;
-        Result = preCheck(String2Uint8T(GbkToUtf8(i2.c_str())));
+        Result = preCheck(CliString2Uint8T(i2));
         if(Result.isEncrypted){
             d = true;
         }
         input = Result;
     }else{
         if(i != NULL_STR){
-            input = preCheck(String2Uint8T(GbkToUtf8(i.c_str())));
+            input = preCheck(CliString2Uint8T(i));
             if(input.isEncrypted){
                 d = true;
             }
@@ -566,25 +595,7 @@ string UrlEncode(const string& szToEncode)
 	}
 	return dst;
 }
-std::string GbkToUtf8(const char* src_str)
-{
-    std::string result;
-    wchar_t* strSrc;
-    char* szRes;
-    int len = MultiByteToWideChar(CP_ACP, 0, src_str, -1, NULL, 0);
-    strSrc = new wchar_t[len + 1];
-    MultiByteToWideChar(CP_ACP, 0, src_str, -1, strSrc, len);
- 
-    len = WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, NULL, 0, NULL, NULL);
-    szRes = new char[len + 1];
-    WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, szRes, len, NULL, NULL);
-    result = szRes;
-    if (strSrc)
-        delete[]strSrc;
-    if (szRes)
-        delete[]szRes;
-    return result;
-}
+
 std::vector<uint8_t> readFile(const char* filename)
 {
     // open the file:
