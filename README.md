@@ -10,9 +10,9 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
 
-**在线体验**: [**Web DEMO Page**](https://sheepchef.github.io/Abracadabra/)
+**在线体验**: [**Web DEMO Page**](https://sheepchef.github.io/Abracadabra_demo/)
 
-**查阅 C++ 实现**: [**dev_c Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_c)
+**C++ 实现**: [**dev_c Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_c)
 
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
