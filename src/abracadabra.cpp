@@ -269,7 +269,7 @@ PreCheckResult preCheck(vector<uint8_t> Input){
         if((input[i] & 0xf8) == 0xf0) cplen = 4;
         else if((input[i] & 0xf0) == 0xe0) cplen = 3;
         else if((input[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > input.length()) cplen = 1;
+        if((i + cplen) > (int)input.length()) cplen = 1;
         temp = input.substr(i, cplen);
 
         //判断这个符号是不是标识符，标识符用空字符进行占位操作
@@ -319,7 +319,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
     };
 
     if(OriginalData.size() <= 1024){
-        int SizeBefore = OriginalData.size();
+        unsigned int SizeBefore = OriginalData.size();
         OriginalData = UNISHOX_COMPRESS(OriginalData);
 
         if(OriginalData.size() == SizeBefore){
@@ -346,7 +346,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr.length()) cplen = 1;
+        if((i + cplen) > (int)OriginStr.length()) cplen = 1;
         temp = OriginStr.substr(i, cplen);
 
         //加密操作开始
@@ -372,7 +372,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
             if((TempStr1[i] & 0xf8) == 0xf0) cplen = 4;
             else if((TempStr1[i] & 0xf0) == 0xe0) cplen = 3;
             else if((TempStr1[i] & 0xe0) == 0xc0) cplen = 2;
-            if((i + cplen) > TempStr1.length()) cplen = 1;
+            if((i + cplen) > (int)TempStr1.length()) cplen = 1;
             i += cplen;
             PosToInset.push_back(i);
         }
@@ -381,7 +381,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
             RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["JP"].size());//随机获取一个下标
             string stemp = (string)Map_Obj["special"]["DECRYPT"]["JP"][RandIndex2];
             TempStr1.insert(RandIndex,stemp);
-            for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
+            for(int z = RandIndex + 1;z < RandIndex + (int)stemp.length();z++){
                     Avoid.push_back(z);
             }
         }else if(q==1){ // 第二次大循环插入CN
@@ -407,7 +407,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr.length()) cplen = 1;
+        if((i + cplen) > (int)OriginStr.length()) cplen = 1;
         temp = OriginStr.substr(i, cplen);
 
         //到这儿循环的取字部分就完成了
@@ -432,12 +432,12 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr.length()) cplen = 1;
+        if((i + cplen) > (int)OriginStr.length()) cplen = 1;
 
         if((OriginStr[i+cplen] & 0xf8) == 0xf0) cplen2 = 4;
         else if((OriginStr[i+cplen] & 0xf0) == 0xe0) cplen2 = 3;
         else if((OriginStr[i+cplen] & 0xe0) == 0xc0) cplen2 = 2;
-        if((i + cplen + cplen) > OriginStr.length()) cplen2 = 1;
+        if((i + cplen + cplen) > (int)OriginStr.length()) cplen2 = 1;
         temp = OriginStr.substr(i, cplen);
         if(i != size - cplen2){ //一次遍历两个字符，遇到倒数第一个的时候防止越界
             temp2 = OriginStr.substr(i+cplen, cplen2);
@@ -709,7 +709,7 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
     char* CompressedStrCharArray = new char[2048]; //此压缩法的上限是1kb, 额外1kb冗余
 
     int CompressedStrCharLength = unishox2_compress_simple(DataStrCharArray ,Datastr.length(), CompressedStrCharArray);
-    if(CompressedStrCharLength > Datastr.length()){
+    if(CompressedStrCharLength > (int)Datastr.length()){
         return Data;
     }
     std::vector<uint8_t> DataOut;
