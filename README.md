@@ -42,7 +42,7 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
 ```shell
 PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v2.5.0***
+***Abracadabra v2.5.1***
 Usage: abracadabra_win_amd64 [OPTIONS] [DEFAULT]
 
 Positionals:
@@ -121,13 +121,15 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 本项目并不复杂，推荐直接用指令调用 g++ 进行构建。如果您愿意，也可以尝试 CMake。
 
-### 标志位污染
+### 密文污染
 
 加密选择的标志位尽可能地排除了日常情况下出现碰撞的可能。
 
 但有些极其特殊的时候，例如你正在尝试加密日语和中文夹杂的文本/文件，此时有可能出现污染现象。
 
-你可以选择强制加密来解决此问题。
+如果出现污染现象，程序会立刻抛出错误并退出。
+
+你可以指定 `-f` 强制加密，也可以指定 `-g` 忽略检查并继续尝试解密(通常不会成功)。
 
 ## 加密细节
 

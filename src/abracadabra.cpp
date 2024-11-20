@@ -1,15 +1,19 @@
 #include <iostream> //Basic Libs
 #include <fstream>
+
+#ifdef _WIN32
 #include <String.h>
+#include <Windows.h>
+#elif defined(__linux__)
+#include <string.h>
+#endif
+
 #include <stdio.h>
 #include <cstdlib>
-#include <codecvt>
 #include <random>
-#include <Windows.h>
 #include <ctime>
 #include <cstdint>
-#include <iomanip>
-#include <sstream>
+#include <vector>
 
 #include <nlohmann/json.hpp> //JSON processing
 #include <cppcodec/base64_rfc4648.hpp> //Base64 Proccessing
@@ -64,14 +68,11 @@ struct DemapResult { // 专门用来打包解密的结果
     vector<uint8_t> output_B;
 };
 
-
 string enMap(PreCheckResult input,string key,bool t,bool q);
 DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
 int GetRandomIndex(int length);
-string UrlEncode(const string& szToEncode);
-std::string GbkToUtf8(const char* src_str);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(vector<uint8_t> Input);
 void rotateString(std::string& str,int n);
@@ -81,23 +82,55 @@ inline string DRoundKeyMatch(string keyIn);
 inline void RoundKey();
 
 std::vector<uint8_t> String2Uint8T(const std::string& str);
-std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data,int* randomByte);
+void AES_256_CTR(string key,vector<uint8_t>& data, const int* randomByte);
 vector<uint8_t> SHA256(vector<uint8_t> data);
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data);
 
+#ifdef _WIN32
+std::string GbkToUtf8(const std::string& src_str)
+{
+    std::string result;
+    wchar_t* strSrc;
+    char* szRes;
+    int len = MultiByteToWideChar(CP_ACP, 0, src_str.c_str(), -1, NULL, 0);
+    strSrc = new wchar_t[len + 1];
+    MultiByteToWideChar(CP_ACP, 0, src_str.c_str(), -1, strSrc, len);
+ 
+    len = WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, NULL, 0, NULL, NULL);
+    szRes = new char[len + 1];
+    WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, szRes, len, NULL, NULL);
+    result = szRes;
+    if (strSrc)
+        delete[]strSrc;
+    if (szRes)
+        delete[]szRes;
+    return result;
+}
+#endif
+
+std::vector<uint8_t> CliString2Uint8T(const std::string& str) {
+    #ifdef _WIN32
+    return String2Uint8T(GbkToUtf8(str));
+    #elif defined(__linux__)
+    return String2Uint8T(str);
+    #endif
+}
 
 int main(int argc, char *argv[]){
-    SetConsoleOutputCP(CP_UTF8); //注意，由于使用了Windows.h，这个版本仅能在Windows平台使用。
-    CLI::App app{"***Abracadabra v2.5.0***"}; //CLI11提供的命令行参数解析
+    #ifdef _WIN32
+        // Windows 特定修正
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
+
+    CLI::App app{"***Abracadabra v2.5.1***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
     bool e = false, d = false,q = false,g = false,t = false;
     string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR,k = "ABRACADABRA";//给定的文件路径和输入
-    string::size_type idx; 
     ofstream outfile;
     vector<uint8_t> inputfiledata;
 
@@ -138,6 +171,8 @@ int main(int argc, char *argv[]){
         ->take_last();
     tflag
         ->take_last();
+    gflag
+        ->take_last();
     try{
         CLI11_PARSE(app, argc, argv);
     }catch(...){
@@ -146,7 +181,7 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    vector<uint8_t> KeyHashVec = SHA256(String2Uint8T(GbkToUtf8(k.c_str())));
+    vector<uint8_t> KeyHashVec = SHA256(CliString2Uint8T(k));
     for(int i=0;i<32;i++){
         RoundControl[i] = KeyHashVec[i];
     }
@@ -154,14 +189,14 @@ int main(int argc, char *argv[]){
     //这里处理所有输入的逻辑
     if (i2 != NULL_STR){//如果i2存在，即只有一个参数
         PreCheckResult Result;
-        Result = preCheck(String2Uint8T(GbkToUtf8(i2.c_str())));
+        Result = preCheck(CliString2Uint8T(i2));
         if(Result.isEncrypted){
             d = true;
         }
         input = Result;
     }else{
         if(i != NULL_STR){
-            input = preCheck(String2Uint8T(GbkToUtf8(i.c_str())));
+            input = preCheck(CliString2Uint8T(i));
             if(input.isEncrypted){
                 d = true;
             }
@@ -224,7 +259,6 @@ PreCheckResult preCheck(vector<uint8_t> Input){
     string input(Input.begin(),Input.end());
     int size = input.length(); //第一次遍历字符数组的函数，负责判断给定的输入类型。
     string temp;
-    string::size_type idx;
     bool isEncrypted = false;//判定该文本是否为加密文本
 
     bool isJPFound = false;//如果检查出一个日语标志位，则标记为真
@@ -235,7 +269,7 @@ PreCheckResult preCheck(vector<uint8_t> Input){
         if((input[i] & 0xf8) == 0xf0) cplen = 4;
         else if((input[i] & 0xf0) == 0xe0) cplen = 3;
         else if((input[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > input.length()) cplen = 1;
+        if((i + cplen) > (int)input.length()) cplen = 1;
         temp = input.substr(i, cplen);
 
         //判断这个符号是不是标识符，标识符用空字符进行占位操作
@@ -278,12 +312,14 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
     OriginalData.push_back(2);
     OriginalData.push_back(2);
     
-    int* RandomByte = new int[2]; //取两个随机数作为初始化向量的随机性
-    RandomByte[0] = GetRandomIndex(256);
-    RandomByte[1] = GetRandomIndex(256);
+    std::array<int, 2> RandomByte {
+        //取两个随机数作为初始化向量的随机性
+        GetRandomIndex(256),
+        GetRandomIndex(256),
+    };
 
     if(OriginalData.size() <= 1024){
-        int SizeBefore = OriginalData.size();
+        unsigned int SizeBefore = OriginalData.size();
         OriginalData = UNISHOX_COMPRESS(OriginalData);
 
         if(OriginalData.size() == SizeBefore){
@@ -293,17 +329,16 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         OriginalData = GZIP_COMPRESS(OriginalData); //Gzip压缩
     }
 
-    OriginalData = AES_256_CTR(key,OriginalData,RandomByte); //AES加密
+    AES_256_CTR(key,OriginalData,RandomByte.data()); //AES加密
     OriginalData.push_back(RandomByte[0]); //压进最后两个比特
     OriginalData.push_back(RandomByte[1]);
     string OriginStr = base64::encode(OriginalData); //用Base64编码AES的加密结果
     if(t){
         cout<<"AES -> Base64: "<< OriginStr << endl;
     }
-    delete[] RandomByte;
+
     string TempStr1;
     string temp,temp2,group;
-    string::size_type idx;
     int size = OriginStr.length();
     RoundKey();
     for(int i=0;i<size;){
@@ -311,7 +346,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr.length()) cplen = 1;
+        if((i + cplen) > (int)OriginStr.length()) cplen = 1;
         temp = OriginStr.substr(i, cplen);
 
         //加密操作开始
@@ -334,32 +369,25 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         size = TempStr1.length();
         for(int i=0;i<size;){ //这里需要确定所有插入UTF-8字符的合适位置
             int cplen = 1; //该死的C++，处理中文字符贼繁琐
-            int cplen2 = 1;
             if((TempStr1[i] & 0xf8) == 0xf0) cplen = 4;
             else if((TempStr1[i] & 0xf0) == 0xe0) cplen = 3;
             else if((TempStr1[i] & 0xe0) == 0xc0) cplen = 2;
-            if((i + cplen) > TempStr1.length()) cplen = 1;
-
-            if((TempStr1[i+cplen] & 0xf8) == 0xf0) cplen2 = 4;
-            else if((TempStr1[i+cplen] & 0xf0) == 0xe0) cplen2 = 3;
-            else if((TempStr1[i+cplen] & 0xe0) == 0xc0) cplen2 = 2;
-            if((i + cplen + cplen) > TempStr1.length()) cplen2 = 1;
+            if((i + cplen) > (int)TempStr1.length()) cplen = 1;
             i += cplen;
             PosToInset.push_back(i);
         }
-        int i;
         if(q==0){//第一次大循环插入JP
             RandIndex = PosToInset.at(GetRandomIndex(PosToInset.size()));//在所有可插入位置中随便选一个
             RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["JP"].size());//随机获取一个下标
             string stemp = (string)Map_Obj["special"]["DECRYPT"]["JP"][RandIndex2];
             TempStr1.insert(RandIndex,stemp);
-            for(int z = RandIndex + 1;z < RandIndex + stemp.length();z++){
+            for(int z = RandIndex + 1;z < RandIndex + (int)stemp.length();z++){
                     Avoid.push_back(z);
             }
         }else if(q==1){ // 第二次大循环插入CN
             vector<int> AvailPos;
             AvailPos.resize(max(PosToInset.size(),Avoid.size()));
-            vector<int>::iterator itEnd = set_difference(PosToInset.begin(), PosToInset.end(), Avoid.begin(), Avoid.end(), AvailPos.begin());
+            set_difference(PosToInset.begin(), PosToInset.end(), Avoid.begin(), Avoid.end(), AvailPos.begin());
             AvailPos.erase(std::remove(AvailPos.begin(), AvailPos.end(), 0), AvailPos.end());
             RandIndex = AvailPos.at(GetRandomIndex(AvailPos.size()));//在所有可插入位置中随便选一个
             RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["CN"].size());//随机获取一个下标
@@ -373,14 +401,13 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     string OriginStr(input.output.begin(),input.output.end());
     string TempStr1,TempStrz;
     string temp,temp2,group,findtemp;
-    string::size_type idx; 
     int size = OriginStr.length();
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr.length()) cplen = 1;
+        if((i + cplen) > (int)OriginStr.length()) cplen = 1;
         temp = OriginStr.substr(i, cplen);
 
         //到这儿循环的取字部分就完成了
@@ -405,12 +432,12 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         if((OriginStr[i] & 0xf8) == 0xf0) cplen = 4;
         else if((OriginStr[i] & 0xf0) == 0xe0) cplen = 3;
         else if((OriginStr[i] & 0xe0) == 0xc0) cplen = 2;
-        if((i + cplen) > OriginStr.length()) cplen = 1;
+        if((i + cplen) > (int)OriginStr.length()) cplen = 1;
 
         if((OriginStr[i+cplen] & 0xf8) == 0xf0) cplen2 = 4;
         else if((OriginStr[i+cplen] & 0xf0) == 0xe0) cplen2 = 3;
         else if((OriginStr[i+cplen] & 0xe0) == 0xc0) cplen2 = 2;
-        if((i + cplen + cplen) > OriginStr.length()) cplen2 = 1;
+        if((i + cplen + cplen) > (int)OriginStr.length()) cplen2 = 1;
         temp = OriginStr.substr(i, cplen);
         if(i != size - cplen2){ //一次遍历两个字符，遇到倒数第一个的时候防止越界
             temp2 = OriginStr.substr(i+cplen, cplen2);
@@ -420,10 +447,16 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
-        findtemp = FindOriginText(temp); //查找第一个字符的原文
+        findtemp = FindOriginText(temp); //查找字符的原文
+        if(findtemp == "" && !g){
+            cout<<"Error Decoding. Bad Input."<<endl;
+            cout<<"Try force encryption if you intended to encrypt something."<<endl; //如果有任何一个字没查到，那么考虑标志位污染
+            cout<<"If you want to go on anyway, add flag -g to ignore this check."<<endl;
+            throw;
+        }
         TempStr1.append(findtemp); //把找到的原文增加到字符串上
         RoundKey();//轮换密钥
-        i+=cplen; 
+        i+=cplen;
         continue;
     }
 
@@ -439,7 +472,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         RandomByte[0] = TempStr2Int.at(TempStr2Int.size()-2);
         TempStr2Int.pop_back();
         TempStr2Int.pop_back();
-        TempStr2Int = AES_256_CTR(key,TempStr2Int,RandomByte); // 原字节码
+        AES_256_CTR(key,TempStr2Int,RandomByte); // 原字节码
         TempStr2Int = GZIP_DECOMPRESS(TempStr2Int); //解压缩
         TempStr2Int = UNISHOX_DECOMPRESS(TempStr2Int); //解压缩
     }catch(...){
@@ -472,7 +505,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     return Res;
 }
 string GetCryptedText(string letter){//查表返回加密之后的字符串
-    int RandIndex,RandIndex2;
+    int RandIndex;
     if(LETTERS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["alphabet"].items())
         {   
@@ -526,65 +559,7 @@ string FindOriginText(string letter){
     }
     return "";
 }
-string UrlEncode(const string& szToEncode)
-{
-	string src = szToEncode;
-	char hex[] = "0123456789ABCDEF";
-	string dst;
- 
- 
-	for (size_t i = 0; i < src.size(); ++i)
-	{
-		unsigned char cc = src[i];
-		if ( cc >= 'A' && cc <= 'Z' 
-                 || cc >='a' && cc <= 'z'
-                 || cc >='0' && cc <= '9'
-                 || cc == '.'
-                 || cc == '_'
-                 || cc == '-'
-                 || cc == '*'
-                 || cc == ':'
-                 || cc == '/'
-                 || cc == '%'
-                 || cc == '?'
-                 || cc == '=')
-		{
-			if (cc == ' ')
-			{
-				dst += "+";
-			}
-			else
-				dst += cc;
-		}
-		else
-		{
-			unsigned char c = static_cast<unsigned char>(src[i]);
-			dst += '%';
-			dst += hex[c / 16];
-			dst += hex[c % 16];
-		}
-	}
-	return dst;
-}
-std::string GbkToUtf8(const char* src_str)
-{
-    std::string result;
-    wchar_t* strSrc;
-    char* szRes;
-    int len = MultiByteToWideChar(CP_ACP, 0, src_str, -1, NULL, 0);
-    strSrc = new wchar_t[len + 1];
-    MultiByteToWideChar(CP_ACP, 0, src_str, -1, strSrc, len);
- 
-    len = WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, NULL, 0, NULL, NULL);
-    szRes = new char[len + 1];
-    WideCharToMultiByte(CP_UTF8, 0, strSrc, -1, szRes, len, NULL, NULL);
-    result = szRes;
-    if (strSrc)
-        delete[]strSrc;
-    if (szRes)
-        delete[]szRes;
-    return result;
-}
+
 std::vector<uint8_t> readFile(const char* filename)
 {
     // open the file:
@@ -696,44 +671,20 @@ vector<uint8_t> SHA256(vector<uint8_t> data){ //计算给定字节数组的哈�
     return hash;
 }
 
-std::vector<uint8_t> AES_256_CTR(string key,vector<uint8_t> data,int* randomByte){ //执行AES_256_CTR加密，返回字节码
+void AES_256_CTR(string key,vector<uint8_t>& data, const int* randomByte) { //执行AES_256_CTR加密
     AES_ctx ctx;
     vector<uint8_t> KeyHashV = SHA256(String2Uint8T(key));
-    uint8_t* KeyHash = new uint8_t[KeyHashV.size()];
-    for (size_t i = 0; i < KeyHashV.size(); ++i) {
-        KeyHash[i] = KeyHashV[i];
-    }
+    vector<uint8_t> KeyHash{KeyHashV};
 
     KeyHashV.push_back(randomByte[0]);
     KeyHashV.push_back(randomByte[1]);
     
-    vector<uint8_t> KeyHashHash = SHA256(KeyHashV); //对密钥的第二次哈希
-    uint8_t* iv = new uint8_t[16];
-    for(int i=0;i<16;i++){
-        iv[i] = KeyHashHash[i]; //初始化向量直接使用密钥两次哈希的前16字节，这么做不是最佳实践。
-        //但是，本项目不会特别把初始化向量另外保存，这样会显著增加密文长度。
-    }
+    vector<uint8_t> iv = SHA256(KeyHashV); //对密钥的第二次哈希
+    //初始化向量直接使用密钥两次哈希的前16字节，这么做不是最佳实践。
+    //但是，本项目不会特别把初始化向量另外保存，这样会显著增加密文长度。
 
-    AES_init_ctx_iv(&ctx,KeyHash,iv);
-
-    int size = data.size();
-
-    uint8_t* Data = new uint8_t[size]; //开辟空间
-    for(int i=0;i<size;i++){
-        Data[i] = data[i];
-    }
-
-    AES_CTR_xcrypt_buffer(&ctx, Data, size);
-
-    for(int i=0;i<size;i++){ //把字符序列反转回去
-        data[i] = Data[i];
-    }
-
-    delete[] Data; //删掉开辟的空间
-    delete[] KeyHash;
-    delete[] iv;
-
-    return data;
+    AES_init_ctx_iv(&ctx,KeyHash.data(),iv.data());
+    AES_CTR_xcrypt_buffer(&ctx, data.data(), data.size());
 }
 
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data){
@@ -764,7 +715,7 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
     char* CompressedStrCharArray = new char[2048]; //此压缩法的上限是1kb, 额外1kb冗余
 
     int CompressedStrCharLength = unishox2_compress_simple(DataStrCharArray ,Datastr.length(), CompressedStrCharArray);
-    if(CompressedStrCharLength > Datastr.length()){
+    if(CompressedStrCharLength > (int)Datastr.length()){
         return Data;
     }
     std::vector<uint8_t> DataOut;
