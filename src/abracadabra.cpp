@@ -447,10 +447,16 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
-        findtemp = FindOriginText(temp); //查找第一个字符的原文
+        findtemp = FindOriginText(temp); //查找字符的原文
+        if(findtemp == "" && !g){
+            cout<<"Error Decoding. Bad Input."<<endl;
+            cout<<"Try force encryption if you intended to encrypt something."<<endl; //如果有任何一个字没查到，那么考虑标志位污染
+            cout<<"If you want to go on anyway, add flag -g to ignore this check."<<endl;
+            throw;
+        }
         TempStr1.append(findtemp); //把找到的原文增加到字符串上
         RoundKey();//轮换密钥
-        i+=cplen; 
+        i+=cplen;
         continue;
     }
 
