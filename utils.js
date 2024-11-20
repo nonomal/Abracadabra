@@ -468,6 +468,9 @@ export function deMap(input, key) {
     group = temp + temp2;
 
     findtemp = findOriginText(temp); //查找第一个字符的原文
+    if (findtemp == NULL_STR) {
+      throw "Bad Input. Try force encrypt if intended.";
+    }
     TempStr1 = TempStr1 + findtemp; //把找到的原文增加到字符串上
     RoundKey(); //轮换密钥
     i++;
