@@ -1,11 +1,19 @@
 #include <iostream> //Basic Libs
 #include <fstream>
+
+#ifdef _WIN32
 #include <String.h>
+#include <Windows.h>
+#elif defined(__linux__)
+#include <string.h>
+#endif
+
 #include <stdio.h>
 #include <cstdlib>
 #include <random>
 #include <ctime>
 #include <cstdint>
+#include <vector>
 
 #include <nlohmann/json.hpp> //JSON processing
 #include <cppcodec/base64_rfc4648.hpp> //Base64 Proccessing
@@ -19,11 +27,6 @@
 #include <gzip/utils.hpp>
 #include <unishox2.h>
 #include <unishox2.c>
-#include <vector>
-
-#ifdef _WIN32
-#include <Windows.h>
-#endif
 
 using namespace std;
 using json = nlohmann::json;
@@ -65,7 +68,6 @@ struct DemapResult { // 专门用来打包解密的结果
     vector<uint8_t> output_B;
 };
 
-
 string enMap(PreCheckResult input,string key,bool t,bool q);
 DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
 string FindOriginText(string letter);
@@ -81,7 +83,7 @@ inline string DRoundKeyMatch(string keyIn);
 inline void RoundKey();
 
 std::vector<uint8_t> String2Uint8T(const std::string& str);
-void AES_256_CTR(string key,vector<uint8_t>& data, const uint8_t* randomByte);
+void AES_256_CTR(string key,vector<uint8_t>& data, const int* randomByte);
 vector<uint8_t> SHA256(vector<uint8_t> data);
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data);
@@ -113,18 +115,18 @@ std::string GbkToUtf8(const std::string& src_str)
 std::vector<uint8_t> CliString2Uint8T(const std::string& str) {
     #ifdef _WIN32
     return String2Uint8T(GbkToUtf8(str));
-    #endif
+    #elif defined(__linux__)
     return String2Uint8T(str);
+    #endif
 }
 
-
 int main(int argc, char *argv[]){
-#ifdef _WIN32
-    // Windows 特定修正
-    SetConsoleOutputCP(CP_UTF8);
-#endif
+    #ifdef _WIN32
+        // Windows 特定修正
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
 
-    CLI::App app{"***Abracadabra v2.5.0***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.5.1***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -311,7 +313,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
     OriginalData.push_back(2);
     OriginalData.push_back(2);
     
-    std::array<uint8_t, 2> RandomByte {
+    std::array<int, 2> RandomByte {
         //取两个随机数作为初始化向量的随机性
         GetRandomIndex(256),
         GetRandomIndex(256),
@@ -713,10 +715,10 @@ vector<uint8_t> SHA256(vector<uint8_t> data){ //计算给定字节数组的哈�
     return hash;
 }
 
-void AES_256_CTR(string key,vector<uint8_t>& data, const uint8_t* randomByte) { //执行AES_256_CTR加密
+void AES_256_CTR(string key,vector<uint8_t>& data, const int* randomByte) { //执行AES_256_CTR加密
     AES_ctx ctx;
     vector<uint8_t> KeyHashV = SHA256(String2Uint8T(key));
-    vector<uint8_t> KeyHash{KeyHash};
+    vector<uint8_t> KeyHash{KeyHashV};
 
     KeyHashV.push_back(randomByte[0]);
     KeyHashV.push_back(randomByte[1]);
