@@ -97,7 +97,6 @@ int main(int argc, char *argv[]){
     PreCheckResult input;
     bool e = false, d = false,q = false,g = false,t = false;
     string f = NULL_STR,o = NULL_STR,i = NULL_STR,i2 = NULL_STR,k = "ABRACADABRA";//给定的文件路径和输入
-    string::size_type idx; 
     ofstream outfile;
     vector<uint8_t> inputfiledata;
 
@@ -137,6 +136,8 @@ int main(int argc, char *argv[]){
     kflag
         ->take_last();
     tflag
+        ->take_last();
+    gflag
         ->take_last();
     try{
         CLI11_PARSE(app, argc, argv);
@@ -224,7 +225,6 @@ PreCheckResult preCheck(vector<uint8_t> Input){
     string input(Input.begin(),Input.end());
     int size = input.length(); //第一次遍历字符数组的函数，负责判断给定的输入类型。
     string temp;
-    string::size_type idx;
     bool isEncrypted = false;//判定该文本是否为加密文本
 
     bool isJPFound = false;//如果检查出一个日语标志位，则标记为真
@@ -303,7 +303,6 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
     delete[] RandomByte;
     string TempStr1;
     string temp,temp2,group;
-    string::size_type idx;
     int size = OriginStr.length();
     RoundKey();
     for(int i=0;i<size;){
@@ -334,20 +333,13 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         size = TempStr1.length();
         for(int i=0;i<size;){ //这里需要确定所有插入UTF-8字符的合适位置
             int cplen = 1; //该死的C++，处理中文字符贼繁琐
-            int cplen2 = 1;
             if((TempStr1[i] & 0xf8) == 0xf0) cplen = 4;
             else if((TempStr1[i] & 0xf0) == 0xe0) cplen = 3;
             else if((TempStr1[i] & 0xe0) == 0xc0) cplen = 2;
             if((i + cplen) > TempStr1.length()) cplen = 1;
-
-            if((TempStr1[i+cplen] & 0xf8) == 0xf0) cplen2 = 4;
-            else if((TempStr1[i+cplen] & 0xf0) == 0xe0) cplen2 = 3;
-            else if((TempStr1[i+cplen] & 0xe0) == 0xc0) cplen2 = 2;
-            if((i + cplen + cplen) > TempStr1.length()) cplen2 = 1;
             i += cplen;
             PosToInset.push_back(i);
         }
-        int i;
         if(q==0){//第一次大循环插入JP
             RandIndex = PosToInset.at(GetRandomIndex(PosToInset.size()));//在所有可插入位置中随便选一个
             RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["JP"].size());//随机获取一个下标
@@ -359,7 +351,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
         }else if(q==1){ // 第二次大循环插入CN
             vector<int> AvailPos;
             AvailPos.resize(max(PosToInset.size(),Avoid.size()));
-            vector<int>::iterator itEnd = set_difference(PosToInset.begin(), PosToInset.end(), Avoid.begin(), Avoid.end(), AvailPos.begin());
+            set_difference(PosToInset.begin(), PosToInset.end(), Avoid.begin(), Avoid.end(), AvailPos.begin());
             AvailPos.erase(std::remove(AvailPos.begin(), AvailPos.end(), 0), AvailPos.end());
             RandIndex = AvailPos.at(GetRandomIndex(AvailPos.size()));//在所有可插入位置中随便选一个
             RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["CN"].size());//随机获取一个下标
@@ -373,7 +365,6 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     string OriginStr(input.output.begin(),input.output.end());
     string TempStr1,TempStrz;
     string temp,temp2,group,findtemp;
-    string::size_type idx; 
     int size = OriginStr.length();
     for(int i=0;i<size;){
         int cplen = 1; //该死的C++，处理中文字符贼繁琐
@@ -472,7 +463,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     return Res;
 }
 string GetCryptedText(string letter){//查表返回加密之后的字符串
-    int RandIndex,RandIndex2;
+    int RandIndex;
     if(LETTERS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["alphabet"].items())
         {   
