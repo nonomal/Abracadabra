@@ -73,7 +73,6 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
 string FindOriginText(string letter);
 string GetCryptedText(string letter);
 int GetRandomIndex(int length);
-string UrlEncode(const string& szToEncode);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(vector<uint8_t> Input);
 void rotateString(std::string& str,int n);
@@ -553,46 +552,6 @@ string FindOriginText(string letter){
         }
     }
     return "";
-}
-string UrlEncode(const string& szToEncode)
-{
-	string src = szToEncode;
-	char hex[] = "0123456789ABCDEF";
-	string dst;
- 
- 
-	for (size_t i = 0; i < src.size(); ++i)
-	{
-		unsigned char cc = src[i];
-		if ( cc >= 'A' && cc <= 'Z' 
-                 || cc >='a' && cc <= 'z'
-                 || cc >='0' && cc <= '9'
-                 || cc == '.'
-                 || cc == '_'
-                 || cc == '-'
-                 || cc == '*'
-                 || cc == ':'
-                 || cc == '/'
-                 || cc == '%'
-                 || cc == '?'
-                 || cc == '=')
-		{
-			if (cc == ' ')
-			{
-				dst += "+";
-			}
-			else
-				dst += cc;
-		}
-		else
-		{
-			unsigned char c = static_cast<unsigned char>(src[i]);
-			dst += '%';
-			dst += hex[c / 16];
-			dst += hex[c % 16];
-		}
-	}
-	return dst;
 }
 
 std::vector<uint8_t> readFile(const char* filename)
