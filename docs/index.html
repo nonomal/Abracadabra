@@ -3,9 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Abracadabra Demo</title>
-    <script type="module" crossorigin src="./assets/index-BcSKzKxq.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BmpJePLS.css">
+    <title>魔曰 - Abracadabra</title>
+    <script>
+      Element.prototype._attachShadow = Element.prototype.attachShadow;
+      Element.prototype.attachShadow = function () {
+        return this._attachShadow({ mode: "open" });
+      };
+    </script>
+    <script type="module" crossorigin src="./assets/index-D_4NI-Je.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CWqx7Tej.css">
   </head>
   <body>
     <div id="app"></div>

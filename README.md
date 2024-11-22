@@ -1,10 +1,10 @@
-# Abracadabra：用中文表示一切
+# Abracadabra：魔曰
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Abracadabra** 是一个文本即时加密/脱敏工具，也可用于加密文件，你正在查阅其基于 Node.js 的分支。
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件。这是其 JavaScript 分支。
 
-Abracadabra 是表演魔术 (施魔法) 时所念的咒语。
+Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
 
 C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
@@ -133,7 +133,7 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 ### 平台兼容性
 
-你正在查阅 Abracabra 基于 Node.js 的实现。
+你正在查阅 Abracabra 基于 JavaScript 的实现。
 
 此分支不存在平台兼容性问题。
 
