@@ -70,19 +70,19 @@ struct DemapResult { // 专门用来打包解密的结果
 
 string enMap(PreCheckResult input,string key,bool t,bool q);
 DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
-string FindOriginText(string letter);
-string GetCryptedText(string letter);
+string FindOriginText(string& letter);
+string GetCryptedText(string& letter);
 int GetRandomIndex(int length);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(vector<uint8_t> Input);
 void rotateString(std::string& str,int n);
 void LrotateString(std::string& str,int n) ;
-inline string RoundKeyMatch(string keyIn);
-inline string DRoundKeyMatch(string keyIn);
+inline string RoundKeyMatch(const string& keyIn);
+inline string DRoundKeyMatch(const string& keyIn);
 inline void RoundKey();
 
 std::vector<uint8_t> String2Uint8T(const std::string& str);
-void AES_256_CTR(string key,vector<uint8_t>& data, const int* randomByte);
+void AES_256_CTR(string& key,vector<uint8_t>& data, const int* randomByte);
 vector<uint8_t> SHA256(vector<uint8_t> data);
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data);
 std::vector<uint8_t> GZIP_DECOMPRESS(std::vector<uint8_t> Data);
@@ -504,7 +504,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
     Res.output_B = TempStr2Int;
     return Res;
 }
-string GetCryptedText(string letter){//查表返回加密之后的字符串
+string GetCryptedText(string& letter){//查表返回加密之后的字符串
     int RandIndex;
     if(LETTERS.find(letter) != string::npos){
         for (auto& el : Map_Obj["basic"]["alphabet"].items())
@@ -540,7 +540,7 @@ string GetCryptedText(string letter){//查表返回加密之后的字符串
     }
     return NULL_STR;
 }
-string FindOriginText(string letter){
+string FindOriginText(string& letter){
     for (auto& el : Map_Obj["basic"]["alphabet"].items()){
         for (auto ell : el.value()){
             string str = (string)ell;
@@ -579,7 +579,7 @@ void LrotateString(std::string& str,int n) { //循环左移字符串
     str.append(str.substr(0,size-n));
     str.erase(0,size-n);
 }
-inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
+inline string RoundKeyMatch(const string& keyIn){ //查询轮换密钥的键值
 
     size_t idx1,idx2;
     size_t idx1_1,idx2_1;
@@ -602,7 +602,7 @@ inline string RoundKeyMatch(string keyIn){ //查询轮换密钥的键值
 
     return NULL_STR;
 }
-inline string DRoundKeyMatch(string keyIn){ //查询轮换密钥的键值
+inline string DRoundKeyMatch(const string& keyIn){ //查询轮换密钥的键值
 
     size_t idx1,idx2;
     size_t idx1_1,idx2_1;
@@ -671,7 +671,7 @@ vector<uint8_t> SHA256(vector<uint8_t> data){ //计算给定字节数组的哈�
     return hash;
 }
 
-void AES_256_CTR(string key,vector<uint8_t>& data, const int* randomByte) { //执行AES_256_CTR加密
+void AES_256_CTR(string& key,vector<uint8_t>& data, const int* randomByte) { //执行AES_256_CTR加密
     AES_ctx ctx;
     vector<uint8_t> KeyHashV = SHA256(String2Uint8T(key));
     vector<uint8_t> KeyHash{KeyHashV};
