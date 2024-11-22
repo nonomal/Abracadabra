@@ -7,7 +7,7 @@ export default defineConfig({
     outDir: "dist", // 将打包后的文件输出到 dist 目录
     minify: "eslint", // 使用 terser 进行压缩
     lib: {
-      entry: "./main.js",
+      entry: "./src/javascript/main.js",
       name: "abracadabra-cn",
       fileName: "abracadabra-cn",
     },
