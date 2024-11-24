@@ -20,6 +20,8 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
+你可以参照本 README 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
+
 ## 特性
 
 ![动画](https://github.com/user-attachments/assets/7ec6e01c-230d-4d27-a0b1-80015307c5f4)
@@ -35,8 +37,6 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
 前往 Release 页面下载构建，使用命令行调用程序。
 使用参数 `-h` 查看命令帮助。
-
-[**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
 
 你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
 
