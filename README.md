@@ -14,6 +14,8 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 **在线体验(国内直连)**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
 
+**Demo 页源码仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
+
 **JavaScript 实现**: [**dev_node Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_nodejs)
 
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
@@ -33,6 +35,8 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
 前往 Release 页面下载构建，使用命令行调用程序。
 使用参数 `-h` 查看命令帮助。
+
+[**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
 
 你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
 
@@ -177,10 +181,6 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 
 标志位隐蔽，在密文中随机位置插入，不易察觉。
 
-### 灵感
-
-Abracadabra 的灵感来源于网络上曾流行过的熊曰加密。
-
 ## Abracadabra VS 与熊论道
 
 ```
@@ -195,7 +195,7 @@ Abracadabra(等效密文，默认密钥):
 呋食食嘍嗡吖物吃訴吖物嗅喜達拙達發怎嘍襲現嗷既歡嚄類捕歡達哞呆麼出啽吃堅和吖既森寶蜂眠森告發沒破吖歡嘶盜達告爾取襲
 ```
 
-| 特性 \ 工具  | Abracadabra       | 与熊论道        |
+| 特性         | Abracadabra       | 与熊论道        |
 | ------------ | ----------------- | --------------- |
 | 易用性       | 🟡 稍弱           | ✅ 傻瓜化       |
 | 加密文本体积 | ✅ 更短           | 🟡 较短         |
@@ -209,10 +209,10 @@ Abracadabra(等效密文，默认密钥):
 | 文件加密     | ✅ 支持(较慢)     | ❌ 不支持       |
 | 开源         | ✅ 开源           | ❌ 不开源       |
 
-## Todo
+## 鸣谢
 
-- [x] ~~实现更规范地解析命令参数~~
-- [x] ~~实现加密任意文件，输出文本文档~~
-- [x] ~~用 Node.js 完整实现 Abracadabra 的轮子~~
-- [x] ~~实现让嵌入自定义密本更具灵活性~~
-- [x] ~~数据的可靠压缩~~
+本项目借鉴了与熊论道(熊曰加密)的设计思路，但由于与熊论道并不开源，故没有引用其代码的可能。
+
+感谢 Unishox2 提供高效的短文本加密方案。
+
+感谢贡献 PR 和参与测试的所有人。
