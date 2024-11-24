@@ -20,6 +20,8 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
+你可以参照本 README 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
+
 ## 特性
 
 - 方便，密文可以描述自身。
@@ -44,8 +46,6 @@ import { Abracadabra } from 'abracadabra-cn'
 ```
 
 如果你想在网页中全量引入本库，可以导入 `abracadabra-cn.umd.cjs`
-
-[**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
 
 你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
 
@@ -211,7 +211,7 @@ Abracadabra(等效密文，默认密钥):
 呋食食嘍嗡吖物吃訴吖物嗅喜達拙達發怎嘍襲現嗷既歡嚄類捕歡達哞呆麼出啽吃堅和吖既森寶蜂眠森告發沒破吖歡嘶盜達告爾取襲
 ```
 
-| 特性 \ 工具  | Abracadabra       | 与熊论道        |
+| 特性         | Abracadabra       | 与熊论道        |
 | ------------ | ----------------- | --------------- |
 | 易用性       | 🟡 稍弱           | ✅ 傻瓜化       |
 | 加密文本体积 | ✅ 更短           | 🟡 较短         |
