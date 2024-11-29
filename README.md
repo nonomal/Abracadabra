@@ -2,11 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件。这是其 JavaScript 分支。
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，基于 C++ 11。
 
 Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
-
-C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
 
@@ -14,17 +12,15 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 <img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399">
 </a>
 
-**在线体验**: [**Github DEMO Page**](https://sheepchef.github.io/Abracadabra_demo/)
+**在线体验**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
 
-**在线体验(国内直连)**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
-
-**Demo页/浏览器插件 源码仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
-
-**C++ 实现**: [**dev_c Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_c)
+**Demo 页/浏览器插件仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
 
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
-你可以参照本 README 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
+你可以参照 [**部署指南**](DEPLOY.md) 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
+
+C++ 版本和 JavaScript 版本完全等效，密文可以互相交叉解密。
 
 ## 特性
 
@@ -37,117 +33,30 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
 ## 快速使用
 
+请查阅 [**部署指南**](DEPLOY.md) 来了解详细使用方法。
+
+### C++
+
+前往 Release 页面下载构建，使用命令行调用程序。
+使用参数 `-h` 查看命令帮助。
+
+### JavaScript
+
 使用 npm 下载 Abracadabra 库。
 
-```
+```shell
 npm install abracadabra-cn
 ```
 
 然后，在项目中引入库文件
 
+```javascript
+import { Abracadabra } from "abracadabra-cn";
 ```
-import { Abracadabra } from 'abracadabra-cn'
-```
-
-如果你想在网页中全量引入本库，可以导入 `abracadabra-cn.umd.cjs`
-
-你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
-
-```
-边难全您事二起住协踵先铭碘个版赴沢月及务褔集咫氧檀银绮铭学叫涧于路以白盈种四通重都俟沥困栀裳间烯化所德即园湍
-```
-
-## 部署说明
-
-Abracadabra 库仅包含一个类型，即`Abracadabra`
-
-使用前，你需要实例化该类型，实例化时需要两个参数来指定输入输出的方式，如果不附带参数，则自动使用默认值 `TEXT`。
-
-```Javascript
-import { Abracadabra } from 'abracadabra-cn'
-
-let Abra = new Abracadabra(); //不附带参数，
-
-/*
-Abracadabra.TEXT = "TEXT"
-Abracadabra.UINT8 = "UINT8"
-*/
-let Abra = new Abracadabra(InputMode,OutputMode);
-//参数必须是上述二者中的一个，传入其他值会导致错误。
-```
-
-`TEXT` 表明将来的输入/输出为 `String`，`UINT8` 表明将来的输入/输出为 `Uint8Array`，你可以灵活使用两种不同的类型。
-
-### Input()
-
-Abracadabra 库中仅有两个方法，`Input()` 是其中一个。
-
-```Javascript
-import { Abracadabra } from 'abracadabra-cn'
-
-let Abra = new Abracadabra(); //不附带参数，
-
-/*
-MODES:
-
-Abracadabra.ENCRYPT = "ENCRYPT";
-强制加密
-
-Abracadabra.DECRYPT = "DECRYPT";
-强制解密
-
-Abracadabra.AUTO = "AUTO";
-自动(遵循自动逻辑)
-
-*/
-Abra.Input(input,mode,key,q)
-```
-
-第一个参数 `input` 接受两种类型的输入，分别是 `String` 和 `Uint8Array`，这是此前在实例化的时候指定的输入类型。
-
-如果你指定了 `UINT8` 却传入 `String`，将抛出错误，反之亦然。
-
-第二个参数 `mode` 接受上文中特定字符串的输入，任何其他输入都将被视为 `AUTO` 并被忽略。
-
-第三个参数 `key` 接受字符串类型的密钥输入，如果不提供，则默认使用内置密钥 `ABRACADABRA`。
-
-如果指定了错误的密码，那么在解码/解密数据校验过程中会抛出错误。
-
-第四个参数 `q` 接受布尔值的输入，如果传入 `true`，则加密结果中将不含标志位，更加隐蔽，但解密时需要强制解密。
-
-在无错误的情况下， `Input()` 函数的返回值通常是 `0`。
-
-### Output()
-
-```Javascript
-import { Abracadabra } from 'abracadabra-cn'
-
-let Abra = new Abracadabra(); //不附带参数，
-
-Abra.Input(input,mode,key,q)
-
-let Result = Abra.Output() //获取输出
-```
-
-在调用 `Output()` 之前，你需要至少调用过一次 `Input()`，否则将会抛出错误。
-
-调用 `Output()` 将获得此前输入的处理结果，其返回类型可能是 `String` 或 `Uint8Array`，取决于对象实例化时指定了何种输出模式。
 
 ## 注意
 
 Abracadabra 还在积极开发中，这里是一些注意事项。
-
-### 平台兼容性
-
-你正在查阅 Abracabra 基于 JavaScript 的实现。
-
-此分支不存在平台兼容性问题。
-
-### 文件处理速度
-
-鱼与熊掌不可兼得，本算法由于需要频繁查表，故对大文件(>3MB)处理速度较低。
-
-本项目之目的并不是加密大文件，故不会采取积极措施优化大文件的处理速度。
 
 ### 密文污染
 
@@ -155,7 +64,11 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 但有些极其特殊的时候，例如你正在尝试加密日语和中文夹杂的文本/文件，此时有可能出现污染现象。
 
-如果出现污染现象，程序会立刻抛出错误并退出。你可以选择强制加密来解决此问题。
+如果出现污染现象，程序会立刻抛出错误并退出。
+
+对于 C++版本，你可以指定 `-f` 强制加密，也可以指定 `-g` 忽略检查并继续尝试解密(通常不会成功)。
+
+对于 JavaScript 版本，你可以选择强制加密来解决此问题。
 
 ## 加密细节
 
