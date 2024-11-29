@@ -6,29 +6,23 @@
 
 Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
 
-C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
-
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
 
 <a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
 <img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399">
 </a>
 
-**在线体验**: [**Github DEMO Page**](https://sheepchef.github.io/Abracadabra_demo/)
-
-**在线体验(国内直连)**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
+**在线体验**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
 
 **Demo页/浏览器插件仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
 
-**JavaScript 实现**: [**dev_node Branch**](https://github.com/SheepChef/Abracadabra/tree/dev_nodejs)
-
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
-你可以参照本 README 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
+你可以参照 [**部署指南**](DEPLOY.md) 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
+
+C++ 版本和 JavaScript 版本完全等效，密文可以互相交叉解密。
 
 ## 特性
-
-![动画](https://github.com/user-attachments/assets/7ec6e01c-230d-4d27-a0b1-80015307c5f4)
 
 - 方便，密文可以描述自身。
 - 简短，密文简短方便传播。
@@ -39,97 +33,30 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
 ## 快速使用
 
+请查阅 [**部署指南**](DEPLOY.md) 来了解详细使用方法。
+
+### C++
+
 前往 Release 页面下载构建，使用命令行调用程序。
 使用参数 `-h` 查看命令帮助。
 
-你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
+### JavaScript
 
-```
-边难全您事二起住协踵先铭碘个版赴沢月及务褔集咫氧檀银绮铭学叫涧于路以白盈种四通重都俟沥困栀裳间烯化所德即园湍
-```
-
-### ⌨️ CLI 使用须知
+使用 npm 下载 Abracadabra 库。
 
 ```shell
-PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v2.5.1***
-Usage: abracadabra_win_amd64 [OPTIONS] [DEFAULT]
-
-Positionals:
-  DEFAULT TEXT Excludes: -f -i
-                              Input text, if there is no given option besides.
-
-Options:
-  -h,--help                   Print this help message and exit
-  -e Excludes: -d             Force to encrypt.
-  -d Excludes: -e -q          Force to decrypt.
-  -q Excludes: -d             Skip appending encrypt marks.
-  -g                          Ignore any data checks.
-  -t                          Test/Debug mode, output more informations.
-  -f TEXT Excludes: DEFAULT -i
-                              Input an arbitrary given file.
-  -o TEXT                     Declare an output file to save the result.
-  -i TEXT Excludes: DEFAULT -f
-                              Input text, expected if -f is not used.
-  -k TEXT                     Key to encrypt, ABRACADABRA in default.
+npm install abracadabra-cn
 ```
 
-程序的输入和输出分离，输入可以是 `-i` 后跟一串字符串，也可以是 `-f` 后指定任意文件。 默认情况下结果输出在控制台，也可以 `-o` 后指定一个输出文件。
+然后，在项目中引入库文件
 
-**理论上本程序可以处理任何文件，解密显著慢于加密。**
-
-**处理 3MB 及以上文件时速度缓慢，加密用时呈指数增长，解密用时是加密的数倍。**
-
-你可以在 `-k` 后附带密钥来增加密文的安全性，安全性由多重因素保证，详情请见下方加密细节。
-
-如果你没有指定密钥，那么将使用默认密钥 `ABRACADABRA`，这会降低安全性。
-
-`-e` 强制加密给定数据，无视标志位检测结果。
-
-`-d` 强制解密给定数据，无视标志位检测结果。
-
-`-q` 可以跳过向密文增加标志位的步骤，增强隐蔽性，但解密时需要显式指定 `-d` 解密。
-
-`-t` 用于额外输出加/解密的中间步骤(Base64)结果，由此你可以查看密钥对转轮步骤的影响。
-
-`-g` 用于忽略解密过程中的数据合法性检查。
-
-如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
+```javascript
+import { Abracadabra } from "abracadabra-cn";
+```
 
 ## 注意
 
 Abracadabra 还在积极开发中，这里是一些注意事项。
-
-### 平台兼容性
-
-由于 Abracadabra 的功能涉及中文的输入和输出，在不同平台上，对不同编码的支持各不相同。
-
-项目在 Windows 11 和 Ubuntu 22.04 LTS 上通过了编译测试。
-
-在嵌入式平台(armv7a, armv8a)上通过了运行测试。
-
-### 文件处理速度
-
-鱼与熊掌不可兼得，本算法由于需要频繁查表，故对大文件(>3MB)处理速度较低。
-
-本项目之目的并不是加密大文件，故不会采取积极措施优化大文件的处理速度。
-
-### 编译与依赖
-
-如果你想自行编译 Abracadabra，请确保正确添加了以下依赖库：
-
-- [nlohmann/json](https://github.com/nlohmann/json) 用于 JSON 密本的解析
-- [cppcodec](https://github.com/tplgy/cppcodec) 用于 Base64 编解码
-- [CLI11](https://github.com/CLIUtils/CLI11) 用于解析命令行参数
-- [tiny-AES-c](https://github.com/kokke/tiny-AES-c) 用于 AES 加密
-- [PicoSHA2](https://github.com/okdshin/PicoSHA2) 用于计算哈希
-- [zlib](https://zlib.net/) 压缩支持库
-- [gzip-hpp](https://github.com/mapbox/gzip-hpp) 对 Gzip 压缩进行简单封装
-- [Unishox2](https://github.com/siara-cc/Unishox2/) 短文本压缩库
-
-另外，请确保您的环境中安装了 C++11 标准库。你需要提前编译 zlib 库并在编译时链接它。
-
-本项目并不复杂，推荐直接用指令调用 g++ 进行构建。如果您愿意，也可以尝试 CMake。
 
 ### 密文污染
 
@@ -139,7 +66,9 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 如果出现污染现象，程序会立刻抛出错误并退出。
 
-你可以指定 `-f` 强制加密，也可以指定 `-g` 忽略检查并继续尝试解密(通常不会成功)。
+对于 C++版本，你可以指定 `-f` 强制加密，也可以指定 `-g` 忽略检查并继续尝试解密(通常不会成功)。
+
+对于 JavaScript 版本，你可以选择强制加密来解决此问题。
 
 ## 加密细节
 
