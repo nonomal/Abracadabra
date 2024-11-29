@@ -16,27 +16,27 @@
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
 ![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
-</div>
-
-**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，基于 C++ 11。
-
-Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
-
-设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
-
-**在线体验**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
-
-**Demo页/浏览器插件仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
-
-Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
-
-你可以参照 [**部署指南**](DEPLOY.md) 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
-
-C++ 版本和 JavaScript 版本完全等效，密文可以互相交叉解密。
 
 <a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
-<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399" width="25%" height="25%">
+<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399" width="18%" height="18%">
 </a>
+
+</div>
+
+<div align=center>
+  
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有C++和JavaScript两个语言的实现
+
+设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息
+
+
+[**在线体验**](https://abracadabra-demo.pages.dev/) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram频道**](https://t.me/abracadabra_cn)
+
+请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目
+
+要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 
+
+</div>
 
 ## 特性
 
