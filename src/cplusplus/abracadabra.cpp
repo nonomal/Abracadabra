@@ -125,7 +125,7 @@ int main(int argc, char *argv[]){
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    CLI::App app{"***Abracadabra v2.5.1***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.5.2***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
