@@ -2,9 +2,10 @@
 abracadabra.exe
 main.exe
 node_modules
-package-lock.json
-package.json
 abracadabra_linux_amd64
 abracadabra_win_amd64.exe
 abracadabra_linux_armv7
 abracadabra_linux_armv8
+test.html
+dist
+demo.zip
