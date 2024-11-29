@@ -10,6 +10,10 @@ C++ 版本和 Node.js 版本完全等效，密文可以互相交叉解密。
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
 
+<a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
+<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399">
+</a>
+
 **在线体验**: [**Github DEMO Page**](https://sheepchef.github.io/Abracadabra_demo/)
 
 **在线体验(国内直连)**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
