@@ -1,16 +1,28 @@
 # Abracadabra：魔曰
 
+
+<div align=center>
+<img src="https://github.com/user-attachments/assets/4c6544fe-166b-4572-acd6-cd1d6d3b4ca0" width="20%" height="20%">
+</div>
+
+<div align=center>
+<h3>Abracadabra 魔曰</h3>
+</div>
+
+<div align=center>
+  
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![C++](https://img.shields.io/badge/lang-C%2B%2B-blue)
+![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
+![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
+![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
+</div>
 
 **Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，基于 C++ 11。
 
 Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
-
-<a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
-<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399">
-</a>
 
 **在线体验**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
 
@@ -22,7 +34,13 @@ Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
 C++ 版本和 JavaScript 版本完全等效，密文可以互相交叉解密。
 
+<a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
+<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399" width="25%" height="25%">
+</a>
+
 ## 特性
+
+![动画](https://github.com/user-attachments/assets/5e5eab85-461b-4dde-8aa6-2c985a2de5f1)
 
 - 方便，密文可以描述自身。
 - 简短，密文简短方便传播。
