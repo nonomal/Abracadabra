@@ -17,26 +17,21 @@
 ![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
-<a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
-<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399" width="18%" height="18%">
-</a>
-
 </div>
 
-<div align=center>
-  
 **Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有C++和JavaScript两个语言的实现
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息
 
-
-[**在线体验**](https://abracadabra-demo.pages.dev/) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram频道**](https://t.me/abracadabra_cn)
+[**在线体验**](https://abracadabra-demo.pages.dev/) || [**安装浏览器插件**](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram频道**](https://t.me/abracadabra_cn)
 
 请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目
 
 要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 
 
-</div>
+<a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
+<img src="https://github.com/user-attachments/assets/ee0397ba-f88d-4ed6-bb87-4474f3028931">
+</a>
 
 ## 特性
 
