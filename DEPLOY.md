@@ -1,6 +1,6 @@
 # 魔曰 部署指南
 
-这篇文档系统地介绍 Abracabra(魔曰)两个语言版本的部署指南。
+这篇文档系统地介绍 Abracadabra(魔曰)两个语言版本的部署指南。
 
 - [**C++**](#c-命令行)
 - [**JavaScript**](#javascript-npm-库)
