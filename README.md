@@ -27,7 +27,9 @@
 
 请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目
 
-要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 
+要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
+
+更多内容和本算法与同类产品的比较，请阅读[**博客文章**](https://shef.cc/2024/11/30/abracadabra/)
 
 <a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
 <img src="https://github.com/user-attachments/assets/ee0397ba-f88d-4ed6-bb87-4474f3028931">
