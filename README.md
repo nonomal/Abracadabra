@@ -11,7 +11,7 @@
 
 <div align=center>
   
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
 ![C++](https://img.shields.io/badge/lang-C%2B%2B-blue)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
 ![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
