@@ -12,7 +12,7 @@
 <div align=center>
   
 ![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
-![C++](https://img.shields.io/badge/lang-C%2B%2B-blue)
+![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
 ![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
