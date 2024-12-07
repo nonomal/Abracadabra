@@ -18,11 +18,11 @@
 
 </div>
 
-**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有 C++和 JavaScript 两个语言的实现
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有C++和JavaScript两个语言的实现
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息
 
-[**在线体验**](https://abracadabra-demo.pages.dev/) || [**安装浏览器插件**](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko) || [**Demo 页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram 频道**](https://t.me/abracadabra_cn)
+[**在线体验**](https://abracadabra-demo.pages.dev/) || [**安装浏览器插件**](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram频道**](https://t.me/abracadabra_cn)
 
 请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目
 
