@@ -7,5 +7,6 @@ abracadabra_win_amd64.exe
 abracadabra_linux_armv7
 abracadabra_linux_armv8
 test.html
+.prettierignore
 dist
 demo.zip
