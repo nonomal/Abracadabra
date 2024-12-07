@@ -1,3 +1,6 @@
+#define USX_HCODES_DFLT (const unsigned char[]) {0x00, 0x40, 0x80, 0xC0, 0xE0}
+#define USX_HCODE_LENS_DFLT (const unsigned char[]) {2, 2, 2, 3, 3}
+
 #include <iostream> //Basic Libs
 #include <fstream>
 
@@ -25,7 +28,6 @@
 #include <gzip/compress.hpp> //Compression Support
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
-#include <unishox2.h>
 #include <unishox2.c>
 
 using namespace std;
@@ -53,6 +55,17 @@ string NUMBERSYMBOL_ROUND_3 = "1234567890+=_-/?.>,<|`~!@#$%^&*(){}[];:";
 const string SIG_DECRYPT_JP = "桜込凪雫実沢";
 const string SIG_DECRYPT_CN = "玚俟玊欤瞐珏";
 const string NULL_STR = "孎"; //默认忽略的占位字符，一个生僻字。
+
+//搜索顺序
+static const char *CHINESE_WEBPAN_LIB[] = {"https://","lanzou","pan.quark.cn","pan.baidu.com","aliyundrive.com","123pan.com"};
+static const char *CHINESE_WEBSITE_LIB[] = {"https://","baidu.com","b23.tv","bilibili.com","weibo.com","weixin.qq.com"};
+static const char *INTER_WEBSITE_LIB[] = {"https://","google.com","youtube.com","x.com","twitter.com","telegra.ph"};
+static const char *JAPAN_WEBSITE_LIB[] = {"https://","pixiv.net","nicovideo.jp","dlsite.com","line.me","dmm.com"};
+static const char *PIRACY_WEBSITE_LIB[] = {"https://","nyaa.si","bangumi.moe","thepiratebay.org","e-hentai.org","exhentai.org"};
+static const char *GENERIC_TLINK_LIB[] = {"https://","magnet:?xt=urn:btih:","magnet:?xt=urn:sha1:","ed2k://","thunder://","torrent"};
+static const char *GENERIC_LINK_LIB_1[] = {"https://",".cn", ".com",".net", ".org", ".xyz"};
+static const char *GENERIC_LINK_LIB_2[] = {"https://",".info", ".moe", ".cc",".co", ".dev"};
+static const char *GENERIC_LINK_LIB_3[] = {"https://",".io", ".us", ".eu",".jp", ".de"};
 
 random_device rd;
 mt19937 generator(rd());
@@ -125,7 +138,7 @@ int main(int argc, char *argv[]){
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    CLI::App app{"***Abracadabra v2.5.2***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.6.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -713,8 +726,81 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
     string Datastr(Data.begin(),Data.end());
     const char* DataStrCharArray = Datastr.c_str();
     char* CompressedStrCharArray = new char[2048]; //此压缩法的上限是1kb, 额外1kb冗余
-
-    int CompressedStrCharLength = unishox2_compress_simple(DataStrCharArray ,Datastr.length(), CompressedStrCharArray);
+    unsigned int libmark = 255;
+    //搜索字符串。
+    for(int i=1;i<6;i++){
+        if(Datastr.find(CHINESE_WEBPAN_LIB[i]) != string::npos){
+            libmark = 254;
+            break;
+        }
+        if(Datastr.find(CHINESE_WEBSITE_LIB[i]) != string::npos){
+            libmark = 253;
+            break;
+        }
+        if(Datastr.find(INTER_WEBSITE_LIB[i]) != string::npos){
+            libmark = 252;
+            break;
+        }
+        if(Datastr.find(JAPAN_WEBSITE_LIB[i]) != string::npos){
+            libmark = 251;
+            break;
+        }
+        if(Datastr.find(PIRACY_WEBSITE_LIB[i]) != string::npos){
+            libmark = 250;
+            break;
+        }
+        if(Datastr.find(GENERIC_TLINK_LIB[i]) != string::npos){
+            libmark = 249;
+            break;
+        }
+        if(Datastr.find(GENERIC_LINK_LIB_1[i]) != string::npos){
+            libmark = 248;
+            break;
+        }
+        if(Datastr.find(GENERIC_LINK_LIB_2[i]) != string::npos){
+            libmark = 247;
+            break;
+        }
+        if(Datastr.find(GENERIC_LINK_LIB_3[i]) != string::npos){
+            libmark = 246;
+            break;
+        }
+    }
+    
+    int CompressedStrCharLength;
+    switch(libmark){
+        case 255:
+            CompressedStrCharLength = unishox2_compress_simple(DataStrCharArray ,Datastr.length(), CompressedStrCharArray);
+            break;
+        case 254:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBPAN_LIB,USX_TEMPLATES);
+            break;
+        case 253:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 252:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,INTER_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 251:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,JAPAN_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 250:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,PIRACY_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 249:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_TLINK_LIB,USX_TEMPLATES);
+            break;
+        case 248:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_LINK_LIB_1,USX_TEMPLATES);
+            break;
+        case 247:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_LINK_LIB_2,USX_TEMPLATES);
+            break;
+        case 246:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_LINK_LIB_3,USX_TEMPLATES);
+            break;
+    }
+    
     if(CompressedStrCharLength > (int)Datastr.length()){
         return Data;
     }
@@ -723,17 +809,19 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
     for(int i=0;i<CompressedStrCharLength;i++){
        DataOut.push_back(CompressedStrCharArray[i]); //把压缩之后的字节写进容器。
     }
-    DataOut.push_back(255);
-    DataOut.push_back(255); //两个标志位
+    DataOut.push_back(libmark);
+    DataOut.push_back(255); //2个标志位
     delete[] CompressedStrCharArray;
     return DataOut;
 }
 
 std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data){
-    if(Data.at(Data.size()-1) != 255 || 
-      Data.at(Data.size()-2) != 255){ //没查到标志位即表示没有压缩。
+    if(Data.at(Data.size()-1) != 255 ||
+      (Data.at(Data.size()-2) < 246 || Data.at(Data.size()-2) > 255)){ //没查到标志位即表示没有压缩。
         return Data;
     }
+    unsigned int libmark = Data.at(Data.size()-2);
+
     Data.pop_back();
     Data.pop_back();
 
@@ -741,7 +829,41 @@ std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data){
     const char* DataStrCharArray = Datastr.c_str();
     char* DecompressedStrCharArray = new char[2048]; //此压缩法的上限是1kb, 额外1kb冗余
 
-    int DecompressedStrCharLength = unishox2_decompress_simple(DataStrCharArray ,Datastr.length(), DecompressedStrCharArray);
+    
+    int DecompressedStrCharLength;
+    switch(libmark){
+        case 255:
+            DecompressedStrCharLength = unishox2_decompress_simple(DataStrCharArray ,Datastr.length(), DecompressedStrCharArray);
+            break;
+        case 254:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBPAN_LIB,USX_TEMPLATES);
+            break;
+        case 253:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 252:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,INTER_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 251:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,JAPAN_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 250:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,PIRACY_WEBSITE_LIB,USX_TEMPLATES);
+            break;
+        case 249:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_TLINK_LIB,USX_TEMPLATES);
+            break;
+        case 248:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_LINK_LIB_1,USX_TEMPLATES);
+            break;
+        case 247:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_LINK_LIB_2,USX_TEMPLATES);
+            break;
+        case 246:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,GENERIC_LINK_LIB_3,USX_TEMPLATES);
+            break;
+    }
+    
     std::vector<uint8_t> DataOut;
     DataOut.reserve(DecompressedStrCharLength);
     for(int i=0;i<DecompressedStrCharLength;i++){
