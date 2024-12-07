@@ -28,9 +28,7 @@
 #include <gzip/compress.hpp> //Compression Support
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
-//#include <unishox2.h>
 #include <unishox2.c>
-
 
 using namespace std;
 using json = nlohmann::json;
@@ -140,7 +138,7 @@ int main(int argc, char *argv[]){
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    CLI::App app{"***Abracadabra v2.5.2***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.6.0***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
