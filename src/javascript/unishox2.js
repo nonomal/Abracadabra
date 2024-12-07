@@ -1126,14 +1126,14 @@ export function unishox2_compress(
   }
 }
 
-export function unishox2_compress_simple(input, len, out) {
+export function unishox2_compress_simple(input, len, out, feq = USX_FREQ_SEQ_DFLT) {
   return unishox2_compress(
     input,
     len,
     out,
     USX_HCODES_DFLT,
     USX_HCODE_LENS_DFLT,
-    USX_FREQ_SEQ_DFLT,
+    feq,
     USX_TEMPLATES
   );
 }
@@ -1771,14 +1771,14 @@ export function unishox2_decompress(
   return out;
 }
 
-export function unishox2_decompress_simple(input, len) {
+export function unishox2_decompress_simple(input, len, feq = USX_FREQ_SEQ_DFLT) {
   return unishox2_decompress(
     input,
     len,
     null,
     USX_HCODES_DFLT,
     USX_HCODE_LENS_DFLT,
-    USX_FREQ_SEQ_DFLT,
+    feq,
     USX_TEMPLATES
   );
 }

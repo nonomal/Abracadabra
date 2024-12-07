@@ -11,19 +11,6 @@ var RoundFlip = 0; //标志现在到哪了
 var RoundControl = new Uint8Array(32); //一个数组，用密钥哈希来控制轮转的行为
 const Normal_Characters =
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+=_-/?.>,<|`~!@#$%^&*(){}[];:1234567890"; //表内有映射的所有字符组成的字符串
-/*const LETTERS = "abcdefghijklmnopqrstuvwxyz";
-var LETTERS_ROUND_1 = "abcdefghijklmnopqrstuvwxyz";
-var LETTERS_ROUND_2 = "tdgxnvyscmahlqwopjzeiurbfk"; //手动随机打乱的乱序轮
-var LETTERS_ROUND_3 = "abcdefghijklmnopqrstuvwxyz";
-
-
-var NUMBERS_ROUND_1 = "1234567890";
-var NUMBERS_ROUND_2 = "3709641852"; //手动随机打乱的乱序轮
-var NUMBERS_ROUND_3 = "1234567890";
-
-var SYMBOLS_ROUND_1 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";
-var SYMBOLS_ROUND_2 = "@,$\t~&<[%{`#:|/*(=]?\n+.;>} _)-!^"; //手动随机打乱的乱序轮
-var SYMBOLS_ROUND_3 = "+=_-/?.>,<|`~!@#$%^&*(){}[];: \n\t";*/
 const LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var LETTERS_ROUND_1 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var LETTERS_ROUND_2 = "FbPoDRStyJKAUcdahfVXlqwnOGpHZejzvmrBCigQILxkYMuWTEsN"; //手动随机打乱的乱序轮
@@ -39,6 +26,58 @@ var NUMBERSYMBOL_ROUND_3 = "1234567890+=_-/?.>,<|`~!@#$%^&*(){}[];:";
 const SIG_DECRYPT_JP = "桜込凪雫実沢";
 const SIG_DECRYPT_CN = "玚俟玊欤瞐珏";
 const NULL_STR = "孎"; //默认忽略的占位字符，一个生僻字。
+
+const CHINESE_WEBPAN_LIB = [
+  "https://",
+  "lanzou",
+  "pan.quark.cn",
+  "pan.baidu.com",
+  "aliyundrive.com",
+  "123pan.com",
+];
+const CHINESE_WEBSITE_LIB = [
+  "https://",
+  "baidu.com",
+  "b23.tv",
+  "bilibili.com",
+  "weibo.com",
+  "weixin.qq.com",
+];
+const INTER_WEBSITE_LIB = [
+  "https://",
+  "google.com",
+  "youtube.com",
+  "x.com",
+  "twitter.com",
+  "telegra.ph",
+];
+const JAPAN_WEBSITE_LIB = [
+  "https://",
+  "pixiv.net",
+  "nicovideo.jp",
+  "dlsite.com",
+  "line.me",
+  "dmm.com",
+];
+const PIRACY_WEBSITE_LIB = [
+  "https://",
+  "nyaa.si",
+  "bangumi.moe",
+  "thepiratebay.org",
+  "e-hentai.org",
+  "exhentai.org",
+];
+const GENERIC_TLINK_LIB = [
+  "https://",
+  "magnet:?xt=urn:btih:",
+  "magnet:?xt=urn:sha1:",
+  "ed2k://",
+  "thunder://",
+  "torrent",
+];
+const GENERIC_LINK_LIB_1 = ["https://", ".cn", ".com", ".net", ".org", ".xyz"];
+const GENERIC_LINK_LIB_2 = ["https://", ".info", ".moe", ".cc", ".co", ".dev"];
+const GENERIC_LINK_LIB_3 = ["https://", ".io", ".us", ".eu", ".jp", ".de"];
 
 const Map_Obj = JSON.parse(Map);
 
@@ -93,11 +132,130 @@ function GZIP_DECOMPRESS(Data) {
 
 function UNISHOX_COMPRESS(Data) {
   let CompressedStrCharArray = new Uint8Array(2048);
-  let Outlen = Unishox.unishox2_compress_simple(
-    Data,
-    Data.byteLength,
-    CompressedStrCharArray
-  );
+  let Datastr = Uint8ArrayTostring(Data);
+  let libmark = 255;
+
+  for (let i = 1; i < 6; i++) {
+    if (Datastr.indexOf(CHINESE_WEBPAN_LIB[i]) != -1) {
+      libmark = 254;
+      break;
+    }
+    if (Datastr.indexOf(CHINESE_WEBSITE_LIB[i]) != -1) {
+      libmark = 253;
+      break;
+    }
+    if (Datastr.indexOf(INTER_WEBSITE_LIB[i]) != -1) {
+      libmark = 252;
+      break;
+    }
+    if (Datastr.indexOf(JAPAN_WEBSITE_LIB[i]) != -1) {
+      libmark = 251;
+      break;
+    }
+    if (Datastr.indexOf(PIRACY_WEBSITE_LIB[i]) != -1) {
+      libmark = 250;
+      break;
+    }
+    if (Datastr.indexOf(GENERIC_TLINK_LIB[i]) != -1) {
+      libmark = 249;
+      break;
+    }
+    if (Datastr.indexOf(GENERIC_LINK_LIB_1[i]) != -1) {
+      libmark = 248;
+      break;
+    }
+    if (Datastr.indexOf(GENERIC_LINK_LIB_2[i]) != -1) {
+      libmark = 247;
+      break;
+    }
+    if (Datastr.indexOf(GENERIC_LINK_LIB_3[i]) != -1) {
+      libmark = 246;
+      break;
+    }
+  }
+  let Outlen;
+  switch (libmark) {
+    case 255:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray
+      );
+      break;
+    case 254:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        CHINESE_WEBPAN_LIB
+      );
+      break;
+    case 253:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        CHINESE_WEBSITE_LIB
+      );
+      break;
+    case 252:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        INTER_WEBSITE_LIB
+      );
+      break;
+    case 251:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        JAPAN_WEBSITE_LIB
+      );
+      break;
+    case 250:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        PIRACY_WEBSITE_LIB
+      );
+      break;
+    case 249:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        GENERIC_TLINK_LIB
+      );
+      break;
+    case 248:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        GENERIC_LINK_LIB_1
+      );
+      break;
+    case 247:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        GENERIC_LINK_LIB_2
+      );
+      break;
+    case 246:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        GENERIC_LINK_LIB_3
+      );
+      break;
+  }
+
   let ResStrCharArray = CompressedStrCharArray.subarray(0, Outlen);
   if (ResStrCharArray.byteLength >= Data.byteLength) {
     return Data;
@@ -105,7 +263,7 @@ function UNISHOX_COMPRESS(Data) {
 
   let TempArray = new Uint8Array(ResStrCharArray.byteLength + 2);
   TempArray.set(ResStrCharArray, 0);
-  TempArray.set([255, 255], ResStrCharArray.byteLength);
+  TempArray.set([libmark, 255], ResStrCharArray.byteLength);
   ResStrCharArray = TempArray;
 
   return ResStrCharArray;
@@ -114,21 +272,131 @@ function UNISHOX_DECOMPRESS(Data) {
   const lastElement = Data[Data.byteLength - 1];
   const secondLastElement = Data[Data.byteLength - 2];
 
-  if (lastElement != 255 || secondLastElement != 255) {
+  if (
+    lastElement != 255 ||
+    secondLastElement < 246 ||
+    secondLastElement > 255
+  ) {
     return Data;
   }
+  let libmark = secondLastElement;
   let NewData = Data.subarray(0, Data.byteLength - 2);
 
   let DecompressedStrCharArray = new Uint8Array(2048);
-  let Outlen = Unishox.unishox2_decompress(
-    NewData,
-    NewData.byteLength,
-    DecompressedStrCharArray,
-    Unishox.USX_HCODES_DFLT,
-    Unishox.USX_HCODE_LENS_DFLT,
-    Unishox.USX_FREQ_SEQ_DFLT,
-    Unishox.USX_TEMPLATES
-  );
+
+  let Outlen;
+  switch (libmark) {
+    case 255:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        Unishox.USX_FREQ_SEQ_DFLT,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 254:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        CHINESE_WEBPAN_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 253:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        CHINESE_WEBSITE_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 252:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        INTER_WEBSITE_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 251:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        JAPAN_WEBSITE_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 250:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        PIRACY_WEBSITE_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 249:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        GENERIC_TLINK_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 248:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        GENERIC_LINK_LIB_1,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 247:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        GENERIC_LINK_LIB_2,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 246:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        GENERIC_LINK_LIB_3,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+  }
   let ResStrCharArray = DecompressedStrCharArray.subarray(0, Outlen);
   return ResStrCharArray;
 }

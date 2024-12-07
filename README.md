@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，基于 C++ 11。
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，基于 JavaScript。
 
 Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
 
@@ -14,7 +14,7 @@ Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本�
 
 **在线体验**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
 
-**Demo页/浏览器插件仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
+**Demo 页/浏览器插件仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
 
 Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
 
