@@ -1,28 +1,43 @@
 # Abracadabra：魔曰
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，基于 C++ 11。
+<div align=center>
+<img src="https://github.com/user-attachments/assets/4c6544fe-166b-4572-acd6-cd1d6d3b4ca0" width="20%" height="20%">
+</div>
 
-Abracadabra 是表演魔术 (施魔法) 时所念的咒语，**魔曰** 是本项目的中文别名。
+<div align=center>
+<h3>Abracadabra 魔曰</h3>
+</div>
 
-设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息。
+<div align=center>
+  
+![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
+![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
+![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
+![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
+![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
+
+</div>
+
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有C++和JavaScript两个语言的实现
+
+设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息
+
+[**在线体验**](https://abracadabra-demo.pages.dev/) || [**安装浏览器插件**](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram频道**](https://t.me/abracadabra_cn)
+
+请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目
+
+要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
+
+更多内容和本算法与同类产品的比较，请阅读[**博客文章**](https://shef.cc/2024/11/30/abracadabra/)
 
 <a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
-<img src="https://github.com/user-attachments/assets/9d2a3518-eb92-4c52-9191-098d1abdd399">
+<img src="https://github.com/user-attachments/assets/ee0397ba-f88d-4ed6-bb87-4474f3028931">
 </a>
 
-**在线体验**: [**Cloudflare DEMO Page**](https://abracadabra-demo.pages.dev/)
-
-**Demo页/浏览器插件仓库**: [**Abracadabra-demo**](https://github.com/SheepChef/Abracadabra_demo)
-
-Telegram: [@abracadabra_cn](https://t.me/abracadabra_cn)
-
-你可以参照 [**部署指南**](DEPLOY.md) 快速开始使用本项目，也可以查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md) 来深入了解本项目。
-
-C++ 版本和 JavaScript 版本完全等效，密文可以互相交叉解密。
-
 ## 特性
+
+![动画](https://github.com/user-attachments/assets/5e5eab85-461b-4dde-8aa6-2c985a2de5f1)
 
 - 方便，密文可以描述自身。
 - 简短，密文简短方便传播。
