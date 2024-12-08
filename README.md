@@ -165,3 +165,7 @@ Abracadabra(等效密文，默认密钥):
 感谢 Unishox2 提供高效的短文本压缩方案。
 
 感谢贡献 PR 和参与测试的所有人。
+
+## Stargazers
+
+[![Stargazers over time](https://starchart.cc/SheepChef/Abracadabra.svg?variant=adaptive)](https://starchart.cc/SheepChef/Abracadabra)
