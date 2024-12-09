@@ -23,13 +23,15 @@
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息
 
-[**在线体验**](https://abracadabra-demo.pages.dev/) || [**安装浏览器插件**](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**Telegram频道**](https://t.me/abracadabra_cn)
+[**在线体验**](https://abracadabra-demo.pages.dev/) || [**安装浏览器插件**](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko) || [**Demo页/浏览器插件仓库**](https://github.com/SheepChef/Abracadabra_demo) || [**贡献压缩关键词**](https://forms.gle/BBD5McqU6Bws6hiw6) || [**Telegram频道**](https://t.me/abracadabra_cn)
 
-请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目
+请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目。
 
 要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
 
 更多内容和本算法与同类产品的比较，请阅读[**博客文章**](https://shef.cc/2024/11/30/abracadabra/)
+
+**你可以向魔曰贡献压缩关键词，点击上方链接来填写调查问卷。**
 
 <a href="https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko">
 <img src="https://github.com/user-attachments/assets/ee0397ba-f88d-4ed6-bb87-4474f3028931">
