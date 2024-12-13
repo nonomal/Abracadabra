@@ -25,7 +25,7 @@
 
 [<img src="https://img.shields.io/badge/前端源码仓库-9a10b5?style=for-the-badge" width="120" />](https://github.com/SheepChef/Abracadabra_demo)
 [<img src="https://img.shields.io/badge/贡献压缩字典-54ffac?style=for-the-badge" width="120" />](https://forms.gle/BBD5McqU6Bws6hiw6)
-[<img src="https://img.shields.io/badge/Telegram-0970ba?logo=telegram&style=for-the-badge&logoColor=ffffff" width="149.5" />](https://t.me/abracadabra_cn)
+[<img src="https://img.shields.io/badge/更新频道-0970ba?logo=telegram&style=for-the-badge&logoColor=ffffff" width="118" />](https://t.me/abracadabra_cn)
 
 </div>
 
