@@ -75,7 +75,9 @@ import { Abracadabra } from "abracadabra-cn";
 
 ### 浏览器插件
 
-本插件已上架 **Chrome WebStore** 和 **Edge 加载项** 。
+浏览器插件基于本项目的 JavaScript 实现。
+
+已上架 **Chrome WebStore** 和 **Edge 加载项** 。
 
 如果不方便访问 Chrome 插件商店，也可以访问 Edge 插件商店。
 
