@@ -1,6 +1,5 @@
 # Abracadabra 魔曰
 
-
 <div align=center>
 <img src="https://github.com/user-attachments/assets/4c6544fe-166b-4572-acd6-cd1d6d3b4ca0" width="20%" height="20%">
 </div>
@@ -21,9 +20,8 @@
 
 <div align=center>
 
-[<img src="https://img.shields.io/badge/%E7%AB%8B%E5%88%BB%E4%BD%BF%E7%94%A8-ffd91c?logo=cloudflarepages&style=for-the-badge&logoColor=000000" width="150"/>](https://abracadabra-demo.pages.dev/)
-[<img src="https://img.shields.io/badge/浏览器插件-8a54ff?logo=chromewebstore&style=for-the-badge&logoColor=ffffff" width="170" />](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko)
-
+[<img src="https://img.shields.io/badge/立刻使用-ffd91c?logo=cloudflarepages&style=for-the-badge&logoColor=000000" width="170"/>](https://abracadabra-demo.pages.dev/)
+[<img src="https://img.shields.io/badge/下载插件-8a54ff?logo=googlechrome&style=for-the-badge&logoColor=ffffff" width="170" />](#浏览器插件)
 
 [<img src="https://img.shields.io/badge/前端源码仓库-9a10b5?style=for-the-badge" width="120" />](https://github.com/SheepChef/Abracadabra_demo)
 [<img src="https://img.shields.io/badge/贡献压缩字典-54ffac?style=for-the-badge" width="120" />](https://forms.gle/BBD5McqU6Bws6hiw6)
@@ -31,7 +29,7 @@
 
 </div>
 
-**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有C++和JavaScript两个语言的实现
+**Abracadabra(魔曰)** 是一个文本即时加密/脱敏工具，也可用于加密文件，有 C++和 JavaScript 两个语言的实现
 
 设计它的初衷，是为了在中文互联网上公开合理地传输不安全的信息
 
@@ -74,6 +72,15 @@ npm install abracadabra-cn
 ```javascript
 import { Abracadabra } from "abracadabra-cn";
 ```
+
+### 浏览器插件
+
+本插件已上架 **Chrome WebStore** 和 **Edge 加载项** 。
+
+如果不方便访问 Chrome 插件商店，也可以访问 Edge 插件商店。
+
+[<img src="https://img.shields.io/badge/Chrome 商店-8a54ff?logo=chromewebstore&style=for-the-badge&logoColor=ffffff" width="171" />](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko)
+[<img src="https://img.shields.io/badge/MSEdge 商店-8a54ff?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMyAyMyI+CiAgICA8cGF0aCBmaWxsPSIjZjNmM2YzIiBkPSJNMCAwaDIzdjIzSDB6Ii8+CiAgICA8cGF0aCBmaWxsPSIjZjM1MzI1IiBkPSJNMSAxaDEwdjEwSDF6Ii8+CiAgICA8cGF0aCBmaWxsPSIjODFiYzA2IiBkPSJNMTIgMWgxMHYxMEgxMnoiLz4KICAgIDxwYXRoIGZpbGw9IiMwNWE2ZjAiIGQ9Ik0xIDEyaDEwdjEwSDF6Ii8+CiAgICA8cGF0aCBmaWxsPSIjZmZiYTA4IiBkPSJNMTIgMTJoMTB2MTBIMTJ6Ii8+Cjwvc3ZnPg==&style=for-the-badge&logoColor=ffffff" width="170" />](https://microsoftedge.microsoft.com/addons/detail/abracadabra-%E9%AD%94%E6%9B%B0/kfkmhdcahjblddpkkmnjeppmfmfoihkb)
 
 ## 注意
 
