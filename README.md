@@ -11,9 +11,11 @@
 <div align=center>
   
 ![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/SheepChef/Abracadabra?color=31b046)
 ![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
-![NPM Downloads](https://img.shields.io/npm/dy/abracadabra-cn?label=npm)
+
+![GitHub Release](https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=b33bb3)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
