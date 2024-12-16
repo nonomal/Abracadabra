@@ -35,6 +35,14 @@ const CHINESE_WEBPAN_LIB = [
   "aliyundrive.com",
   "123pan.com",
 ];
+const INTER_WEBPAN_LIB = [
+  "https://",
+  "mypikpak.com",
+  "mega.nz",
+  "drive.google.com",
+  "sharepoint.com",
+  "1drv.ms",
+];
 const CHINESE_WEBSITE_LIB = [
   "https://",
   "baidu.com",
@@ -129,7 +137,6 @@ function GZIP_DECOMPRESS(Data) {
     return Data;
   }
 }
-
 function UNISHOX_COMPRESS(Data) {
   let CompressedStrCharArray = new Uint8Array(2048);
   let Datastr = Uint8ArrayTostring(Data);
@@ -138,6 +145,10 @@ function UNISHOX_COMPRESS(Data) {
   for (let i = 1; i < 6; i++) {
     if (Datastr.indexOf(CHINESE_WEBPAN_LIB[i]) != -1) {
       libmark = 254;
+      break;
+    }
+    if (Datastr.indexOf(INTER_WEBPAN_LIB[i]) != -1) {
+      libmark = 245;
       break;
     }
     if (Datastr.indexOf(CHINESE_WEBSITE_LIB[i]) != -1) {
@@ -188,6 +199,14 @@ function UNISHOX_COMPRESS(Data) {
         Data.byteLength,
         CompressedStrCharArray,
         CHINESE_WEBPAN_LIB
+      );
+      break;
+    case 245:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        INTER_WEBPAN_LIB
       );
       break;
     case 253:
@@ -274,7 +293,7 @@ function UNISHOX_DECOMPRESS(Data) {
 
   if (
     lastElement != 255 ||
-    secondLastElement < 246 ||
+    secondLastElement < 245 ||
     secondLastElement > 255
   ) {
     return Data;
@@ -305,6 +324,17 @@ function UNISHOX_DECOMPRESS(Data) {
         Unishox.USX_HCODES_DFLT,
         Unishox.USX_HCODE_LENS_DFLT,
         CHINESE_WEBPAN_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 245:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        INTER_WEBPAN_LIB,
         Unishox.USX_TEMPLATES
       );
       break;
