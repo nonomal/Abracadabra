@@ -58,6 +58,7 @@ const string NULL_STR = "孎"; //默认忽略的占位字符，一个生僻字�
 
 //搜索顺序
 static const char *CHINESE_WEBPAN_LIB[] = {"https://","lanzou","pan.quark.cn","pan.baidu.com","aliyundrive.com","123pan.com"};
+static const char *INTER_WEBPAN_LIB[] = {"https://","mypikpak.com","mega.nz","drive.google.com","sharepoint.com","1drv.ms"};
 static const char *CHINESE_WEBSITE_LIB[] = {"https://","baidu.com","b23.tv","bilibili.com","weibo.com","weixin.qq.com"};
 static const char *INTER_WEBSITE_LIB[] = {"https://","google.com","youtube.com","x.com","twitter.com","telegra.ph"};
 static const char *JAPAN_WEBSITE_LIB[] = {"https://","pixiv.net","nicovideo.jp","dlsite.com","line.me","dmm.com"};
@@ -138,7 +139,7 @@ int main(int argc, char *argv[]){
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    CLI::App app{"***Abracadabra v2.6.0***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.6.1***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -733,6 +734,10 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
             libmark = 254;
             break;
         }
+        if(Datastr.find(INTER_WEBPAN_LIB[i]) != string::npos){
+            libmark = 245;
+            break;
+        }
         if(Datastr.find(CHINESE_WEBSITE_LIB[i]) != string::npos){
             libmark = 253;
             break;
@@ -774,6 +779,9 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
             break;
         case 254:
             CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBPAN_LIB,USX_TEMPLATES);
+            break;
+        case 245:
+            CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,INTER_WEBPAN_LIB,USX_TEMPLATES);
             break;
         case 253:
             CompressedStrCharLength = unishox2_compress(DataStrCharArray,Datastr.length(),CompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBSITE_LIB,USX_TEMPLATES);
@@ -817,7 +825,7 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
 
 std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data){
     if(Data.at(Data.size()-1) != 255 ||
-      (Data.at(Data.size()-2) < 246 || Data.at(Data.size()-2) > 255)){ //没查到标志位即表示没有压缩。
+      (Data.at(Data.size()-2) < 245 || Data.at(Data.size()-2) > 255)){ //没查到标志位即表示没有压缩。
         return Data;
     }
     unsigned int libmark = Data.at(Data.size()-2);
@@ -837,6 +845,9 @@ std::vector<uint8_t> UNISHOX_DECOMPRESS(std::vector<uint8_t> Data){
             break;
         case 254:
             DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBPAN_LIB,USX_TEMPLATES);
+            break;
+        case 245:
+            DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,INTER_WEBPAN_LIB,USX_TEMPLATES);
             break;
         case 253:
             DecompressedStrCharLength = unishox2_decompress(DataStrCharArray,Datastr.length(),DecompressedStrCharArray,USX_HCODES_DFLT,USX_HCODE_LENS_DFLT,CHINESE_WEBSITE_LIB,USX_TEMPLATES);
