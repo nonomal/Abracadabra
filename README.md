@@ -181,6 +181,6 @@ Abracadabra(等效密文，默认密钥):
 
 感谢贡献 PR 和参与测试的所有人。
 
-## Stargazers
+## Star History
 
-[![Stargazers over time](https://starchart.cc/SheepChef/Abracadabra.svg?variant=adaptive)](https://starchart.cc/SheepChef/Abracadabra)
+[![Star History Chart](https://api.star-history.com/svg?repos=SheepChef/Abracadabra&type=Date)](https://star-history.com/#SheepChef/Abracadabra&Date)
