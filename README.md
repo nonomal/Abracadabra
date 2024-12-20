@@ -83,7 +83,7 @@ import { Abracadabra } from "abracadabra-cn";
 
 如果不方便访问 Chrome 插件商店，也可以访问 Edge 插件商店。
 
-但Edge插件商店的上架审核速度十分缓慢，因此更新速度也更慢。
+但 Edge 插件商店的上架审核速度十分缓慢，因此更新速度也更慢。
 
 [<img src="https://img.shields.io/badge/Chrome 商店-8a54ff?logo=chromewebstore&style=for-the-badge&logoColor=ffffff" width="171" />](https://chrome.google.com/webstore/detail/jgmlgdoefnmlealmfmhjhnoiejaifpko)
 [<img src="https://img.shields.io/badge/MSEdge 商店-8a54ff?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMyAyMyI+CiAgICA8cGF0aCBmaWxsPSIjZjNmM2YzIiBkPSJNMCAwaDIzdjIzSDB6Ii8+CiAgICA8cGF0aCBmaWxsPSIjZjM1MzI1IiBkPSJNMSAxaDEwdjEwSDF6Ii8+CiAgICA8cGF0aCBmaWxsPSIjODFiYzA2IiBkPSJNMTIgMWgxMHYxMEgxMnoiLz4KICAgIDxwYXRoIGZpbGw9IiMwNWE2ZjAiIGQ9Ik0xIDEyaDEwdjEwSDF6Ii8+CiAgICA8cGF0aCBmaWxsPSIjZmZiYTA4IiBkPSJNMTIgMTJoMTB2MTBIMTJ6Ii8+Cjwvc3ZnPg==&style=for-the-badge&logoColor=ffffff" width="170" />](https://microsoftedge.microsoft.com/addons/detail/abracadabra-%E9%AD%94%E6%9B%B0/kfkmhdcahjblddpkkmnjeppmfmfoihkb)
@@ -150,19 +150,96 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 
 ## 功能比较
 
-| 特性         | Abracadabra       | 与熊论道        | 佛曰             | 兽音             | Whisperer       |
-| ------------ | ----------------- | --------------- | --------------- | --------------- | --------------- |
-| 易用性       | ✅ 傻瓜化         | ✅ 傻瓜化       | ✅ 傻瓜化       | ✅ 傻瓜化       | ✅ 傻瓜化       |
-| 加密方案     | ✅ 公开/安全      | ❌ 不公开/不安全 | ✅ 公开/安全    | 🟡 公开/不安全  | 🟡 公开/不安全   |
-| 加密地点     | ✅ 本地           | ❌ 服务器      | ✅ 本地          | ✅ 本地         | 🟡 依赖后端     |
-| 密文长度     | 🟡 较短           | 🟡 较短        | ❌ 冗长          | ❌ 冗长         | ✅ 短          |     
-| 密本构成     | ✅ 常见字         | 🟡 生僻字       | 🟡 生僻字        | ❌ 无密本       | ✅ 常见字      |
-| 密文随机     | ✅ 强随机性       | ❌ 无随机性     | ✅ 强随机性      | ❌ 无随机性     | 🟡 弱随机性     |
-| 密文特征     | ✅ 较难识别       | ❌ 容易识别     | ❌ 容易识别      | ❌ 容易识别     | ✅ 较难识别     |
-| 加解密自动   | ✅ 全自动         | ❌ 手动         | ❌ 手动         | ❌ 手动         | ❌ 手动         |
-| 错误校验     | ✅ 校验位         | ❌ 无校验       | ❌ 无校验       | ❌ 无校验        | ❌ 无校验      |
-| 自部署       | ✅ 简单          | ❌ 不可自部署    | 🟡 无文档       | ✅ 简单         | 🟡 无文档       |
-| 开源         | ✅ 开源          | ❌ 不开源       | ❌ 不开源       | ✅ 开源         | ✅ 开源         |
+<table width="450px">
+<tr>
+<th>特性</th>
+<th align=center>Abracadabra</th>
+<th align=center>与熊论道</th>
+<th align=center>佛曰</th>
+<th align=center>兽音</th>
+<th align=center>Whisperer</th>
+</tr>
+<tr>
+<td>开源</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+</tr>
+<tr>
+<td>易用</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+</tr>
+<tr>
+<td>加密</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+</tr>
+<tr>
+<td>本地运行</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+<td align=center>✅</td>
+</tr>
+<tr>
+<td>短密文</td>
+<td align=center>🟡</td>
+<td align=center>🟡</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+</tr>
+<tr>
+<td>随机性</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>🟡</td>
+</tr>
+<tr>
+<td>抗识别</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+</tr>
+<tr>
+<td>自判断</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+</tr>
+<tr>
+<td>自校验</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+</tr>
+<tr>
+<td>易部署</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+<td align=center>✅</td>
+<td align=center>🟡</td>
+</tr>
+</table>
 
 ## 鸣谢
 
