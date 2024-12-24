@@ -426,7 +426,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
-        if(temp == NULL_STR){ //如果这是空字符
+        if(temp == NULL_STR || temp == " " || temp == "\n" || temp == "\t"){ //如果这是空字符
             i+=cplen; 
             continue;
         }else{//如果不是
