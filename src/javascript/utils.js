@@ -743,7 +743,7 @@ export function deMap(input, key) {
   let size = OriginStr.length;
   for (let i = 0; i < size; i++) {
     temp = OriginStr[i];
-    if (temp == NULL_STR) {
+    if (temp == NULL_STR || temp == " " || temp == "\n" || temp == "\t") {
       //如果这是空字符
       continue;
     } else {
