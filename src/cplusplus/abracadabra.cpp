@@ -87,6 +87,8 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t);
 string FindOriginText(string& letter);
 string GetCryptedText(string& letter);
 int GetRandomIndex(int length);
+int GetLuhnBit(vector<uint8_t>& data);
+bool CheckLuhnBit(vector<uint8_t> data);
 std::vector<uint8_t> readFile(const char* filename);
 PreCheckResult preCheck(vector<uint8_t> Input);
 void rotateString(std::string& str,int n);
@@ -139,7 +141,7 @@ int main(int argc, char *argv[]){
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    CLI::App app{"***Abracadabra v2.6.1***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.6.5***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -322,9 +324,7 @@ string enMap(PreCheckResult input,string key,bool t,bool q){
     vector<uint8_t> OriginalData = input.output;
     string TempS(input.output.begin(),input.output.end());
 
-    OriginalData.push_back(2); //在末尾加入三个字节的标志位 222
-    OriginalData.push_back(2);
-    OriginalData.push_back(2);
+    OriginalData.push_back(GetLuhnBit(OriginalData)); //获取校验码并压进去。
     
     std::array<int, 2> RandomByte {
         //取两个随机数作为初始化向量的随机性
@@ -426,7 +426,7 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
 
         //到这儿循环的取字部分就完成了
         //temp是前一个字，temp2是后一个字
-        if(temp == NULL_STR){ //如果这是空字符
+        if(temp == NULL_STR || temp == " " || temp == "\n" || temp == "\t"){ //如果这是空字符
             i+=cplen; 
             continue;
         }else{//如果不是
@@ -497,18 +497,21 @@ DemapResult deMap(PreCheckResult input,string key,bool g,bool t){
         }
     }
     delete[] RandomByte;
-
-   if(TempStr2Int.at(TempStr2Int.size()-1) == 2 && 
-      TempStr2Int.at(TempStr2Int.size()-2) == 2 && 
-      TempStr2Int.at(TempStr2Int.size()-3) == 2){
-        TempStr2Int.pop_back();
-        TempStr2Int.pop_back();
-        TempStr2Int.pop_back();
-   }else{
-        if(!g){
-            cout<<"Error Decrypting. Incorrect key."<<endl;
-            throw;
+    if(!CheckLuhnBit(TempStr2Int)){ //如果检查LuhnBit出了问题
+        if(TempStr2Int.at(TempStr2Int.size()-1) == 2 && 
+            TempStr2Int.at(TempStr2Int.size()-2) == 2 && 
+            TempStr2Int.at(TempStr2Int.size()-3) == 2){ //兼容性，检查旧版本的校验码
+                TempStr2Int.pop_back();
+                TempStr2Int.pop_back();
+                TempStr2Int.pop_back();
+        }else{ //如果仍然不行，丢错误出去
+                if(!g){
+                    cout<<"Error Decrypting. Checksum Mismatch."<<endl;
+                    throw;
+                }
         }
+   }else{
+    TempStr2Int.pop_back(); //删掉校验码
    }
     //到此，TempStr2Int 就是解密的结果，形式为字节码。
     DemapResult Res;
@@ -699,6 +702,48 @@ void AES_256_CTR(string& key,vector<uint8_t>& data, const int* randomByte) { //�
 
     AES_init_ctx_iv(&ctx,KeyHash.data(),iv.data());
     AES_CTR_xcrypt_buffer(&ctx, data.data(), data.size());
+}
+
+int GetLuhnBit(vector<uint8_t>& data){ //计算数据的卢恩校验码
+    vector<unsigned int> Digit;
+    unsigned int num,digit;
+    for(unsigned int i = 0;i<data.size();i++){ //一重循环
+        num = data[i]; //取字节。
+        while(num > 0){ //取字节值的每一位数字
+            digit = num % 10; // 取得最低位数
+            Digit.push_back(digit);
+            num /= 10; //除去十
+        }
+    }
+
+    // Digit应当是一个数位构成的数组。
+    int sum = 0;
+    int Check;
+    for(unsigned int i = 0;i<Digit.size();i++){
+        if( i % 2 != 0){ //从0开始的奇数位
+         Digit[i] = Digit[i]*2; //奇数位乘二 , 最大18
+         if(Digit[i] >= 10){ //如果大于等于十
+            Digit[i] = (Digit[i] % 10) + (Digit[i] / 10); //计算数字之和
+         }
+        }
+        sum += (int)Digit[i];
+    }
+
+    Check = 10 - (sum % 10);
+
+    return Check;
+}
+
+bool CheckLuhnBit(vector<uint8_t> data){ //检查数据的卢恩校验码
+    int DCheck = (int)data.at(data.size()-1);
+    data.pop_back();
+    int Check = GetLuhnBit(data);
+    
+    if(Check == DCheck){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 std::vector<uint8_t> GZIP_COMPRESS(std::vector<uint8_t> Data){
