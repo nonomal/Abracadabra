@@ -431,6 +431,48 @@ function UNISHOX_DECOMPRESS(Data) {
   return ResStrCharArray;
 }
 
+function GetLuhnBit(Data) {
+  let Digit = new Array();
+  let num, digit;
+  for (let i = 0; i < Data.byteLength; i++) {
+    num = Data[i];
+    while (num > 0) {
+      digit = num % 10;
+      Digit.push(digit);
+      num = Math.floor(num / 10);
+    }
+  }
+
+  // Digit应当是一个数位构成的数组。
+  let sum = 0;
+  let Check = 0;
+
+  for (let i = 0; i < Digit.length; i++) {
+    if (i % 2 != 0) {
+      Digit[i] = Digit[i] * 2;
+      if (Digit[i] >= 10) {
+        Digit[i] = (Digit[i] % 10) + Math.floor(Digit[i] / 10); //计算数字之和
+      }
+    }
+    sum = sum + Digit[i];
+  }
+
+  Check = 10 - (sum % 10);
+
+  return Check;
+}
+
+function CheckLuhnBit(Data) {
+  let DCheck = Data[Data.byteLength - 1];
+  let Check = GetLuhnBit(Data.subarray(0, byteLength - 1));
+
+  if (Check == DCheck) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // 将WordArray转换为Uint8Array
 function wordArrayToUint8Array(data) {
   const dataArray = new Uint8Array(data.sigBytes);
@@ -640,7 +682,9 @@ export function enMap(input, key, q) {
 
   let TempArray = new Uint8Array(OriginalData.byteLength + 3);
   TempArray.set(OriginalData, 0);
-  TempArray.set([2, 2, 2], OriginalData.byteLength);
+
+  TempArray.set([GetLuhnBit(OriginalData)], OriginalData.byteLength);
+
   OriginalData = TempArray;
 
   if (OriginalData.byteLength <= 1024) {
@@ -790,14 +834,18 @@ export function deMap(input, key) {
     throw "Error Decoding. Bad Input or Incorrect Key.";
   }
 
-  if (
-    TempStr2Int.at(TempStr2Int.byteLength - 1) == 2 &&
-    TempStr2Int.at(TempStr2Int.byteLength - 2) == 2 &&
-    TempStr2Int.at(TempStr2Int.byteLength - 3) == 2
-  ) {
-    TempStr2Int = TempStr2Int.subarray(0, TempStr2Int.byteLength - 3);
+  if (!CheckLuhnBit(TempStr2Int)) {
+    if (
+      TempStr2Int.at(TempStr2Int.byteLength - 1) == 2 &&
+      TempStr2Int.at(TempStr2Int.byteLength - 2) == 2 &&
+      TempStr2Int.at(TempStr2Int.byteLength - 3) == 2
+    ) {
+      TempStr2Int = TempStr2Int.subarray(0, TempStr2Int.byteLength - 3);
+    } else {
+      throw "Error Decrypting. Checksum Mismatch.";
+    }
   } else {
-    throw "Error Decrypting. Incorrect key.";
+    TempStr2Int = TempStr2Int.subarray(0, TempStr2Int.byteLength - 1);
   }
 
   //到此，TempStr2Int 就是解密的结果，形式为字节码。
