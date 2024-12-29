@@ -464,7 +464,7 @@ function GetLuhnBit(Data) {
 
 function CheckLuhnBit(Data) {
   let DCheck = Data[Data.byteLength - 1];
-  let Check = GetLuhnBit(Data.subarray(0, byteLength - 1));
+  let Check = GetLuhnBit(Data.subarray(0, Data.byteLength - 1));
 
   if (Check == DCheck) {
     return true;
@@ -680,7 +680,7 @@ export function enMap(input, key, q) {
   let TempS;
   TempS = Uint8ArrayTostring(OriginalData);
 
-  let TempArray = new Uint8Array(OriginalData.byteLength + 3);
+  let TempArray = new Uint8Array(OriginalData.byteLength + 1);
   TempArray.set(OriginalData, 0);
 
   TempArray.set([GetLuhnBit(OriginalData)], OriginalData.byteLength);
