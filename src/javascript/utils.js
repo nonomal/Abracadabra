@@ -825,6 +825,9 @@ export function deMap(input, key) {
   //到这儿应该能还原出AES加密之后的Base64 TempStr1
   let TempStr2Int = new Uint8Array();
   let RandomBytes = new Array(2);
+  if (!Base64.isValid(TempStr1)) {
+    throw "Error Decoding. Bad Input or Incorrect Key.";
+  }
   try {
     TempStr2Int = Base64.toUint8Array(TempStr1);
     RandomBytes[1] = TempStr2Int.at(TempStr2Int.byteLength - 1);
