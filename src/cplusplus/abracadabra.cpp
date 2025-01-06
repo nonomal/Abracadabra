@@ -799,21 +799,25 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
             libmark = 250;
             break;
         }
-        if(Datastr.find(GENERIC_TLINK_LIB[i]) != string::npos){
-            libmark = 249;
-            break;
-        }
-        if(Datastr.find(GENERIC_LINK_LIB_1[i]) != string::npos){
-            libmark = 248;
-            break;
-        }
-        if(Datastr.find(GENERIC_LINK_LIB_2[i]) != string::npos){
-            libmark = 247;
-            break;
-        }
-        if(Datastr.find(GENERIC_LINK_LIB_3[i]) != string::npos){
-            libmark = 246;
-            break;
+    }
+    if(libmark == 255){
+        for(int i=1;i<6;i++){
+            if(Datastr.find(GENERIC_TLINK_LIB[i]) != string::npos){
+                libmark = 249;
+                break;
+            }
+            if(Datastr.find(GENERIC_LINK_LIB_1[i]) != string::npos){
+                libmark = 248;
+                break;
+            }
+            if(Datastr.find(GENERIC_LINK_LIB_2[i]) != string::npos){
+                libmark = 247;
+                break;
+            }
+            if(Datastr.find(GENERIC_LINK_LIB_3[i]) != string::npos){
+                libmark = 246;
+                break;
+            }
         }
     }
     
