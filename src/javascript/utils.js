@@ -151,21 +151,25 @@ function UNISHOX_COMPRESS(Data) {
       libmark = 245;
       break;
     }
-    if (Datastr.indexOf(CHINESE_WEBSITE_LIB[i]) != -1) {
-      libmark = 253;
-      break;
-    }
-    if (Datastr.indexOf(INTER_WEBSITE_LIB[i]) != -1) {
-      libmark = 252;
-      break;
-    }
-    if (Datastr.indexOf(JAPAN_WEBSITE_LIB[i]) != -1) {
-      libmark = 251;
-      break;
-    }
-    if (Datastr.indexOf(PIRACY_WEBSITE_LIB[i]) != -1) {
-      libmark = 250;
-      break;
+  }
+  if (libmark == 255) {
+    for (let i = 1; i < 6; i++) {
+      if (Datastr.indexOf(CHINESE_WEBSITE_LIB[i]) != -1) {
+        libmark = 253;
+        break;
+      }
+      if (Datastr.indexOf(INTER_WEBSITE_LIB[i]) != -1) {
+        libmark = 252;
+        break;
+      }
+      if (Datastr.indexOf(JAPAN_WEBSITE_LIB[i]) != -1) {
+        libmark = 251;
+        break;
+      }
+      if (Datastr.indexOf(PIRACY_WEBSITE_LIB[i]) != -1) {
+        libmark = 250;
+        break;
+      }
     }
   }
   if (libmark == 255) {
