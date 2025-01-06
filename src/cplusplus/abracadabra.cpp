@@ -783,21 +783,25 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
             libmark = 245;
             break;
         }
-        if(Datastr.find(CHINESE_WEBSITE_LIB[i]) != string::npos){
-            libmark = 253;
-            break;
-        }
-        if(Datastr.find(INTER_WEBSITE_LIB[i]) != string::npos){
-            libmark = 252;
-            break;
-        }
-        if(Datastr.find(JAPAN_WEBSITE_LIB[i]) != string::npos){
-            libmark = 251;
-            break;
-        }
-        if(Datastr.find(PIRACY_WEBSITE_LIB[i]) != string::npos){
-            libmark = 250;
-            break;
+    }
+    if(libmark == 255){
+        for(int i=1;i<6;i++){
+            if(Datastr.find(CHINESE_WEBSITE_LIB[i]) != string::npos){
+                libmark = 253;
+                break;
+            }
+            if(Datastr.find(INTER_WEBSITE_LIB[i]) != string::npos){
+                libmark = 252;
+                break;
+            }
+            if(Datastr.find(JAPAN_WEBSITE_LIB[i]) != string::npos){
+                libmark = 251;
+                break;
+            }
+            if(Datastr.find(PIRACY_WEBSITE_LIB[i]) != string::npos){
+                libmark = 250;
+                break;
+            }
         }
     }
     if(libmark == 255){
