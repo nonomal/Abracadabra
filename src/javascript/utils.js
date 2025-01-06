@@ -167,23 +167,28 @@ function UNISHOX_COMPRESS(Data) {
       libmark = 250;
       break;
     }
-    if (Datastr.indexOf(GENERIC_TLINK_LIB[i]) != -1) {
-      libmark = 249;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_LINK_LIB_1[i]) != -1) {
-      libmark = 248;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_LINK_LIB_2[i]) != -1) {
-      libmark = 247;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_LINK_LIB_3[i]) != -1) {
-      libmark = 246;
-      break;
+  }
+  if (libmark == 255) {
+    for (let i = 1; i < 6; i++) {
+      if (Datastr.indexOf(GENERIC_TLINK_LIB[i]) != -1) {
+        libmark = 249;
+        break;
+      }
+      if (Datastr.indexOf(GENERIC_LINK_LIB_1[i]) != -1) {
+        libmark = 248;
+        break;
+      }
+      if (Datastr.indexOf(GENERIC_LINK_LIB_2[i]) != -1) {
+        libmark = 247;
+        break;
+      }
+      if (Datastr.indexOf(GENERIC_LINK_LIB_3[i]) != -1) {
+        libmark = 246;
+        break;
+      }
     }
   }
+
   let Outlen;
   switch (libmark) {
     case 255:
