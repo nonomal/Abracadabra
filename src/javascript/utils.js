@@ -151,39 +151,48 @@ function UNISHOX_COMPRESS(Data) {
       libmark = 245;
       break;
     }
-    if (Datastr.indexOf(CHINESE_WEBSITE_LIB[i]) != -1) {
-      libmark = 253;
-      break;
-    }
-    if (Datastr.indexOf(INTER_WEBSITE_LIB[i]) != -1) {
-      libmark = 252;
-      break;
-    }
-    if (Datastr.indexOf(JAPAN_WEBSITE_LIB[i]) != -1) {
-      libmark = 251;
-      break;
-    }
-    if (Datastr.indexOf(PIRACY_WEBSITE_LIB[i]) != -1) {
-      libmark = 250;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_TLINK_LIB[i]) != -1) {
-      libmark = 249;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_LINK_LIB_1[i]) != -1) {
-      libmark = 248;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_LINK_LIB_2[i]) != -1) {
-      libmark = 247;
-      break;
-    }
-    if (Datastr.indexOf(GENERIC_LINK_LIB_3[i]) != -1) {
-      libmark = 246;
-      break;
+  }
+  if (libmark == 255) {
+    for (let i = 1; i < 6; i++) {
+      if (Datastr.indexOf(CHINESE_WEBSITE_LIB[i]) != -1) {
+        libmark = 253;
+        break;
+      }
+      if (Datastr.indexOf(INTER_WEBSITE_LIB[i]) != -1) {
+        libmark = 252;
+        break;
+      }
+      if (Datastr.indexOf(JAPAN_WEBSITE_LIB[i]) != -1) {
+        libmark = 251;
+        break;
+      }
+      if (Datastr.indexOf(PIRACY_WEBSITE_LIB[i]) != -1) {
+        libmark = 250;
+        break;
+      }
     }
   }
+  if (libmark == 255) {
+    for (let i = 1; i < 6; i++) {
+      if (Datastr.indexOf(GENERIC_TLINK_LIB[i]) != -1) {
+        libmark = 249;
+        break;
+      }
+      if (Datastr.indexOf(GENERIC_LINK_LIB_1[i]) != -1) {
+        libmark = 248;
+        break;
+      }
+      if (Datastr.indexOf(GENERIC_LINK_LIB_2[i]) != -1) {
+        libmark = 247;
+        break;
+      }
+      if (Datastr.indexOf(GENERIC_LINK_LIB_3[i]) != -1) {
+        libmark = 246;
+        break;
+      }
+    }
+  }
+
   let Outlen;
   switch (libmark) {
     case 255:
@@ -820,6 +829,9 @@ export function deMap(input, key) {
   //到这儿应该能还原出AES加密之后的Base64 TempStr1
   let TempStr2Int = new Uint8Array();
   let RandomBytes = new Array(2);
+  if (!Base64.isValid(TempStr1)) {
+    throw "Error Decoding. Bad Input or Incorrect Key.";
+  }
   try {
     TempStr2Int = Base64.toUint8Array(TempStr1);
     RandomBytes[1] = TempStr2Int.at(TempStr2Int.byteLength - 1);
