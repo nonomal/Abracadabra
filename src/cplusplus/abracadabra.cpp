@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    CLI::App app{"***Abracadabra v2.6.5***"}; //CLI11提供的命令行参数解析
+    CLI::App app{"***Abracadabra v2.6.6***"}; //CLI11提供的命令行参数解析
 
     string arg1 = "";
     PreCheckResult input;
@@ -783,37 +783,45 @@ std::vector<uint8_t> UNISHOX_COMPRESS(std::vector<uint8_t> Data){
             libmark = 245;
             break;
         }
-        if(Datastr.find(CHINESE_WEBSITE_LIB[i]) != string::npos){
-            libmark = 253;
-            break;
+    }
+    if(libmark == 255){
+        for(int i=1;i<6;i++){
+            if(Datastr.find(CHINESE_WEBSITE_LIB[i]) != string::npos){
+                libmark = 253;
+                break;
+            }
+            if(Datastr.find(INTER_WEBSITE_LIB[i]) != string::npos){
+                libmark = 252;
+                break;
+            }
+            if(Datastr.find(JAPAN_WEBSITE_LIB[i]) != string::npos){
+                libmark = 251;
+                break;
+            }
+            if(Datastr.find(PIRACY_WEBSITE_LIB[i]) != string::npos){
+                libmark = 250;
+                break;
+            }
         }
-        if(Datastr.find(INTER_WEBSITE_LIB[i]) != string::npos){
-            libmark = 252;
-            break;
-        }
-        if(Datastr.find(JAPAN_WEBSITE_LIB[i]) != string::npos){
-            libmark = 251;
-            break;
-        }
-        if(Datastr.find(PIRACY_WEBSITE_LIB[i]) != string::npos){
-            libmark = 250;
-            break;
-        }
-        if(Datastr.find(GENERIC_TLINK_LIB[i]) != string::npos){
-            libmark = 249;
-            break;
-        }
-        if(Datastr.find(GENERIC_LINK_LIB_1[i]) != string::npos){
-            libmark = 248;
-            break;
-        }
-        if(Datastr.find(GENERIC_LINK_LIB_2[i]) != string::npos){
-            libmark = 247;
-            break;
-        }
-        if(Datastr.find(GENERIC_LINK_LIB_3[i]) != string::npos){
-            libmark = 246;
-            break;
+    }
+    if(libmark == 255){
+        for(int i=1;i<6;i++){
+            if(Datastr.find(GENERIC_TLINK_LIB[i]) != string::npos){
+                libmark = 249;
+                break;
+            }
+            if(Datastr.find(GENERIC_LINK_LIB_1[i]) != string::npos){
+                libmark = 248;
+                break;
+            }
+            if(Datastr.find(GENERIC_LINK_LIB_2[i]) != string::npos){
+                libmark = 247;
+                break;
+            }
+            if(Datastr.find(GENERIC_LINK_LIB_3[i]) != string::npos){
+                libmark = 246;
+                break;
+            }
         }
     }
     
