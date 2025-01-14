@@ -35,11 +35,11 @@
 
 由此使用户内容不易被自动过滤识别，减低封删率，增加审核成本。
 
-请阅读 [**部署指南**](DEPLOY.md) 快速开始使用本项目。
+请查阅 [**部署指南**](DEPLOY.md) 快速开始使用本项目。
 
-要深入了解本项目，请查阅 [**深入细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
+要深入了解本项目的设计思路，内部机制和最佳实践，请查阅 [**细节和使用指南**](https://github.com/SheepChef/Abracadabra/blob/main/USAGE.md)
 
-更多内容和本算法与同类产品的比较，请阅读 [**博客文章**](https://shef.cc/2024/11/30/abracadabra/)
+更多延申内容，例如本算法与同类产品的比较，请查阅 [**博客文章**](https://shef.cc/2024/11/30/abracadabra/)
 
 ## 特性
 
