@@ -455,9 +455,9 @@ const USX_NIB_HEX_LOWER = 1;
 const USX_NIB_HEX_UPPER = 2;
 const USX_NIB_NOT = 3;
 function getNibbleType(ch) {
-  if (ch >= 48 && ch <= 57) return USX_NIB_NUM;
+  /*if (ch >= 48 && ch <= 57) return USX_NIB_NUM;
   else if (ch >= 97 && ch <= 102) return USX_NIB_HEX_LOWER;
-  else if (ch >= 65 && ch <= 70) return USX_NIB_HEX_UPPER;
+  else if (ch >= 65 && ch <= 70) return USX_NIB_HEX_UPPER;*/
   return USX_NIB_NOT;
 }
 
@@ -1126,7 +1126,12 @@ export function unishox2_compress(
   }
 }
 
-export function unishox2_compress_simple(input, len, out, feq = USX_FREQ_SEQ_DFLT) {
+export function unishox2_compress_simple(
+  input,
+  len,
+  out,
+  feq = USX_FREQ_SEQ_DFLT
+) {
   return unishox2_compress(
     input,
     len,
@@ -1771,7 +1776,11 @@ export function unishox2_decompress(
   return out;
 }
 
-export function unishox2_decompress_simple(input, len, feq = USX_FREQ_SEQ_DFLT) {
+export function unishox2_decompress_simple(
+  input,
+  len,
+  feq = USX_FREQ_SEQ_DFLT
+) {
   return unishox2_decompress(
     input,
     len,
