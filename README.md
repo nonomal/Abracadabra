@@ -193,7 +193,7 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 </tr>
 <tr>
 <td>短密文</td>
-<td align=center>🟡</td>
+<td align=center>✅</td>
 <td align=center>🟡</td>
 <td align=center>❌</td>
 <td align=center>❌</td>
