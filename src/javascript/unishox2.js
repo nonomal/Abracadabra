@@ -17,6 +17,14 @@
  *
  */
 
+/*
+ * This file contains modified code from Unishox2.
+ * Original copyright (C) 2020 Siara Logics (cc)
+ * Modifications made:
+ * - Disabled the function "getNibbleType".
+ * - Other minor fixes.
+ */
+
 export var USX_HCODES_DFLT = new Uint8Array([0x00, 0x40, 0x80, 0xc0, 0xe0]);
 export var USX_HCODE_LENS_DFLT = new Uint8Array([2, 2, 2, 3, 3]);
 export var USX_FREQ_SEQ_DFLT = ['": "', '": ', "</", '="', '":"', "://"];
@@ -455,9 +463,9 @@ const USX_NIB_HEX_LOWER = 1;
 const USX_NIB_HEX_UPPER = 2;
 const USX_NIB_NOT = 3;
 function getNibbleType(ch) {
-  if (ch >= 48 && ch <= 57) return USX_NIB_NUM;
+  /*if (ch >= 48 && ch <= 57) return USX_NIB_NUM;
   else if (ch >= 97 && ch <= 102) return USX_NIB_HEX_LOWER;
-  else if (ch >= 65 && ch <= 70) return USX_NIB_HEX_UPPER;
+  else if (ch >= 65 && ch <= 70) return USX_NIB_HEX_UPPER;*/
   return USX_NIB_NOT;
 }
 
@@ -1126,7 +1134,12 @@ export function unishox2_compress(
   }
 }
 
-export function unishox2_compress_simple(input, len, out, feq = USX_FREQ_SEQ_DFLT) {
+export function unishox2_compress_simple(
+  input,
+  len,
+  out,
+  feq = USX_FREQ_SEQ_DFLT
+) {
   return unishox2_compress(
     input,
     len,
@@ -1771,7 +1784,11 @@ export function unishox2_decompress(
   return out;
 }
 
-export function unishox2_decompress_simple(input, len, feq = USX_FREQ_SEQ_DFLT) {
+export function unishox2_decompress_simple(
+  input,
+  len,
+  feq = USX_FREQ_SEQ_DFLT
+) {
   return unishox2_decompress(
     input,
     len,

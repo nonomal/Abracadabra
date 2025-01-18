@@ -1,3 +1,31 @@
+/*
+ * Copyright (C) 2024 SheepChef (a.k.a. Haruka Hokuto)
+ *
+ * This program is free software:
+ * you can redistribute it and/or modify it under the terms of
+ * as published by the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * DISCLAIMER OF UNISHOX2
+ *
+ * This project uses Unishox2 as a compress library.
+ * Some of its code need to be altered in order to achieve certain purposes.
+ * Unishox2 was Licensed under the Apache License, Version 2.0.
+ * Copyright (C) 2020 Siara Logics (cc)
+ *
+ */
+
 import { Base64 } from "js-base64";
 import CryptoJS from "crypto-js";
 import pako from "pako";
@@ -58,6 +86,14 @@ const INTER_WEBSITE_LIB = [
   "x.com",
   "twitter.com",
   "telegra.ph",
+];
+const INTER_WEBSITE_LIB_2 = [
+  "https://",
+  "wikipedia.org",
+  "github.com",
+  "pages.dev",
+  "github.io",
+  "netlify.app",
 ];
 const JAPAN_WEBSITE_LIB = [
   "https://",
@@ -162,6 +198,10 @@ function UNISHOX_COMPRESS(Data) {
         libmark = 252;
         break;
       }
+      if (Datastr.indexOf(INTER_WEBSITE_LIB_2[i]) != -1) {
+        libmark = 244;
+        break;
+      }
       if (Datastr.indexOf(JAPAN_WEBSITE_LIB[i]) != -1) {
         libmark = 251;
         break;
@@ -234,6 +274,14 @@ function UNISHOX_COMPRESS(Data) {
         INTER_WEBSITE_LIB
       );
       break;
+    case 244:
+      Outlen = Unishox.unishox2_compress_simple(
+        Data,
+        Data.byteLength,
+        CompressedStrCharArray,
+        INTER_WEBSITE_LIB_2
+      );
+      break;
     case 251:
       Outlen = Unishox.unishox2_compress_simple(
         Data,
@@ -302,7 +350,7 @@ function UNISHOX_DECOMPRESS(Data) {
 
   if (
     lastElement != 255 ||
-    secondLastElement < 245 ||
+    secondLastElement < 244 ||
     secondLastElement > 255
   ) {
     return Data;
@@ -366,6 +414,17 @@ function UNISHOX_DECOMPRESS(Data) {
         Unishox.USX_HCODES_DFLT,
         Unishox.USX_HCODE_LENS_DFLT,
         INTER_WEBSITE_LIB,
+        Unishox.USX_TEMPLATES
+      );
+      break;
+    case 244:
+      Outlen = Unishox.unishox2_decompress(
+        NewData,
+        NewData.byteLength,
+        DecompressedStrCharArray,
+        Unishox.USX_HCODES_DFLT,
+        Unishox.USX_HCODE_LENS_DFLT,
+        INTER_WEBSITE_LIB_2,
         Unishox.USX_TEMPLATES
       );
       break;
