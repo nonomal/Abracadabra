@@ -16,6 +16,16 @@
  * @author Arundale Ramanathan
  *
  */
+
+/*
+ * This file contains modified code from Unishox2.
+ * Original copyright (C) 2020 Siara Logics (cc)
+ * Modifications made:
+ * - Disabled the function "getNibbleType".
+ * - Commented out unused constants.
+ * - Other minor fixes.
+ */
+
 /**
  * @file unishox2.c
  * @author Arundale Ramanathan, James Z. M. Gao
