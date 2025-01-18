@@ -17,6 +17,14 @@
  *
  */
 
+/*
+ * This file contains modified code from Unishox2.
+ * Original copyright (C) 2020 Siara Logics (cc)
+ * Modifications made:
+ * - Disabled the function "getNibbleType".
+ * - Other minor fixes.
+ */
+
 export var USX_HCODES_DFLT = new Uint8Array([0x00, 0x40, 0x80, 0xc0, 0xe0]);
 export var USX_HCODE_LENS_DFLT = new Uint8Array([2, 2, 2, 3, 3]);
 export var USX_FREQ_SEQ_DFLT = ['": "', '": ', "</", '="', '":"', "://"];

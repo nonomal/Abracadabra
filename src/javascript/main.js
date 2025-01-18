@@ -17,12 +17,16 @@
  */
 
 /*
- * DISCLAIMER OF UNISHOX2
+ * ACKNOWLEDGEMENT
  *
- * This project uses Unishox2 as a compress library.
- * Some of its code need to be altered in order to achieve certain purposes.
- * Unishox2 was Licensed under the Apache License, Version 2.0.
+ * This project uses code from Unishox2 as a compression library,
+ * with certain modifications made to achieve specific purposes.
+ *
+ * Unishox2 is licensed under the Apache License, Version 2.0.
  * Copyright (C) 2020 Siara Logics (cc)
+ *
+ * Special thanks to Arundale Ramanathan, the author of Unishox2,
+ * who genuinely answered my enquiries and helped me to debug.
  *
  */
 
