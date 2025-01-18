@@ -84,7 +84,7 @@ import { Abracadabra } from "abracadabra-cn";
 如果你想自行快速部署这个静态页，请查阅前端源代码仓库。
 
 [<img src="https://img.shields.io/badge/静态页面-ffd91c?logo=cloudflarepages&style=for-the-badge&logoColor=000000" width="130"/>](https://abracadabra-demo.pages.dev/)
-[<img src="https://img.shields.io/badge/前端源码-9a10b5?style=for-the-badge" width="100" />](https://github.com/SheepChef/Abracadabra_demo)
+[<img src="https://img.shields.io/badge/前端源码-9a10b5?style=for-the-badge" width="103" />](https://github.com/SheepChef/Abracadabra_demo)
 
 ### 浏览器插件
 
