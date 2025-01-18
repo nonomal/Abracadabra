@@ -65,6 +65,8 @@
 
 使用 npm 下载 Abracadabra 库。
 
+你也可以前往 Release 页面直接下载Js文件。
+
 ```shell
 npm install abracadabra-cn
 ```
@@ -74,6 +76,15 @@ npm install abracadabra-cn
 ```javascript
 import { Abracadabra } from "abracadabra-cn";
 ```
+
+### 静态页面
+
+本项目有自动托管在Cloudflare Pages的静态页面可供直接使用。
+
+如果你想自行快速部署这个静态页，请查阅前端源代码仓库。
+
+[<img src="https://img.shields.io/badge/静态页面-ffd91c?logo=cloudflarepages&style=for-the-badge&logoColor=000000" width="130"/>](https://abracadabra-demo.pages.dev/)
+[<img src="https://img.shields.io/badge/前端源码-9a10b5?style=for-the-badge" width="100" />](https://github.com/SheepChef/Abracadabra_demo)
 
 ### 浏览器插件
 
