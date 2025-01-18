@@ -21,7 +21,6 @@
  * This file contains modified code from Unishox2.
  * Original copyright (C) 2020 Siara Logics (cc)
  * Modifications made:
- * - Disabled the function "getNibbleType".
  * - Commented out unused constants.
  * - Other minor fixes.
  */
@@ -475,13 +474,13 @@ enum {USX_NIB_NUM = 0, USX_NIB_HEX_LOWER, USX_NIB_HEX_UPPER, USX_NIB_NOT};
 /// Gets 4 bit code assuming ch falls between '0' to '9', \n
 /// 'A' to 'F' or 'a' to 'f'
 
-char getNibbleType(char ch) { //Disabled
-  /*if (ch >= '0' && ch <= '9')
+char getNibbleType(char ch) {
+  if (ch >= '0' && ch <= '9')
     return USX_NIB_NUM;
   else if (ch >= 'a' && ch <= 'f')
     return USX_NIB_HEX_LOWER;
   else if (ch >= 'A' && ch <= 'F')
-    return USX_NIB_HEX_UPPER;*/
+    return USX_NIB_HEX_UPPER;
   return USX_NIB_NOT;
 }
 
