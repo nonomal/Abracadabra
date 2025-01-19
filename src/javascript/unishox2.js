@@ -557,7 +557,8 @@ export function unishox2_compress(
   usx_hcodes,
   usx_hcode_lens,
   usx_freq_seq,
-  usx_templates
+  usx_templates,
+  ignoreHex
 ) {
   var state;
 
@@ -681,7 +682,7 @@ export function unishox2_compress(
           )
             continue;
           var nib_type = getNibbleType(c_uid);
-          if (nib_type == USX_NIB_NOT) break;
+          if (nib_type == USX_NIB_NOT || ignoreHex) break;
           if (nib_type != USX_NIB_NUM) {
             if (hex_type != USX_NIB_NUM && hex_type != nib_type) break;
             hex_type = nib_type;
@@ -1139,15 +1140,53 @@ export function unishox2_compress_simple(
   out,
   feq = USX_FREQ_SEQ_DFLT
 ) {
-  return unishox2_compress(
+  let CompressedStrCharArrayTest = new Uint8Array(2048);
+  let Op1, Op2;
+  Op1 = unishox2_compress(
     input,
     len,
-    out,
+    CompressedStrCharArrayTest,
     USX_HCODES_DFLT,
     USX_HCODE_LENS_DFLT,
     feq,
-    USX_TEMPLATES
+    USX_TEMPLATES,
+    false
   );
+  Op2 = unishox2_compress(
+    input,
+    len,
+    CompressedStrCharArrayTest,
+    USX_HCODES_DFLT,
+    USX_HCODE_LENS_DFLT,
+    feq,
+    USX_TEMPLATES,
+    true
+  );
+
+  CompressedStrCharArrayTest = undefined;
+  if (Op1 >= Op2) {
+    return unishox2_compress(
+      input,
+      len,
+      out,
+      USX_HCODES_DFLT,
+      USX_HCODE_LENS_DFLT,
+      feq,
+      USX_TEMPLATES,
+      true
+    );
+  } else {
+    return unishox2_compress(
+      input,
+      len,
+      out,
+      USX_HCODES_DFLT,
+      USX_HCODE_LENS_DFLT,
+      feq,
+      USX_TEMPLATES,
+      false
+    );
+  }
 }
 
 function readBit(input, bit_no) {
