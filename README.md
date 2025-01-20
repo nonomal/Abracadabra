@@ -77,11 +77,13 @@ npm install abracadabra-cn
 import { Abracadabra } from "abracadabra-cn";
 ```
 
-### 静态页面
+### 静态页面 / 前端源码
 
 本项目有自动托管在Cloudflare Pages的静态页面可供直接使用。
 
-如果你想自行快速部署这个静态页，请查阅前端源代码仓库。
+如果你想自行快速部署这个静态页，请前往前端源代码仓库。
+
+浏览器插件的源码同样在前端源代码仓库，位于crx分支。
 
 [<img src="https://img.shields.io/badge/静态页面-ffd91c?logo=cloudflarepages&style=for-the-badge&logoColor=000000" width="130"/>](https://abracadabra-demo.pages.dev/)
 [<img src="https://img.shields.io/badge/前端源码-9a10b5?style=for-the-badge" width="103" />](https://github.com/SheepChef/Abracadabra_demo)
