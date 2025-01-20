@@ -723,7 +723,7 @@ export function unishox2_compress(
       do {
         var c_uid = is_str ? input.charCodeAt(l + hex_len) : input[l + hex_len];
         var nib_type = getNibbleType(c_uid);
-        if (nib_type == USX_NIB_NOT) break;
+        if (nib_type == USX_NIB_NOT || ignoreHex) break;
         if (nib_type != USX_NIB_NUM) {
           if (hex_type != USX_NIB_NUM && hex_type != nib_type) break;
           hex_type = nib_type;
