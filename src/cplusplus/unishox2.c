@@ -21,6 +21,7 @@
  * This file contains modified code from Unishox2.
  * Original copyright (C) 2020 Siara Logics (cc)
  * Modifications made:
+ * - Added simple comparison of the efficiency of Hex encoding.
  * - Commented out unused constants.
  * - Other minor fixes.
  */
@@ -527,7 +528,7 @@ int append_final_bits(char *const out, const int olen, int ol, const byte state,
 } while (0)
 
 // Main API function. See unishox2.h for documentation
-int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(char *out, int olen), const byte usx_hcodes[], const byte usx_hcode_lens[], const char *usx_freq_seq[], const char *usx_templates[], struct us_lnk_lst *prev_lines) {
+int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(char *out, int olen), const byte usx_hcodes[], const byte usx_hcode_lens[], const char *usx_freq_seq[], const char *usx_templates[], struct us_lnk_lst *prev_lines, bool ignoreHex) {
 
   byte state;
 
@@ -600,7 +601,7 @@ int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(cha
           if (c_uid == '-' && (uid_pos == 8 || uid_pos == 13 || uid_pos == 18 || uid_pos == 23))
             continue;
           char nib_type = getNibbleType(c_uid);
-          if (nib_type == USX_NIB_NOT)
+          if (nib_type == USX_NIB_NOT || ignoreHex)
             break;
           if (nib_type != USX_NIB_NUM) {
             if (hex_type != USX_NIB_NUM && hex_type != nib_type)
@@ -629,7 +630,7 @@ int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(cha
       int hex_len = 0;
       do {
         char nib_type = getNibbleType(in[l + hex_len]);
-        if (nib_type == USX_NIB_NOT)
+        if (nib_type == USX_NIB_NOT || ignoreHex)
           break;
         if (nib_type != USX_NIB_NUM) {
           if (hex_type != USX_NIB_NUM && hex_type != nib_type)
@@ -861,12 +862,34 @@ int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(cha
 
 // Main API function. See unishox2.h for documentation
 int unishox2_compress(const char *in, int len, UNISHOX_API_OUT_AND_LEN(char *out, int olen), const byte usx_hcodes[], const byte usx_hcode_lens[], const char *usx_freq_seq[], const char *usx_templates[]) {
-  return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL);
+  
+  char* CompressedStrCharArrayTest = (char *)calloc(2048, sizeof(char));
+  int Op1,Op2; //Compress Twice and compare the length.
+  Op1 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, false);
+  Op2 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, true);
+  free(CompressedStrCharArrayTest);
+  if(Op1 >= Op2){
+    return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, true);
+  }else{
+    return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, false);
+  }
+  
+  //return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, ignoreHex);
 }
 
 // Main API function. See unishox2.h for documentation
 int unishox2_compress_simple(const char *in, int len, char *out) {
-  return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL);
+  char* CompressedStrCharArrayTest = (char *)calloc(2048, sizeof(char));
+  int Op1,Op2; //Compress Twice and compare the length.
+  Op1 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, false);
+  Op2 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, true);
+  free(CompressedStrCharArrayTest);
+  if(Op1 >= Op2){
+    return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, true);
+  }else{
+    return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, false);
+  }
+  //return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, ignoreHex);
 }
 
 // Reads one bit from in
