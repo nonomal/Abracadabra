@@ -21,6 +21,7 @@
  * This file contains modified code from Unishox2.
  * Original copyright (C) 2020 Siara Logics (cc)
  * Modifications made:
+ * - Added simple comparison of the efficiency of Hex encoding.
  * - Minor fixes.
  */
 
