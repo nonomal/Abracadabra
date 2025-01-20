@@ -601,7 +601,7 @@ int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(cha
           if (c_uid == '-' && (uid_pos == 8 || uid_pos == 13 || uid_pos == 18 || uid_pos == 23))
             continue;
           char nib_type = getNibbleType(c_uid);
-          if (nib_type == USX_NIB_NOT)
+          if (nib_type == USX_NIB_NOT || ignoreHex)
             break;
           if (nib_type != USX_NIB_NUM) {
             if (hex_type != USX_NIB_NUM && hex_type != nib_type)
@@ -864,7 +864,7 @@ int unishox2_compress_lines(const char *in, int len, UNISHOX_API_OUT_AND_LEN(cha
 int unishox2_compress(const char *in, int len, UNISHOX_API_OUT_AND_LEN(char *out, int olen), const byte usx_hcodes[], const byte usx_hcode_lens[], const char *usx_freq_seq[], const char *usx_templates[]) {
   
   char* CompressedStrCharArrayTest = (char *)calloc(2048, sizeof(char));
-  int Op1,Op2;
+  int Op1,Op2; //Compress Twice and compare the length.
   Op1 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, false);
   Op2 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, olen), usx_hcodes, usx_hcode_lens, usx_freq_seq, usx_templates, NULL, true);
   free(CompressedStrCharArrayTest);
@@ -880,11 +880,10 @@ int unishox2_compress(const char *in, int len, UNISHOX_API_OUT_AND_LEN(char *out
 // Main API function. See unishox2.h for documentation
 int unishox2_compress_simple(const char *in, int len, char *out) {
   char* CompressedStrCharArrayTest = (char *)calloc(2048, sizeof(char));
-  int Op1,Op2;
+  int Op1,Op2; //Compress Twice and compare the length.
   Op1 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, false);
   Op2 = unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(CompressedStrCharArrayTest, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, true);
   free(CompressedStrCharArrayTest);
-
   if(Op1 >= Op2){
     return unishox2_compress_lines(in, len, UNISHOX_API_OUT_AND_LEN(out, INT_MAX - 1), USX_HCODES_DFLT, USX_HCODE_LENS_DFLT, USX_FREQ_SEQ_DFLT, USX_TEMPLATES, NULL, true);
   }else{
