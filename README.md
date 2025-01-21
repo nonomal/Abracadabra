@@ -15,7 +15,7 @@
 ![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
 
-![GitHub Release](https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=b33bb3)
+[<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=b33bb3"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
