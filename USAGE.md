@@ -48,9 +48,9 @@ AES-256 是业内公认的安全加密算法，久经考验。
 
 如果你不知道 IV 是什么，只需要知道，IV 是用来刻意使每次加密的结果不同的。
 
-### 转轮加密
+### 转轮混淆
 
-有关转轮加密的细节，请见 [Issue#30](https://github.com/SheepChef/Abracadabra/issues/30)
+有关转轮混淆的细节，请见 [Issue#30](https://github.com/SheepChef/Abracadabra/issues/30)
 
 ## 标志位
 
