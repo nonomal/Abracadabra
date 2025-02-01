@@ -41,6 +41,8 @@
 
 更多延申内容，例如本算法与同类产品的比较，请查阅 [**博客文章**](https://shef.cc/2024/11/30/abracadabra/)
 
+> **觉得本项目的密文特征仍明显？查阅并参与** [**Abracadabra Next**](https://github.com/SheepChef/Abracadabra/issues/60) **的开发！**
+
 ## 特性
 
 ![动画](https://github.com/user-attachments/assets/5e5eab85-461b-4dde-8aa6-2c985a2de5f1)
