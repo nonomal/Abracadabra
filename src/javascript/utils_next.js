@@ -50,6 +50,7 @@ var NUMBERSYMBOL_ROUND_1 = "1234567890+/=";
 var NUMBERSYMBOL_ROUND_2 = "5=0764+389/12"; //手动随机打乱的乱序轮
 var NUMBERSYMBOL_ROUND_3 = "1234567890+/=";
 
+
 //const SIG_DECRYPT_JP = "桜込凪雫実沢";
 //const SIG_DECRYPT_CN = "玚俟玊欤瞐珏";
 const NULL_STR = "孎"; //默认忽略的占位字符，一个生僻字。
@@ -123,6 +124,7 @@ const GENERIC_LINK_LIB_2 = ["https://", ".info", ".moe", ".cc", ".co", ".dev"];
 const GENERIC_LINK_LIB_3 = ["https://", ".io", ".us", ".eu", ".jp", ".de"];
 
 const Map_Obj = JSON.parse(Map);
+
 
 function AES_256_CTR_E(Uint8attr, key, RandomBytes) {
   let KeyHash = CryptoJS.SHA256(key);
@@ -691,12 +693,164 @@ function RoundControlInit(key) {
   RoundControl = HashArray;
 }
 
+function distributeInteger(num) {
+  if (num <= 3) {
+    // 如果 num 小于等于 3，则无法满足每个元素都大于 0 的要求
+    return []; // 返回空数组，表示无法分配
+  }
+
+  const maxPart = Math.floor(num * 0.2); // 计算每个部分的最大值
+  let remaining = num - 2 * maxPart; // 计算剩余部分
+
+  if (remaining <= 0) {
+    // 如果剩余部分小于等于 0，则调整最大值，确保每个元素都大于 0
+    maxPart = Math.floor((num - 2) / 3); // 调整 maxPart 的计算方式
+    remaining = num - 2 * maxPart;
+
+    if (remaining <= 0) {
+      return []; // 如果调整后仍然无法满足要求，则返回空数组
+    }
+  }
+
+  const result = [maxPart, remaining, maxPart]; // 创建包含三个整数的数组
+
+  return result;
+}
+
 export class PreCheckResult {
   constructor(output, isEncrypted = false) {
     this.output = output;
     this.isEncrypted = isEncrypted;
   }
 }
+
+
+export function selectSentence(PayloadLength,RandomIndex){ //句式选择算法
+  //RandomIndex 随机指数，越大，给出的句式越随机，最大100。
+  let selectRand;
+
+  let DividedPayload = distributeInteger(PayloadLength);//把Payload平均分配给三个部分。
+  
+  let ElementResult = []; //最终要返回的语素序列 
+
+  for(let i=0;i<3;i++){ //第一重循环，选择Payload
+
+    let Payload = DividedPayload[i];
+    if(i == 0){ //在Begin句式库中选择。
+
+      for(let a=0 ;a < Payload;){ //第二重循环，用算法选择句式，满足载荷
+        selectRand = GetRandomIndex(101) + RandomIndex;
+        let PossiblePayload = [];
+        for(let b = 1;b < Payload - a;b++){ //三重，求取所有可能载荷。
+          if(b == 9){ //最大为9
+            PossiblePayload.push(b);
+            break;
+          }
+          PossiblePayload.push(b);
+        }
+        //这里给出的可能载荷数组应当是从小到大的。
+        let TargetPayload;
+        if(selectRand <= 100){ //选择贪心最优解
+          TargetPayload = PossiblePayload.pop(); //目标Payload，参照这个去库里寻句式。
+        }else if(selectRand > 100 && selectRand <= 200){ //随机选择一个，不一定是最优解
+          TargetPayload = PossiblePayload[GetRandomIndex(PossiblePayload.length)];
+        }
+
+        let PossibleSentences = []; //所有挑选出来的可能句式，选择时任选其一。
+        for(let c = 0;c<Map_Obj["Sentences"]["Begin"].length;c++){ //开始选择句式
+          let Sentence = Map_Obj["Sentences"]["Begin"][c].split("/"); //Sentence是列表，按照/分割的句式
+          if(parseInt(Sentence[0]) == TargetPayload){
+            PossibleSentences.push(Sentence.slice(1));
+          }
+        }
+
+        let TargetSentence = PossibleSentences[GetRandomIndex(PossibleSentences.length)];
+        TargetSentence.forEach( ele =>{
+          ElementResult.push(ele);
+        });
+
+        a = a + TargetPayload;
+
+      }
+    }else if(i == 1){
+      for(let a=0 ;a < Payload;){ //第二重循环，用算法选择句式，满足载荷
+        selectRand = GetRandomIndex(101) + RandomIndex;
+        let PossiblePayload = [];
+        for(let b = 1;b < Payload - a;b++){ //三重，求取所有可能载荷。
+          if(b == 9){ //最大为9
+            PossiblePayload.push(b);
+            break;
+          }
+          PossiblePayload.push(b);
+        }
+        //这里给出的可能载荷数组应当是从小到大的。
+        let TargetPayload;
+        if(selectRand <= 100){ //选择贪心最优解
+          TargetPayload = PossiblePayload.pop(); //目标Payload，参照这个去库里寻句式。
+        }else if(selectRand > 100 && selectRand <= 200){ //随机选择一个，不一定是最优解
+          TargetPayload = PossiblePayload[GetRandomIndex(PossiblePayload.length)];
+        }
+
+        let PossibleSentences = []; //所有挑选出来的可能句式，选择时任选其一。
+        for(let c = 0;c<Map_Obj["Sentences"]["Main"].length;c++){ //开始选择句式
+          let Sentence = Map_Obj["Sentences"]["Main"][c].split("/"); //Sentence是列表，按照/分割的句式
+          if(parseInt(Sentence[0]) == TargetPayload){
+            PossibleSentences.push(Sentence.slice(1));
+          }
+        }
+
+        let TargetSentence = PossibleSentences[GetRandomIndex(PossibleSentences.length)];
+        TargetSentence.forEach( ele =>{
+          ElementResult.push(ele);
+        });
+
+        a = a + TargetPayload;
+  
+      }
+
+    }else if(i == 2){
+
+      for(let a=0 ;a < Payload;){ //第二重循环，用算法选择句式，满足载荷
+        selectRand = GetRandomIndex(101) + RandomIndex;
+        let PossiblePayload = [];
+        for(let b = 1;b < Payload - a;b++){ //三重，求取所有可能载荷。
+          if(b == 9){ //最大为9
+            PossiblePayload.push(b);
+            break;
+          }
+          PossiblePayload.push(b);
+        }
+        //这里给出的可能载荷数组应当是从小到大的。
+        let TargetPayload;
+        if(selectRand <= 100){ //选择贪心最优解
+          TargetPayload = PossiblePayload.pop(); //目标Payload，参照这个去库里寻句式。
+        }else if(selectRand > 100 && selectRand <= 200){ //随机选择一个，不一定是最优解
+          TargetPayload = PossiblePayload[GetRandomIndex(PossiblePayload.length)];
+        }
+
+        let PossibleSentences = []; //所有挑选出来的可能句式，选择时任选其一。
+        for(let c = 0;c<Map_Obj["Sentences"]["End"].length;c++){ //开始选择句式
+          let Sentence = Map_Obj["Sentences"]["End"][c].split("/"); //Sentence是列表，按照/分割的句式
+          if(parseInt(Sentence[0]) == TargetPayload){
+            PossibleSentences.push(Sentence.slice(1));
+          }
+        }
+
+        let TargetSentence = PossibleSentences[GetRandomIndex(PossibleSentences.length)];
+        TargetSentence.forEach( ele =>{
+          ElementResult.push(ele);
+        });
+
+        a = a + TargetPayload;
+  
+      }
+
+    }
+  }
+
+  return ElementResult;
+}
+
 
 /*export function preCheck(inp) {
   let input = String(inp);
@@ -930,6 +1084,8 @@ export function deMap(input, key) {
   RoundReset();
   return Res;
 }
+
+
 
 export function getCryptText(text) {
   let letter = String(text); //源文本
