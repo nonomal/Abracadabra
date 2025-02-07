@@ -765,9 +765,7 @@ export function selectSentence(PayloadLength,RandomIndex){ //句式选择算法
         }
 
         let TargetSentence = PossibleSentences[GetRandomIndex(PossibleSentences.length)];
-        TargetSentence.forEach( ele =>{
-          ElementResult.push(ele);
-        });
+        ElementResult.push(TargetSentence);
 
         a = a + TargetPayload;
 
@@ -800,9 +798,7 @@ export function selectSentence(PayloadLength,RandomIndex){ //句式选择算法
         }
 
         let TargetSentence = PossibleSentences[GetRandomIndex(PossibleSentences.length)];
-        TargetSentence.forEach( ele =>{
-          ElementResult.push(ele);
-        });
+        ElementResult.push(TargetSentence);
 
         a = a + TargetPayload;
   
@@ -837,9 +833,7 @@ export function selectSentence(PayloadLength,RandomIndex){ //句式选择算法
         }
 
         let TargetSentence = PossibleSentences[GetRandomIndex(PossibleSentences.length)];
-        TargetSentence.forEach( ele =>{
-          ElementResult.push(ele);
-        });
+        ElementResult.push(TargetSentence);
 
         a = a + TargetPayload;
   
