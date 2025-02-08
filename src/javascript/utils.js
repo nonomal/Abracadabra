@@ -550,7 +550,7 @@ function wordArrayToUint8Array(data) {
   return dataArray;
 }
 
-function stringToUint8Array(str) {
+export function stringToUint8Array(str) {
   let tempBase64 = Base64.encode(str);
   return Base64.toUint8Array(tempBase64);
 }

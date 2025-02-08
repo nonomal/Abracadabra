@@ -725,7 +725,7 @@ export class PreCheckResult {
 }
 
 
-export function selectSentence(PayloadLength,RandomIndex){ //句式选择算法
+export function selectSentence(PayloadLength,RandomIndex = 0){ //句式选择算法
   //RandomIndex 随机指数，越大，给出的句式越随机，最大100。
   let selectRand;
 
@@ -885,7 +885,7 @@ export function selectSentence(PayloadLength,RandomIndex){ //句式选择算法
   return Result;
 }*/
 
-export function enMap(input, key, q) {
+export function enMap(input, key, q, r) {
   //input.output Uint8Array
   RoundReset();
   RoundControlInit(key);
@@ -926,68 +926,46 @@ export function enMap(input, key, q) {
 
   let OriginStr = Base64.fromUint8Array(OriginalData);
 
-  let TempStr1 = "",
-    temp = "",
-    temp2 = "",
-    group = "";
+  let TempStr1 = "", temp = "";
 
   let size = OriginStr.length;
 
   //从这里开始做文章。。
-  
+
+  let Sentence = selectSentence(OriginStr.length,r);//选择句式
+  let i = 0;
+  let Finished = false;
   RoundKey();
-  for (let i = 0; i < size; i++) {
-    temp = OriginStr[i];
-    if (i != size - 1) {
-      //一次遍历两个字符，遇到倒数第一个的时候防止越界
-      temp2 = OriginStr[i + 1];
-    } else {
-      temp2 = NULL_STR;
-    }
-    group = temp + temp2;
-
-    TempStr1 = TempStr1 + getCryptText(temp); //把加密字符加到结果字符串的后面
-    RoundKey();
-  }
-
-  if (q) {
-    RoundReset();
-    return TempStr1;
-  }
-
-  //第一个循环结束后，TempStr1应当是完全的密文，但是缺少标志位
-  let RandIndex, RandIndex2;
-  let Avoid = new Array();
-  for (let q = 0; q < 2; q++) {
-    //分两次大循环
-    let PosToInset = new Array();
-    let size = TempStr1.length;
-    for (let i = 0; i < size; i++) {
-      PosToInset.push(i);
-    }
-    if (q == 0) {
-      //第一次大循环插入JP
-      RandIndex = PosToInset[GetRandomIndex(PosToInset.length)];
-      RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["JP"].length);
-      let stemp = Map_Obj["special"]["DECRYPT"]["JP"][RandIndex2];
-      TempStr1 = insertStringAtIndex(TempStr1, stemp, RandIndex);
-      for (let z = RandIndex + 1; z < RandIndex + stemp.length; z++) {
-        Avoid.push(z);
+    for(let j = 0;j < Sentence.length;j++){ 
+      for(let k = 0;k <Sentence[j].length;k++){
+        if(Sentence[j][k] == "V" || Sentence[j][k] == "N" || Sentence[j][k] == "A"){ //拆解句式，对表。
+          temp = OriginStr[i];
+          TempStr1 = TempStr1 + getCryptText(temp,Sentence[j][k]);
+          RoundKey();
+          i++;
+          if(i == size){
+            Finished = true;
+            break;
+          }
+        }else if(Sentence[j][k] == "MV"){
+          TempStr1 = TempStr1 + Map_Obj["Actual"]["MV"][GetRandomIndex(Map_Obj["Actual"]["MV"].length)];
+        }else if(Map_Obj["Virtual"].hasOwnProperty(Sentence[j][k])){
+          TempStr1 = TempStr1 + Map_Obj["Virtual"][Sentence[j][k]][GetRandomIndex(Map_Obj["Virtual"][Sentence[j][k]].length)];
+        }else{
+          TempStr1 = TempStr1 + Sentence[j][k];
+        }
       }
-    } else if (q == 1) {
-      //第二次大循环插入CN;
-      let AvailPos = new Array();
-      AvailPos = difference(PosToInset, Avoid);
-
-      RandIndex = AvailPos[GetRandomIndex(AvailPos.length)];
-      RandIndex2 = GetRandomIndex(Map_Obj["special"]["DECRYPT"]["CN"].length);
-      TempStr1 = insertStringAtIndex(
-        TempStr1,
-        Map_Obj["special"]["DECRYPT"]["CN"][RandIndex2],
-        RandIndex
-      );
+      if(Finished){
+        if(q){
+          TempStr1 = TempStr1 + "。";
+          break;
+        }
+      }else{
+        if(q){
+          TempStr1 = TempStr1 + "，";
+        }
+      }
     }
-  }
   RoundReset();
   return TempStr1;
 }
@@ -1081,7 +1059,7 @@ export function deMap(input, key) {
 
 
 
-export function getCryptText(text) {
+export function getCryptText(text,type) {
   let letter = String(text); //源文本
   let idx, idx2, idx3, idx4;
 
@@ -1089,44 +1067,85 @@ export function getCryptText(text) {
   idx2 = BIG_LETTERS.indexOf(letter); //是否是大写字母
   idx3 = NUMBERS.indexOf(letter); //是否是数字
   idx4 = SYMBOLS.indexOf(letter); //是否是符号
-  let RandIndex, RandIndex2;
 
   //判断给定字符的类型
   if (idx != -1 || idx2 != -1) {
-    for (let key in Map_Obj["basic"]["alphabet"]) {
-      if (Map_Obj["basic"]["alphabet"].hasOwnProperty(key)) {
-        if (key == letter) {
-          RandIndex = GetRandomIndex(
-            Map_Obj["basic"]["alphabet"][RoundKeyMatch(key)].length
-          );
-          let s2 = Map_Obj["basic"]["alphabet"][RoundKeyMatch(key)][RandIndex];
-          return s2;
-        } else if (key.toUpperCase() == letter) {
-          RandIndex = GetRandomIndex(
-            Map_Obj["basic"]["alphabet"][RoundKeyMatch(key.toUpperCase())]
-              .length
-          );
-          let s2 = String(
-            Map_Obj["basic"]["alphabet"][RoundKeyMatch(key.toUpperCase())][
-              RandIndex
-            ]
-          );
-          return s2;
+    if(type == "N"){
+      for (let key in Map_Obj["Actual"]["N"]["alphabet"]) {
+        if (Map_Obj["Actual"]["N"]["alphabet"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 = Map_Obj["Actual"]["N"]["alphabet"][RoundKeyMatch(key)];
+            return s2;
+          } else if (key.toUpperCase() == letter) {
+            let s2 = String(
+              Map_Obj["Actual"]["N"]["alphabet"][RoundKeyMatch(key.toUpperCase())]
+            );
+            return s2;
+          }
+        }
+      }
+    }else if(type == "V"){
+      for (let key in Map_Obj["Actual"]["V"]["alphabet"]) {
+        if (Map_Obj["Actual"]["V"]["alphabet"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 = Map_Obj["Actual"]["V"]["alphabet"][RoundKeyMatch(key)];
+            return s2;
+          } else if (key.toUpperCase() == letter) {
+            let s2 = String(
+              Map_Obj["Actual"]["V"]["alphabet"][RoundKeyMatch(key.toUpperCase())]
+            );
+            return s2;
+          }
+        }
+      }
+    }else if(type == "A"){
+      for (let key in Map_Obj["Actual"]["A"]["alphabet"]) {
+        if (Map_Obj["Actual"]["A"]["alphabet"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 = Map_Obj["Actual"]["A"]["alphabet"][RoundKeyMatch(key)];
+            return s2;
+          } else if (key.toUpperCase() == letter) {
+            let s2 = String(
+              Map_Obj["Actual"]["A"]["alphabet"][RoundKeyMatch(key.toUpperCase())]
+            );
+            return s2;
+          }
         }
       }
     }
+
   } else if (idx3 != -1 || idx4 != -1) {
-    for (let key in Map_Obj["basic"]["numbersymbol"]) {
-      if (Map_Obj["basic"]["numbersymbol"].hasOwnProperty(key)) {
-        if (key == letter) {
-          RandIndex = GetRandomIndex(
-            Map_Obj["basic"]["numbersymbol"][RoundKeyMatch(key)].length
-          );
-          let s2 =
-            Map_Obj["basic"]["numbersymbol"][RoundKeyMatch(key)][RandIndex];
-          return s2;
+    if(type == "N"){
+      for (let key in Map_Obj["Actual"]["N"]["numbersymbol"]) {
+        if (Map_Obj["Actual"]["N"]["numbersymbol"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 =
+              Map_Obj["Actual"]["N"]["numbersymbol"][RoundKeyMatch(key)];
+            return s2;
+          }
         }
       }
+    }else if(type == "V"){
+      for (let key in Map_Obj["Actual"]["V"]["numbersymbol"]) {
+        if (Map_Obj["Actual"]["V"]["numbersymbol"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 =
+              Map_Obj["Actual"]["V"]["numbersymbol"][RoundKeyMatch(key)];
+            return s2;
+          }
+        }
+      }
+    }else if(type == "A"){
+      for (let key in Map_Obj["Actual"]["A"]["numbersymbol"]) {
+        if (Map_Obj["Actual"]["A"]["numbersymbol"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 =
+              Map_Obj["Actual"]["A"]["numbersymbol"][RoundKeyMatch(key)];
+            return s2;
+          }
+        }
+      }
+
     }
   }
   return NULL_STR;
