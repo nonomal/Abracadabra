@@ -82,21 +82,11 @@ export class Abracadabra {
    * @param{string}key 指定密钥，默认是 ABRACADABRA;
    * @param{bool}q 指定是否在加密后省略标志位，默认 false/不省略;
    */
-  Input(input, mode, key = "ABRACADABRA", q = false , Next = false , r = 50) {
+  Input(input, mode, key = "ABRACADABRA", q = false) {
     if (this.#input == Abracadabra.UINT8) {
       //如果指定输入类型是UINT8
       if (Object.prototype.toString.call(input) != "[object Uint8Array]") {
         throw "Unexpected Input Type";
-      }
-      if(Next){
-        if(mode == Abracadabra.ENCRYPT){
-          let Nextinput = new Object();
-          Nextinput.output = input;
-          this.#res = Util_Next.enMap(Nextinput, key, q, r);
-        }else if(mode == Abracadabra.DECRYPT){
-          this.#res = Util_Next.deMap(preCheckRes, key, q);
-        }
-        return 0;
       }
       //对于输入UINT8的情况，先尝试将数据转换成字符串进行预检。
       let Decoder = new TextDecoder("utf-8", { fatal: true });
@@ -134,16 +124,6 @@ export class Abracadabra {
       //如果指定输入类型是TEXT
       if (Object.prototype.toString.call(input) != "[object String]") {
         throw "Unexpected Input Type";
-      }
-      if(Next){
-        if(mode == Abracadabra.ENCRYPT){
-          let Nextinput = new Object();
-          Nextinput.output = Util.stringToUint8Array(input);
-          this.#res = Util_Next.enMap(Nextinput, key, q, r);
-        }else if(mode == Abracadabra.DECRYPT){
-          this.#res = Util_Next.deMap(preCheckRes, key, q);
-        }
-        return 0;
       }
       let preCheckRes = Util.preCheck(input);
       if (
@@ -192,4 +172,38 @@ export class Abracadabra {
       }
     }
   }
+  Input_Next(input, mode, key = "ABRACADABRA", q = false , r = 50) {
+    if (this.#input == Abracadabra.UINT8) {
+      //如果指定输入类型是UINT8
+      if (Object.prototype.toString.call(input) != "[object Uint8Array]") {
+        throw "Unexpected Input Type";
+      }
+        if(mode == Abracadabra.ENCRYPT){
+          let Nextinput = new Object();
+          Nextinput.output = input;
+          this.#res = Util_Next.enMap(Nextinput, key, q, r);
+        }else if(mode == Abracadabra.DECRYPT){
+          let Nextinput = new Object();
+          Nextinput.output = input;
+          this.#res = Util_Next.deMap(Nextinput, key);
+        }
+        return 0;
+
+    } else if (this.#input == Abracadabra.TEXT) {
+      //如果指定输入类型是TEXT
+      if (Object.prototype.toString.call(input) != "[object String]") {
+        throw "Unexpected Input Type";
+      }
+        let Nextinput = new Object();
+        Nextinput.output = Util.stringToUint8Array(input);
+        if(mode == Abracadabra.ENCRYPT){
+          this.#res = Util_Next.enMap(Nextinput, key, q, r);
+        }else if(mode == Abracadabra.DECRYPT){
+          this.#res = Util_Next.deMap(Nextinput, key);
+        }
+        return 0;
+    }
+    return 0;
+  }
+
 }

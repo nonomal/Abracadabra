@@ -45,10 +45,10 @@ var LETTERS_ROUND_3 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const BIG_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const NUMBERS = "1234567890";
 const SYMBOLS = "+/=";
-const NUMBERSYMBOL = "1234567890+/=";
-var NUMBERSYMBOL_ROUND_1 = "1234567890+/=";
+const NUMBERSYMBOL = "0123456789+/=";
+var NUMBERSYMBOL_ROUND_1 = "0123456789+/=";
 var NUMBERSYMBOL_ROUND_2 = "5=0764+389/12"; //手动随机打乱的乱序轮
-var NUMBERSYMBOL_ROUND_3 = "1234567890+/=";
+var NUMBERSYMBOL_ROUND_3 = "0123456789+/=";
 
 
 //const SIG_DECRYPT_JP = "桜込凪雫実沢";
@@ -125,6 +125,32 @@ const GENERIC_LINK_LIB_3 = ["https://", ".io", ".us", ".eu", ".jp", ".de"];
 
 const Map_Obj = JSON.parse(Map);
 
+let DecodeTable = {};
+let PayloadLetter = "";
+
+
+function InitDecodeTable(){
+  DecodeTable = {};
+  PayloadLetter = "";
+  for(let i = 0; i < 52 ; i++){
+    DecodeTable[LETTERS[i]] = [];
+    DecodeTable[LETTERS[i]].push(Map_Obj["Actual"]["N"]["alphabet"][LETTERS[i]]);
+    DecodeTable[LETTERS[i]].push(Map_Obj["Actual"]["A"]["alphabet"][LETTERS[i]]);
+    DecodeTable[LETTERS[i]].push(Map_Obj["Actual"]["V"]["alphabet"][LETTERS[i]]);
+    PayloadLetter = PayloadLetter + Map_Obj["Actual"]["N"]["alphabet"][LETTERS[i]];
+    PayloadLetter = PayloadLetter + Map_Obj["Actual"]["A"]["alphabet"][LETTERS[i]];
+    PayloadLetter = PayloadLetter + Map_Obj["Actual"]["V"]["alphabet"][LETTERS[i]];
+  }
+  for(let i = 0; i < 13 ; i++){
+    DecodeTable[NUMBERSYMBOL[i]] = [];
+    DecodeTable[NUMBERSYMBOL[i]].push(Map_Obj["Actual"]["N"]["numbersymbol"][NUMBERSYMBOL[i]]);
+    DecodeTable[NUMBERSYMBOL[i]].push(Map_Obj["Actual"]["A"]["numbersymbol"][NUMBERSYMBOL[i]]);
+    DecodeTable[NUMBERSYMBOL[i]].push(Map_Obj["Actual"]["V"]["numbersymbol"][NUMBERSYMBOL[i]]);
+    PayloadLetter = PayloadLetter + Map_Obj["Actual"]["N"]["numbersymbol"][NUMBERSYMBOL[i]];
+    PayloadLetter = PayloadLetter + Map_Obj["Actual"]["A"]["numbersymbol"][NUMBERSYMBOL[i]];
+    PayloadLetter = PayloadLetter + Map_Obj["Actual"]["V"]["numbersymbol"][NUMBERSYMBOL[i]];
+  }
+}
 
 function AES_256_CTR_E(Uint8attr, key, RandomBytes) {
   let KeyHash = CryptoJS.SHA256(key);
@@ -974,6 +1000,7 @@ export function enMap(input, key, q, r) {
 
 export function deMap(input, key) {
   RoundReset();
+  InitDecodeTable()
   RoundControlInit(key);
   let OriginStr = Uint8ArrayTostring(input.output);
   let TempStr1 = "",
@@ -988,7 +1015,9 @@ export function deMap(input, key) {
     if (temp == NULL_STR || temp == " " || temp == "\n" || temp == "\t") {
       //如果这是空字符
       continue;
-    } else {
+    } else if(PayloadLetter.indexOf(temp) == -1){
+      continue;
+    }else {
       //如果不是
       TempStrz = TempStrz + temp; //加上
       continue;
@@ -1156,8 +1185,8 @@ export function getCryptText(text,type) {
 export function findOriginText(text) {
   let letter = String(text);
   let res;
-  for (let key in Map_Obj["basic"]["alphabet"]) {
-    Map_Obj["basic"]["alphabet"][key].forEach((item) => {
+  for (let key in DecodeTable) {
+    DecodeTable[key].forEach((item) => {
       if (letter == item) {
         res = DRoundKeyMatch(key);
       }
@@ -1166,8 +1195,8 @@ export function findOriginText(text) {
   if (res) {
     return res;
   }
-  for (let key in Map_Obj["basic"]["numbersymbol"]) {
-    Map_Obj["basic"]["numbersymbol"][key].forEach((item) => {
+  for (let key in DecodeTable) {
+    DecodeTable[key].forEach((item) => {
       if (letter == item) {
         res = DRoundKeyMatch(key);
       }
