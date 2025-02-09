@@ -239,7 +239,7 @@
     "make":["使","将","让"],
     "and": ["和", "与", "同"],
     "anti": ["非", "不"],
-    "why": ["为何", "奈何"],
+    "why": ["为何", "奈何","何哉"],
     "but": ["但", "却", "则", "而", "况", "且"],
     "like": ["似", "如", "若"],
     "if":["若","倘"],
@@ -249,7 +249,9 @@
   },
   "Sentences":{
     "Begin":[
+      "1/anti/N/ye",
       "1/N/曰",
+      "1/若夫/N/",
       "2/A/N/曰",
       "2/N/anti/在/A",
       "3/初，/N/V/by/N",
@@ -257,13 +259,18 @@
       "3/A/V/zhi/谓/A",
       "3/V/而/V/zhi/zhi/谓/A",
       "3/N/，/N/zhi/N/ye",
+      "4/非/N/不/A/，/V/不/A",
+      "5/V/N/而/V/A/，/V/zhi/道/ye",
       "6/A/N/by/N/zhi/N/V/N",
+      "7/N/anti/A/V/zhe/by/A/V/zhe/V/，/anti/MV/A/V",
+      "8/V/A/N/，/V/A/N/，/by/MV/A/zhi/N/",
       "9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye"
 
       
       
     ],
     "Main":[
+      "1/anti/N/ye",
       "1/anti/MV/V/ye",
       "2/N/make/N/zhi",
       "2/MV/N/zhe/A",
@@ -276,8 +283,10 @@
       "4/V/N/以/V/N",
       "5/今/V/N/以/V/A/N",
       "5/N/乃/V/V/N/zhi/N",
-      "7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye"
-      
+      "6/以/N/V/，/like/V/N/V/N",
+      "7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye",
+      "8/N/anti/MV/V/N/，/still/继/N/V/，/why/，/and/N/而/anti/V/N/ye",
+      "9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye"
 
     ],
     "End":[
@@ -288,7 +297,10 @@
       "3/V/在/A/N",
       "4/V/N/zhi/N/by/N",
       "5/请/V/N/zhi/N/中/，/是/N/zhi/N",
-      "8/何必/V/N/V/N/，/V/N/zhi/N/N/哉"
+      "6/以/N/V/，/like/V/N/V/N",
+      "7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye",
+      "8/何必/V/N/V/N/，/V/N/zhi/N/N/哉",
+      "9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye"
 
     ]
   }
