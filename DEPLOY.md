@@ -1,6 +1,6 @@
 # 魔曰 部署指南
 
-这篇文档系统地介绍 Abracabra(魔曰)两个语言版本的部署指南。
+这篇文档系统地介绍 Abracadabra(魔曰)两个语言版本的部署指南。
 
 - [**C++**](#c-命令行)
 - [**JavaScript**](#javascript-npm-库)
@@ -87,7 +87,9 @@ Options:
 
 另外，请确保您的环境中安装了 C++11 标准库。你需要提前编译 zlib 库并在编译时链接它。
 
-本项目并不复杂，推荐直接用指令调用 g++ 进行构建。如果您愿意，也可以尝试 CMake。
+除了 Zlib 以外，本项目使用的所有库均是头文件/单文件库，因此只需事先下载库文件，编译时指定 Include 目录即可。
+
+本项目并不复杂，推荐直接用指令调用 g++ 进行构建。
 
 ## JavaScript NPM 库
 
@@ -132,9 +134,9 @@ let Abra = new Abracadabra(InputMode,OutputMode);
 
 `TEXT` 表明将来的输入/输出为 `String`，`UINT8` 表明将来的输入/输出为 `Uint8Array`，你可以灵活使用两种不同的类型。
 
-#### Input()
+#### Input() 传统加密函数
 
-Abracadabra 库中仅有两个方法，`Input()` 是其中一个。
+Abracadabra 库中仅有三个方法，`Input()` 是其中一个。
 
 ```Javascript
 import { Abracadabra } from 'abracadabra-cn'
@@ -168,6 +170,44 @@ Abra.Input(input,mode,key,q)
 如果指定了错误的密码，那么在解码/解密数据校验过程中会抛出错误。
 
 第四个参数 `q` 接受布尔值的输入，如果传入 `true`，则加密结果中将不含标志位，更加隐蔽，但解密时需要强制解密。
+
+在无错误的情况下， `Input()` 函数的返回值通常是 `0`。
+
+#### Input_Next() 文言仿真加密函数
+
+`Input_Next()` 函数用来对数据执行文言文仿真加密。
+
+```Javascript
+import { Abracadabra } from 'abracadabra-cn'
+
+let Abra = new Abracadabra(); //不附带参数，
+
+/*
+MODES:
+
+Abracadabra.ENCRYPT = "ENCRYPT";
+强制加密
+
+Abracadabra.DECRYPT = "DECRYPT";
+强制解密
+
+*/
+Abra.Input_Next(input,mode,key,q,r)
+```
+
+第一个参数 `input` 接受两种类型的输入，分别是 `String` 和 `Uint8Array`，这是此前在实例化的时候指定的输入类型。
+
+如果你指定了 `UINT8` 却传入 `String`，将抛出错误，反之亦然。
+
+第二个参数 `mode` 接受上文中特定字符串的输入，任何其他输入都将被忽略，不会输出任何结果。
+
+第三个参数 `key` 接受字符串类型的密钥输入，如果不提供，则默认使用内置密钥 `ABRACADABRA`。
+
+如果指定了错误的密码，那么在解码/解密数据校验过程中会抛出错误。
+
+第四个参数 `q` 接受布尔值的输入，如果传入 `true`，则加密结果中将不含标点符号，解密时可以忽略这个参数。
+
+第五个参数 `r` 接受整数值的输入，最小值`0`，最大值`100`，超过 100 的输入将会报错。输入值越大，句式选择算法的随机性越大；输入值为 0 时，句式选择步骤将只选择载荷字最多的那个。
 
 在无错误的情况下， `Input()` 函数的返回值通常是 `0`。
 
