@@ -32,7 +32,7 @@ import pako from "pako";
 import * as Unishox from "./unishox2.js";
 import "pako";
 
-const Map ='{\"Actual\":{\"N\":{\"alphabet\":{\"a\":\"人\",\"b\":\"镜\",\"c\":\"鹏\",\"d\":\"曲\",\"e\":\"霞\",\"f\":\"绸\",\"g\":\"裳\",\"h\":\"路\",\"i\":\"岩\",\"j\":\"话\",\"k\":\"鲤\",\"l\":\"月\",\"m\":\"雪\",\"n\":\"冰\",\"o\":\"局\",\"p\":\"恋\",\"q\":\"褔\",\"r\":\"铃\",\"s\":\"琴\",\"t\":\"家\",\"u\":\"天\",\"v\":\"韵\",\"w\":\"桨\",\"x\":\"莺\",\"y\":\"璃\",\"z\":\"雨\",\"A\":\"文\",\"B\":\"涧\",\"C\":\"水\",\"D\":\"花\",\"E\":\"风\",\"F\":\"棋\",\"G\":\"楼\",\"H\":\"鹤\",\"I\":\"鸢\",\"J\":\"灯\",\"K\":\"雁\",\"L\":\"星\",\"M\":\"声\",\"N\":\"树\",\"O\":\"茶\",\"P\":\"竹\",\"Q\":\"兰\",\"R\":\"苗\",\"S\":\"心\",\"T\":\"语\",\"U\":\"礼\",\"V\":\"梦\",\"W\":\"园\",\"X\":\"柯\",\"Y\":\"驿\",\"Z\":\"烛\"},\"numbersymbol\":{\"0\":\"森\",\"1\":\"夏\",\"2\":\"光\",\"3\":\"林\",\"4\":\"物\",\"5\":\"云\",\"6\":\"夜\",\"7\":\"城\",\"8\":\"春\",\"9\":\"空\",\"+\":\"雀\",\"/\":\"鹂\",\"=\":\"鸳\"}},\"V\":{\"alphabet\":{\"a\":\"闭\",\"b\":\"赴\",\"c\":\"呈\",\"d\":\"添\",\"e\":\"用\",\"f\":\"成\",\"g\":\"走\",\"h\":\"达\",\"i\":\"行\",\"j\":\"称\",\"k\":\"见\",\"l\":\"学\",\"m\":\"听\",\"n\":\"买\",\"o\":\"作\",\"p\":\"设\",\"q\":\"写\",\"r\":\"定\",\"s\":\"谈\",\"t\":\"动\",\"u\":\"客\",\"v\":\"易\",\"w\":\"度\",\"x\":\"分\",\"y\":\"筑\",\"z\":\"选\",\"A\":\"建\",\"B\":\"指\",\"C\":\"换\",\"D\":\"探\",\"E\":\"放\",\"F\":\"看\",\"G\":\"报\",\"H\":\"事\",\"I\":\"泊\",\"J\":\"现\",\"K\":\"闪\",\"L\":\"彰\",\"M\":\"需\",\"N\":\"飞\",\"O\":\"游\",\"P\":\"求\",\"Q\":\"御\",\"R\":\"航\",\"S\":\"歌\",\"T\":\"读\",\"U\":\"振\",\"V\":\"登\",\"W\":\"任\",\"X\":\"留\",\"Y\":\"奏\",\"Z\":\"系\"},\"numbersymbol\":{\"0\":\"知\",\"1\":\"至\",\"2\":\"内\",\"3\":\"去\",\"4\":\"图\",\"5\":\"说\",\"6\":\"进\",\"7\":\"信\",\"8\":\"取\",\"9\":\"问\",\"+\":\"笑\",\"/\":\"视\",\"=\":\"言\"}},\"MV\":[\"欲\",\"应\",\"可\",\"能\",\"将\",\"请\",\"想\",\"必\",\"当\"],\"A\":{\"alphabet\":{\"a\":\"莹\",\"b\":\"畅\",\"c\":\"新\",\"d\":\"高\",\"e\":\"静\",\"f\":\"美\",\"g\":\"绿\",\"h\":\"佳\",\"i\":\"善\",\"j\":\"白\",\"k\":\"瀚\",\"l\":\"明\",\"m\":\"早\",\"n\":\"宏\",\"o\":\"青\",\"p\":\"遥\",\"q\":\"速\",\"r\":\"慧\",\"s\":\"绚\",\"t\":\"绮\",\"u\":\"寒\",\"v\":\"冷\",\"w\":\"银\",\"x\":\"灵\",\"y\":\"绣\",\"z\":\"北\",\"A\":\"临\",\"B\":\"南\",\"C\":\"俊\",\"D\":\"捷\",\"E\":\"骏\",\"F\":\"益\",\"G\":\"雅\",\"H\":\"舒\",\"I\":\"智\",\"J\":\"谜\",\"K\":\"彩\",\"L\":\"余\",\"M\":\"短\",\"N\":\"秋\",\"O\":\"乐\",\"P\":\"怡\",\"Q\":\"瑞\",\"R\":\"惠\",\"S\":\"和\",\"T\":\"纯\",\"U\":\"悦\",\"V\":\"迷\",\"W\":\"长\",\"X\":\"少\",\"Y\":\"近\",\"Z\":\"清\"},\"numbersymbol\":{\"0\":\"远\",\"1\":\"极\",\"2\":\"安\",\"3\":\"聪\",\"4\":\"秀\",\"5\":\"旧\",\"6\":\"浩\",\"7\":\"盈\",\"8\":\"快\",\"9\":\"悠\",\"+\":\"后\",\"/\":\"轻\",\"=\":\"坚\"}}},\"Virtual\":{\"zhi\":[\"之\"],\"hu\":[\"乎\"],\"zhe\":[\"者\"],\"ye\":[\"也\"],\"for\":[\"为\"],\"ba\":[\"把\"],\"le\":[\"了\"],\"er\":[\"而\"],\"this\":[\"此\",\"斯\"],\"still\":[\"仍\"],\"with\":[\"与\",\"同\"],\"also\":[\"亦\",\"也\"],\"is\":[\"是\",\"乃\"],\"not\":[\"未\",\"莫\"],\"or\":[\"或\"],\"more\":[\"更\"],\"make\":[\"使\",\"将\",\"让\"],\"and\":[\"与\",\"同\"],\"anti\":[\"非\",\"不\"],\"why\":[\"为何\",\"奈何\",\"何哉\"],\"but\":[\"但\",\"却\",\"则\",\"而\",\"况\",\"且\"],\"like\":[\"似\",\"如\",\"若\"],\"if\":[\"若\",\"倘\"],\"int\":[\"哉\",\"呼\",\"噫\"],\"self\":[\"自\"],\"by\":[\"以\",\"于\"]},\"Sentences\":{\"Begin\":[\"1/anti/N/ye\",\"1/N/曰\",\"1/N/言\",\"1/若夫/N/\",\"2/A/N/曰\",\"2/N/以/A\",\"2/N/anti/在/A\",\"3/初，/N/V/by/N\",\"3/夫/N/anti/V/by/N\",\"3/A/V/zhi/谓/A\",\"3/V/而/V/zhi/zhi/谓/A\",\"3/N/，/N/zhi/N/ye\",\"4/非/N/不/A/，/V/不/A\",\"5/V/N/而/V/A/，/V/zhi/道/ye\",\"5/N/zhi/V/V/，/实为/A/A\",\"5/本/MV/V/A/，/anti/V/N/N\",\"6/A/N/by/N/zhi/N/V/N\",\"7/N/以/A/A/，/A/V/A/N\",\"7/V/N/A/，/A/N/V/N\",\"8/V/A/N/，/V/A/N/，/by/MV/A/zhi/N/\",\"8/N/anti/A/V/zhe/by/A/V/zhe/V/，/anti/MV/A/V\",\"9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye\"],\"Main\":[\"1/anti/N/ye\",\"1/anti/MV/V/ye\",\"2/N/make/N/zhi\",\"2/MV/N/zhe/A\",\"2/有/N/则/A\",\"2/V/zhe/V/zhi\",\"2/but/MV/A/zhe/A\",\"3/N/with/N/V\",\"3/N/曰，何/A/zhi/V\",\"4/A/N/A/V\",\"4/V/N/以/V/N\",\"4/N/无/N/，/无以/V/N\",\"5/今/V/N/以/V/A/N\",\"5/N/乃/V/V/N/zhi/N\",\"5/本/MV/V/A/，/anti/V/N/N\",\"5/今/N/乃/A/N/A/N\",\"6/以/N/V/，/like/V/N/V/N\",\"6/N/V/，/V/N/V/N\",\"6/虽/V/V/A/A/，/A/A/不/同\",\"7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye\",\"7/N/V/以/N/V/，/V/不/V/N\",\"7/N/N/V/N/，/A/于/N/N\",\"7/MV/A/V/A/N/，/but/V/V/不/A\",\"7/或/V/N/V/N/，/V/N/于/N\",\"8/N/anti/MV/V/N/，/still/继/N/V/，/why/，/and/N/而/anti/V/N/ye\",\"8/V/N/A/A/，/V/N/A/A\",\"8/N/在/A/N/，/A/N/zhi/A/，/V/于/N\",\"8/A/N/A/V/，/N/N/A/V\",\"8/虽/无/N/N/zhi/V/，/亦/V/以/A/V/A/N\",\"9/N/MV/V/N/V/V/，/but/N/N/A/V\",\"9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye\",\"9/以/N/，/当/V/A/N/，/非/N/V/N/所/MV/A/V\",\"9/此/N/有/A/N/A/N/，/A/N/A/N\",\"9/是/N/ye/，/N/A/N/A/，/N/A/N/A\"],\"End\":[\"1/anti/N/ye\",\"2/唯/N/V/zhi\",\"2/V/by/N\",\"2/其/also/A/hu/其/V/ye\",\"3/V/在/A/N\",\"3/今/zhi/V/zhe，/亦将有/V/于/this/N\",\"4/V/N/zhi/N/by/N\",\"5/请/V/N/zhi/N/中/，/是/N/zhi/N\",\"6/以/N/V/，/like/V/N/V/N\",\"6/A/zhi/V/N/，/亦/like/今/zhi/V/N/，/A/夫\",\"7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye\",\"7/虽/N/A/N/A/，/所/以/V/N/，其/N/A/ye\",\"8/何必/V/N/V/N/，/V/N/zhi/N/N/哉\",\"9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye\"]}}'
+const Map ='{\"Actual\":{\"N\":{\"alphabet\":{\"a\":\"人\",\"b\":\"镜\",\"c\":\"鹏\",\"d\":\"曲\",\"e\":\"霞\",\"f\":\"绸\",\"g\":\"裳\",\"h\":\"路\",\"i\":\"岩\",\"j\":\"叶\",\"k\":\"鲤\",\"l\":\"月\",\"m\":\"雪\",\"n\":\"冰\",\"o\":\"局\",\"p\":\"恋\",\"q\":\"褔\",\"r\":\"铃\",\"s\":\"琴\",\"t\":\"家\",\"u\":\"天\",\"v\":\"韵\",\"w\":\"书\",\"x\":\"莺\",\"y\":\"璃\",\"z\":\"雨\",\"A\":\"文\",\"B\":\"涧\",\"C\":\"水\",\"D\":\"花\",\"E\":\"风\",\"F\":\"棋\",\"G\":\"楼\",\"H\":\"鹤\",\"I\":\"鸢\",\"J\":\"灯\",\"K\":\"雁\",\"L\":\"星\",\"M\":\"声\",\"N\":\"树\",\"O\":\"茶\",\"P\":\"竹\",\"Q\":\"兰\",\"R\":\"苗\",\"S\":\"心\",\"T\":\"语\",\"U\":\"礼\",\"V\":\"梦\",\"W\":\"庭\",\"X\":\"木\",\"Y\":\"驿\",\"Z\":\"火\"},\"numbersymbol\":{\"0\":\"森\",\"1\":\"夏\",\"2\":\"光\",\"3\":\"林\",\"4\":\"物\",\"5\":\"云\",\"6\":\"夜\",\"7\":\"城\",\"8\":\"春\",\"9\":\"空\",\"+\":\"雀\",\"/\":\"鹂\",\"=\":\"鸳\"}},\"V\":{\"alphabet\":{\"a\":\"关\",\"b\":\"赴\",\"c\":\"呈\",\"d\":\"添\",\"e\":\"停\",\"f\":\"成\",\"g\":\"走\",\"h\":\"达\",\"i\":\"行\",\"j\":\"称\",\"k\":\"见\",\"l\":\"学\",\"m\":\"听\",\"n\":\"买\",\"o\":\"作\",\"p\":\"弹\",\"q\":\"写\",\"r\":\"定\",\"s\":\"谈\",\"t\":\"动\",\"u\":\"旅\",\"v\":\"返\",\"w\":\"度\",\"x\":\"开\",\"y\":\"筑\",\"z\":\"选\",\"A\":\"流\",\"B\":\"指\",\"C\":\"换\",\"D\":\"探\",\"E\":\"放\",\"F\":\"看\",\"G\":\"报\",\"H\":\"事\",\"I\":\"泊\",\"J\":\"现\",\"K\":\"迸\",\"L\":\"彰\",\"M\":\"需\",\"N\":\"飞\",\"O\":\"游\",\"P\":\"求\",\"Q\":\"御\",\"R\":\"航\",\"S\":\"歌\",\"T\":\"读\",\"U\":\"振\",\"V\":\"登\",\"W\":\"任\",\"X\":\"留\",\"Y\":\"奏\",\"Z\":\"连\"},\"numbersymbol\":{\"0\":\"知\",\"1\":\"至\",\"2\":\"致\",\"3\":\"去\",\"4\":\"画\",\"5\":\"说\",\"6\":\"进\",\"7\":\"信\",\"8\":\"取\",\"9\":\"问\",\"+\":\"笑\",\"/\":\"视\",\"=\":\"言\"}},\"MV\":[\"欲\",\"应\",\"可\",\"能\",\"将\",\"请\",\"想\",\"必\",\"当\"],\"A\":{\"alphabet\":{\"a\":\"莹\",\"b\":\"畅\",\"c\":\"新\",\"d\":\"高\",\"e\":\"静\",\"f\":\"美\",\"g\":\"绿\",\"h\":\"佳\",\"i\":\"善\",\"j\":\"良\",\"k\":\"瀚\",\"l\":\"明\",\"m\":\"早\",\"n\":\"宏\",\"o\":\"青\",\"p\":\"遥\",\"q\":\"速\",\"r\":\"慧\",\"s\":\"绚\",\"t\":\"绮\",\"u\":\"寒\",\"v\":\"冷\",\"w\":\"银\",\"x\":\"灵\",\"y\":\"绣\",\"z\":\"北\",\"A\":\"临\",\"B\":\"南\",\"C\":\"俊\",\"D\":\"捷\",\"E\":\"骏\",\"F\":\"益\",\"G\":\"雅\",\"H\":\"舒\",\"I\":\"智\",\"J\":\"谜\",\"K\":\"彩\",\"L\":\"余\",\"M\":\"短\",\"N\":\"秋\",\"O\":\"乐\",\"P\":\"怡\",\"Q\":\"瑞\",\"R\":\"惠\",\"S\":\"和\",\"T\":\"纯\",\"U\":\"悦\",\"V\":\"迷\",\"W\":\"长\",\"X\":\"少\",\"Y\":\"近\",\"Z\":\"清\"},\"numbersymbol\":{\"0\":\"远\",\"1\":\"极\",\"2\":\"安\",\"3\":\"聪\",\"4\":\"秀\",\"5\":\"旧\",\"6\":\"浩\",\"7\":\"盈\",\"8\":\"快\",\"9\":\"悠\",\"+\":\"后\",\"/\":\"轻\",\"=\":\"坚\"}},\"AD\":{\"alphabet\":{\"a\":\"诚\",\"b\":\"畅\",\"c\":\"新\",\"d\":\"高\",\"e\":\"静\",\"f\":\"恒\",\"g\":\"愈\",\"h\":\"谨\",\"i\":\"善\",\"j\":\"良\",\"k\":\"频\",\"l\":\"笃\",\"m\":\"早\",\"n\":\"湛\",\"o\":\"昭\",\"p\":\"遥\",\"q\":\"速\",\"r\":\"朗\",\"s\":\"祗\",\"t\":\"攸\",\"u\":\"徐\",\"v\":\"咸\",\"w\":\"皆\",\"x\":\"灵\",\"y\":\"恭\",\"z\":\"弥\",\"A\":\"临\",\"B\":\"允\",\"C\":\"公\",\"D\":\"捷\",\"E\":\"淳\",\"F\":\"益\",\"G\":\"雅\",\"H\":\"舒\",\"I\":\"嘉\",\"J\":\"勤\",\"K\":\"协\",\"L\":\"永\",\"M\":\"短\",\"N\":\"歆\",\"O\":\"乐\",\"P\":\"怡\",\"Q\":\"已\",\"R\":\"忻\",\"S\":\"和\",\"T\":\"谧\",\"U\":\"悦\",\"V\":\"稍\",\"W\":\"长\",\"X\":\"少\",\"Y\":\"近\",\"Z\":\"尚\"},\"numbersymbol\":{\"0\":\"远\",\"1\":\"极\",\"2\":\"安\",\"3\":\"竟\",\"4\":\"悉\",\"5\":\"渐\",\"6\":\"颇\",\"7\":\"辄\",\"8\":\"快\",\"9\":\"悠\",\"+\":\"后\",\"/\":\"轻\",\"=\":\"曾\"}}},\"Virtual\":{\"zhi\":[\"之\"],\"hu\":[\"乎\"],\"zhe\":[\"者\"],\"ye\":[\"也\"],\"for\":[\"为\"],\"ba\":[\"把\"],\"le\":[\"了\"],\"er\":[\"而\"],\"this\":[\"此\",\"斯\"],\"still\":[\"仍\"],\"with\":[\"与\",\"同\"],\"also\":[\"亦\",\"也\"],\"is\":[\"是\",\"乃\"],\"not\":[\"未\",\"莫\"],\"or\":[\"或\"],\"more\":[\"更\"],\"make\":[\"使\",\"将\",\"让\"],\"and\":[\"与\",\"同\"],\"anti\":[\"非\",\"不\"],\"why\":[\"为何\",\"奈何\",\"何哉\"],\"but\":[\"但\",\"却\",\"则\",\"而\",\"况\",\"且\"],\"like\":[\"似\",\"如\",\"若\"],\"if\":[\"若\",\"倘\"],\"int\":[\"哉\",\"呼\",\"噫\"],\"self\":[\"自\"],\"by\":[\"以\",\"于\"]},\"Sentences\":{\"Begin\":[\"1/anti/N/ye\",\"1/N/曰\",\"1/N/言\",\"1/若夫/N/\",\"1/anti/MV/V/ye\",\"2/A/N/曰\",\"2/N/以/A\",\"2/N/anti/在/A\",\"2/N/make/N/zhi\",\"2/MV/N/zhe/A\",\"2/有/N/则/A\",\"2/V/zhe/V/zhi\",\"2/but/MV/A/zhe/A\",\"3/初，/N/V/by/N\",\"3/夫/N/anti/V/by/N\",\"3/AD/V/zhi/谓/A\",\"3/V/而/V/zhi/zhi/谓/A\",\"3/N/，/N/zhi/N/ye\",\"4/非/N/不/A/，/V/不/A\",\"4/A/N/AD/V\",\"4/V/N/以/V/N\",\"4/N/无/N/，/无以/V/N\",\"5/V/N/而/V/A/，/V/zhi/道/ye\",\"5/N/zhi/V/V/，/实为/A/A\",\"5/本/MV/V/A/，/anti/V/N/N\",\"5/今/V/N/以/V/A/N\",\"5/N/乃/V/V/N/zhi/N\",\"5/今/N/乃/A/N/A/N\",\"6/A/N/by/N/zhi/N/V/N\",\"7/N/以/A/A/，/AD/V/A/N\",\"7/V/N/A/，/A/N/V/N\",\"7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye\",\"7/N/V/以/N/V/，/V/不/V/N\",\"7/N/N/V/N/，/A/于/N/N\",\"7/MV/AD/V/A/N/，/but/V/V/不/A\",\"7/或/V/N/V/N/，/V/N/于/N\",\"8/V/A/N/，/V/A/N/，/by/MV/A/zhi/N/\",\"8/N/anti/AD/V/zhe/by/AD/V/zhe/V/，/anti/MV/AD/V\",\"8/N/anti/MV/V/N/，/still/继/N/V/，/why/，/and/N/而/anti/V/N/ye\",\"8/V/N/A/A/，/V/N/A/A\",\"8/N/在/A/N/，/A/N/zhi/A/，/V/于/N\",\"8/A/N/AD/V/，/N/N/AD/V\",\"8/虽/无/N/N/zhi/V/，/亦/V/以/AD/V/A/N\",\"9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye\",\"9/N/MV/V/N/V/V/，/but/N/N/AD/V\",\"9/以/N/，/当/V/A/N/，/非/N/V/N/所/MV/AD/V\",\"9/此/N/有/A/N/A/N/，/A/N/A/N\",\"9/是/N/ye/，/N/A/N/A/，/N/A/N/A\"],\"Main\":[\"1/anti/N/ye\",\"1/anti/MV/V/ye\",\"2/N/make/N/zhi\",\"2/MV/N/zhe/A\",\"2/有/N/则/A\",\"2/V/zhe/V/zhi\",\"2/but/MV/A/zhe/A\",\"3/N/with/N/V\",\"3/N/曰，何/A/zhi/V\",\"4/A/N/AD/V\",\"4/V/N/以/V/N\",\"4/N/无/N/，/无以/V/N\",\"5/今/V/N/以/V/A/N\",\"5/N/乃/V/V/N/zhi/N\",\"5/本/MV/V/A/，/anti/V/N/N\",\"5/今/N/乃/A/N/A/N\",\"6/以/N/V/，/like/V/N/V/N\",\"6/N/V/，/V/N/V/N\",\"6/虽/V/V/A/A/，/A/A/不/同\",\"7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye\",\"7/N/V/以/N/V/，/V/不/V/N\",\"7/N/N/V/N/，/A/于/N/N\",\"7/MV/AD/V/A/N/，/but/V/V/不/A\",\"7/或/V/N/V/N/，/V/N/于/N\",\"8/N/anti/MV/V/N/，/still/继/N/V/，/why/，/and/N/而/anti/V/N/ye\",\"8/V/N/A/A/，/V/N/A/A\",\"8/N/在/A/N/，/A/N/zhi/A/，/V/于/N\",\"8/A/N/AD/V/，/N/N/AD/V\",\"8/虽/无/N/N/zhi/V/，/亦/V/以/AD/V/A/N\",\"9/N/MV/V/N/V/V/，/but/N/N/AD/V\",\"9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye\",\"9/以/N/，/当/V/A/N/，/非/N/V/N/所/MV/AD/V\",\"9/此/N/有/A/N/A/N/，/A/N/A/N\",\"9/是/N/ye/，/N/A/N/A/，/N/A/N/A\"],\"End\":[\"1/anti/N/ye\",\"1/anti/MV/V/ye\",\"2/唯/N/V/zhi\",\"2/V/by/N\",\"2/其/also/A/hu/其/V/ye\",\"2/N/make/N/zhi\",\"2/MV/N/zhe/A\",\"2/有/N/则/A\",\"2/V/zhe/V/zhi\",\"2/but/MV/A/zhe/A\",\"3/V/在/A/N\",\"3/今/zhi/V/zhe/，/亦将有/V/于/this/N\",\"4/V/N/zhi/N/by/N\",\"4/A/N/AD/V\",\"4/V/N/以/V/N\",\"4/N/无/N/，/无以/V/N\",\"5/请/V/N/zhi/N/中/，/是/N/zhi/N\",\"5/今/V/N/以/V/A/N\",\"5/N/乃/V/V/N/zhi/N\",\"5/本/MV/V/A/，/anti/V/N/N\",\"5/今/N/乃/A/N/A/N\",\"6/以/N/V/，/like/V/N/V/N\",\"6/A/zhi/V/N/，/亦/like/今/zhi/V/N/，/A/夫\",\"6/N/V/，/V/N/V/N\",\"6/虽/V/V/A/A/，/A/A/不/同\",\"7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye\",\"7/虽/N/A/N/A/，/所/以/V/N/，其/N/A/ye\",\"7/anti/V/A/by/N/，/N/，/N/，/N/，/N/ye\",\"7/N/V/以/N/V/，/V/不/V/N\",\"7/N/N/V/N/，/A/于/N/N\",\"7/MV/AD/V/A/N/，/but/V/V/不/A\",\"7/或/V/N/V/N/，/V/N/于/N\",\"8/何必/V/N/V/N/，/V/N/zhi/N/N/哉\",\"8/N/anti/MV/V/N/，/still/继/N/V/，/why/，/and/N/而/anti/V/N/ye\",\"8/V/N/A/A/，/V/N/A/A\",\"8/N/在/A/N/，/A/N/zhi/A/，/V/于/N\",\"8/A/N/AD/V/，/N/N/AD/V\",\"8/虽/无/N/N/zhi/V/，/亦/V/以/AD/V/A/N\",\"9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye\",\"9/N/MV/V/N/V/V/，/but/N/N/AD/V\",\"9/以/N/，/当/V/A/N/，/非/N/V/N/所/MV/AD/V\",\"9/此/N/有/A/N/A/N/，/A/N/A/N\",\"9/是/N/ye/，/N/A/N/A/，/N/A/N/A\"]}}';
 
 var RoundFlip = 0; //标志现在到哪了
 var RoundControl = new Uint8Array(32); //一个数组，用密钥哈希来控制轮转的行为
@@ -140,6 +140,10 @@ function InitDecodeTable(){
     PayloadLetter = PayloadLetter + Map_Obj["Actual"]["N"]["alphabet"][LETTERS[i]];
     PayloadLetter = PayloadLetter + Map_Obj["Actual"]["A"]["alphabet"][LETTERS[i]];
     PayloadLetter = PayloadLetter + Map_Obj["Actual"]["V"]["alphabet"][LETTERS[i]];
+    if(Map_Obj["Actual"]["A"]["alphabet"][LETTERS[i]] != Map_Obj["Actual"]["AD"]["alphabet"][LETTERS[i]]){
+      DecodeTable[LETTERS[i]].push(Map_Obj["Actual"]["AD"]["alphabet"][LETTERS[i]]);
+      PayloadLetter = PayloadLetter + Map_Obj["Actual"]["AD"]["alphabet"][LETTERS[i]];
+    }
   }
   for(let i = 0; i < 13 ; i++){
     DecodeTable[NUMBERSYMBOL[i]] = [];
@@ -149,6 +153,10 @@ function InitDecodeTable(){
     PayloadLetter = PayloadLetter + Map_Obj["Actual"]["N"]["numbersymbol"][NUMBERSYMBOL[i]];
     PayloadLetter = PayloadLetter + Map_Obj["Actual"]["A"]["numbersymbol"][NUMBERSYMBOL[i]];
     PayloadLetter = PayloadLetter + Map_Obj["Actual"]["V"]["numbersymbol"][NUMBERSYMBOL[i]];
+    if(Map_Obj["Actual"]["A"]["numbersymbol"][NUMBERSYMBOL[i]] != Map_Obj["Actual"]["AD"]["numbersymbol"][NUMBERSYMBOL[i]]){
+      DecodeTable[NUMBERSYMBOL[i]].push(Map_Obj["Actual"]["AD"]["numbersymbol"][NUMBERSYMBOL[i]]);
+      PayloadLetter = PayloadLetter + Map_Obj["Actual"]["AD"]["numbersymbol"][NUMBERSYMBOL[i]];
+    }
   }
 }
 
@@ -586,25 +594,12 @@ function Uint8ArrayTostring(fileData) {
   return Base64.decode(tempBase64);
 }
 
-function setCharOnIndex(string, index, char) {
-  if (index > string.length - 1) return string;
-  return string.substring(0, index) + char + string.substring(index + 1);
-}
-
 function GetRandomIndex(length) {
   let Rand1 = Math.floor(Math.random() * 10000);
   let Rand2 = Rand1 % length;
   return Rand2;
 }
 
-function insertStringAtIndex(str, value, index) {
-  // 分割字符串为两部分，并在中间插入新值
-  return str.slice(0, index) + value + str.slice(index);
-}
-
-function difference(arr1, arr2) {
-  return arr1.filter((item) => !arr2.includes(item));
-}
 function rotateString(str, n) {
   return str.slice(n) + str.slice(0, n);
 }
@@ -874,46 +869,6 @@ export function selectSentence(PayloadLength,RandomIndex = 0){ //句式选择算
   return ElementResult;
 }
 
-
-/*export function preCheck(inp) {
-  let input = String(inp);
-  let size = input.length; //第一次遍历字符数组的函数，负责判断给定的输入类型。
-  let temp, temp2, group;
-  let isEncrypted = false; //判定该文本是否为加密文本
-
-  let isJPFound = false; //如果检查出一个日语标志位，则标记为真
-  let isCNFound = false; //如果检查出一个汉字标志位，则标记为真
-  for (let i = 0; i < size; i++) {
-    temp = input[i];
-
-    if (i != size - 1) {
-      //一次遍历两个字符，遇到倒数第一个的时候防止越界
-      temp2 = input[i + 1];
-    } else {
-      temp2 = NULL_STR;
-    }
-    group = temp + temp2;
-
-    //判断这个符号是不是标识符，标识符用空字符进行占位操作
-    if (SIG_DECRYPT_JP.indexOf(temp) != -1) {
-      input = setCharOnIndex(input, i, NULL_STR);
-      isJPFound = true;
-      continue;
-    }
-    if (SIG_DECRYPT_CN.indexOf(temp) != -1) {
-      input = setCharOnIndex(input, i, NULL_STR);
-      isCNFound = true;
-      continue;
-    }
-  }
-
-  if (isJPFound && isCNFound) {
-    isEncrypted = true;
-  }
-  let Result = new PreCheckResult(stringToUint8Array(input), isEncrypted);
-  return Result;
-}*/
-
 export function enMap(input, key, q, r) {
   //input.output Uint8Array
   RoundReset();
@@ -967,7 +922,7 @@ export function enMap(input, key, q, r) {
   RoundKey();
     for(let j = 0;j < Sentence.length;j++){ 
       for(let k = 0;k <Sentence[j].length;k++){
-        if(Sentence[j][k] == "V" || Sentence[j][k] == "N" || Sentence[j][k] == "A"){ //拆解句式，对表。
+        if(Sentence[j][k] == "V" || Sentence[j][k] == "N" || Sentence[j][k] == "A" || Sentence[j][k] == "AD"){ //拆解句式，对表。
           temp = OriginStr[i];
           TempStr1 = TempStr1 + getCryptText(temp,Sentence[j][k]);
           RoundKey();
@@ -993,6 +948,16 @@ export function enMap(input, key, q, r) {
           TempStr1 = TempStr1 + "，";
         }
       }
+    }
+
+    if(!q){
+      let TempStrQ = "";
+      for(let i = 0;i<TempStr1.length;i++){
+        if(TempStr1[i] != "，" && TempStr1[i] != "。" && TempStr1[i] != "、"){
+          TempStrQ = TempStrQ + TempStr1[i];
+        }
+      }
+      TempStr1 = TempStrQ;
     }
   RoundReset();
   return TempStr1;
@@ -1143,6 +1108,20 @@ export function getCryptText(text,type) {
           }
         }
       }
+    }else if(type == "AD"){
+      for (let key in Map_Obj["Actual"]["AD"]["alphabet"]) {
+        if (Map_Obj["Actual"]["AD"]["alphabet"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 = Map_Obj["Actual"]["AD"]["alphabet"][RoundKeyMatch(key)];
+            return s2;
+          } else if (key.toUpperCase() == letter) {
+            let s2 = String(
+              Map_Obj["Actual"]["AD"]["alphabet"][RoundKeyMatch(key.toUpperCase())]
+            );
+            return s2;
+          }
+        }
+      }
     }
 
   } else if (idx3 != -1 || idx4 != -1) {
@@ -1172,6 +1151,17 @@ export function getCryptText(text,type) {
           if (key == letter) {
             let s2 =
               Map_Obj["Actual"]["A"]["numbersymbol"][RoundKeyMatch(key)];
+            return s2;
+          }
+        }
+      }
+
+    }else if(type == "AD"){
+      for (let key in Map_Obj["Actual"]["AD"]["numbersymbol"]) {
+        if (Map_Obj["Actual"]["AD"]["numbersymbol"].hasOwnProperty(key)) {
+          if (key == letter) {
+            let s2 =
+              Map_Obj["Actual"]["AD"]["numbersymbol"][RoundKeyMatch(key)];
             return s2;
           }
         }
