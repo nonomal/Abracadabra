@@ -720,7 +720,7 @@ function distributeInteger(num) {
     return []; // 返回空数组，表示无法分配
   }
 
-  const maxPart = Math.floor(num * 0.2); // 计算每个部分的最大值
+  let maxPart = Math.floor(num * 0.2); // 计算每个部分的最大值
   let remaining = num - 2 * maxPart; // 计算剩余部分
 
   if (remaining <= 0) {
