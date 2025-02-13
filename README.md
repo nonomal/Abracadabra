@@ -147,7 +147,7 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 密文 -> 解仿真(仅仿真加密) -> 转轮逆映射 -> Base64 -> AES-256-CTR 解密 -> 解压缩 -> 明文
 ```
 
-### 映射表(传统加密)
+### 映射表
 
 Abracadabra 以最常用的 3000 个汉字为密本，对大小写拉丁字母，阿拉伯数字和部分符号进行映射。
 
@@ -219,6 +219,14 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 <td align=center>✅</td>
 <td align=center>❌</td>
 <td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+</tr>
+<tr>
+<td>仿真伪装</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
 <td align=center>❌</td>
 <td align=center>❌</td>
 </tr>
