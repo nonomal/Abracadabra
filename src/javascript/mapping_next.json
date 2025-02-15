@@ -322,7 +322,6 @@
     "Begin":[
       "1/anti/N/ye",
       "1/N/曰",
-      "1/N/言",
       "1/若夫/N/",
       "1/anti/MV/V/ye",
       "2/A/N/曰",
@@ -356,6 +355,7 @@
       "7/N/N/V/N/，/A/于/N/N",
       "7/MV/AD/V/A/N/，/but/V/V/不/A",
       "7/或/V/N/V/N/，/V/N/于/N",
+      "7/则有/N/A/N/A/，/N/N/具/V",
       "8/V/A/N/，/V/A/N/，/by/MV/A/zhi/N/",
       "8/N/anti/AD/V/zhe/by/AD/V/zhe/V/，/anti/MV/AD/V",
       "8/N/anti/MV/V/N/，/still/继/N/V/，/why/，/and/N/而/anti/V/N/ye",
@@ -403,7 +403,8 @@
       "9/A/N/V/zhi/而不/V/zhi/、亦/make/A/N/er/复/V/A/N/ye",
       "9/以/N/，/当/V/A/N/，/非/N/V/N/所/MV/AD/V",
       "9/此/N/有/A/N/A/N/，/A/N/A/N",
-      "9/是/N/ye/，/N/A/N/A/，/N/A/N/A"
+      "9/是/N/ye/，/N/A/N/A/，/N/A/N/A",
+      "9/V/A/N/，/N/A/N/A/，/乃/AD/V"
 
     ],
     "End":[
