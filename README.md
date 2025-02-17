@@ -13,7 +13,6 @@
 <div align=center>
   
 ![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/SheepChef/Abracadabra?color=31b046)
 ![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
 
