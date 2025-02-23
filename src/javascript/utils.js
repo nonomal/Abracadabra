@@ -541,6 +541,26 @@ function CheckLuhnBit(Data) {
   }
 }
 
+function RemovePadding(Base64String){
+  let PaddingCount = 0;
+  for(let i = Base64String.length - 1; i >= Base64String.length - 4 ;i--){
+    if(Base64String[i] == "="){
+      PaddingCount ++;
+    }
+  }
+  return Base64String.slice(0,Base64String.length - PaddingCount);
+}
+
+function AddPadding(Base64String){
+  if(Base64String.length % 4 == 3 ){
+    return Base64String + "=";
+  }else if(Base64String.length % 4 == 2 ){
+    return Base64String + "==";
+  }else{
+    return Base64String;
+  }
+}
+
 // 将WordArray转换为Uint8Array
 function wordArrayToUint8Array(data) {
   const dataArray = new Uint8Array(data.sigBytes);
@@ -777,7 +797,7 @@ export function enMap(input, key, q) {
   TempArray.set(RandomBytes, OriginalData.byteLength);
   OriginalData = TempArray;
 
-  let OriginStr = Base64.fromUint8Array(OriginalData);
+  let OriginStr = RemovePadding(Base64.fromUint8Array(OriginalData));
 
   let TempStr1 = "",
     temp = "",
@@ -885,6 +905,7 @@ export function deMap(input, key) {
     RoundKey(); //轮换密钥
     i++;
   }
+  TempStr1 = AddPadding(TempStr1);
   //到这儿应该能还原出AES加密之后的Base64 TempStr1
   let TempStr2Int = new Uint8Array();
   let RandomBytes = new Array(2);
