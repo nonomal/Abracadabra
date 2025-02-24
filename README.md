@@ -123,7 +123,7 @@ import { Abracadabra } from "abracadabra-cn";
 
 Abracadabra 还在积极开发中，这里是一些注意事项。
 
-### 密文污染
+### 密文污染(传统加密)
 
 加密选择的标志位尽可能地排除了日常情况下出现碰撞的可能。
 
