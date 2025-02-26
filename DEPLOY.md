@@ -1,96 +1,6 @@
 # 魔曰 部署指南
 
-这篇文档系统地介绍 Abracadabra(魔曰)两个语言版本的部署指南。
-**注意：C++版本** ***不支持*** **文言仿真加密，仅支持传统加密。**
-
-- [**C++**](#c-命令行)
-- [**JavaScript**](#javascript-npm-库)
-
-## C++ 命令行
-
-前往 Release 页面下载构建，使用命令行调用程序。
-使用参数 `-h` 查看命令帮助。
-
-你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
-
-```
-边难全您事二起住协踵先铭碘个版赴沢月及务褔集咫氧檀银绮铭学叫涧于路以白盈种四通重都俟沥困栀裳间烯化所德即园湍
-```
-
-### ⌨️ CLI 使用须知
-
-```shell
-PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v2.5.1***
-Usage: abracadabra_win_amd64 [OPTIONS] [DEFAULT]
-
-Positionals:
-  DEFAULT TEXT Excludes: -f -i
-                              Input text, if there is no given option besides.
-
-Options:
-  -h,--help                   Print this help message and exit
-  -e Excludes: -d             Force to encrypt.
-  -d Excludes: -e -q          Force to decrypt.
-  -q Excludes: -d             Skip appending encrypt marks.
-  -g                          Ignore any data checks.
-  -t                          Test/Debug mode, output more informations.
-  -f TEXT Excludes: DEFAULT -i
-                              Input an arbitrary given file.
-  -o TEXT                     Declare an output file to save the result.
-  -i TEXT Excludes: DEFAULT -f
-                              Input text, expected if -f is not used.
-  -k TEXT                     Key to encrypt, ABRACADABRA in default.
-```
-
-程序的输入和输出分离，输入可以是 `-i` 后跟一串字符串，也可以是 `-f` 后指定任意文件。 默认情况下结果输出在控制台，也可以 `-o` 后指定一个输出文件。
-
-**理论上本程序可以处理任何文件，解密显著慢于加密。**
-
-**处理 3MB 及以上文件时速度缓慢，加密用时呈指数增长，解密用时是加密的数倍。**
-
-你可以在 `-k` 后附带密钥来增加密文的安全性，安全性由多重因素保证，详情请见下方加密细节。
-
-如果你没有指定密钥，那么将使用默认密钥 `ABRACADABRA`，这会降低安全性。
-
-`-e` 强制加密给定数据，无视标志位检测结果。
-
-`-d` 强制解密给定数据，无视标志位检测结果。
-
-`-q` 可以跳过向密文增加标志位的步骤，增强隐蔽性，但解密时需要显式指定 `-d` 解密。
-
-`-t` 用于额外输出加/解密的中间步骤(Base64)结果，由此你可以查看密钥对转轮步骤的影响。
-
-`-g` 用于忽略解密过程中的数据合法性检查。
-
-如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
-
-### C++ 平台兼容性
-
-由于 Abracadabra 的功能涉及中文的输入和输出，在不同平台上，对不同编码的支持各不相同。
-
-项目在 Windows 11 和 Ubuntu 22.04 LTS 上通过了编译测试。
-
-在嵌入式平台(armv7a, armv8a)上通过了运行测试。
-
-### 编译与依赖
-
-如果你想自行编译 Abracadabra，请确保正确添加了以下依赖库：
-
-- [nlohmann/json](https://github.com/nlohmann/json) 用于 JSON 密本的解析
-- [cppcodec](https://github.com/tplgy/cppcodec) 用于 Base64 编解码
-- [CLI11](https://github.com/CLIUtils/CLI11) 用于解析命令行参数
-- [tiny-AES-c](https://github.com/kokke/tiny-AES-c) 用于 AES 加密
-- [PicoSHA2](https://github.com/okdshin/PicoSHA2) 用于计算哈希
-- [zlib](https://zlib.net/) 压缩支持库
-- [gzip-hpp](https://github.com/mapbox/gzip-hpp) 对 Gzip 压缩进行简单封装
-- [Unishox2](https://github.com/siara-cc/Unishox2/) 短文本压缩库
-
-另外，请确保您的环境中安装了 C++11 标准库。你需要提前编译 zlib 库并在编译时链接它。
-
-除了 Zlib 以外，本项目使用的所有库均是头文件/单文件库，因此只需事先下载库文件，编译时指定 Include 目录即可。
-
-本项目并不复杂，推荐直接用指令调用 g++ 进行构建。
+这篇文档系统地介绍 Abracadabra(魔曰) 部署指南。
 
 ## JavaScript NPM 库
 
@@ -107,12 +17,6 @@ import { Abracadabra } from "abracadabra-cn";
 ```
 
 如果你想在网页中全量引入本库，可以导入 `abracadabra-cn.umd.cjs`
-
-你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
-
-```
-边难全您事二起住协踵先铭碘个版赴沢月及务褔集咫氧檀银绮铭学叫涧于路以白盈种四通重都俟沥困栀裳间烯化所德即园湍
-```
 
 ### NPM 部署说明
 
