@@ -13,10 +13,10 @@
 <div align=center>
   
 ![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
-![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
+![WASM](https://img.shields.io/badge/binary-WASM-b33bb3)
 
-[<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=b33bb3"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
+[<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=00aaff"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
@@ -71,8 +71,6 @@
 
 ### JavaScript
 
-**_JavaScript版本支持传统加密和文言文仿真加密_**
-
 使用 npm 下载 Abracadabra 库。
 
 你也可以前往 Release 页面直接下载Js文件。
@@ -86,6 +84,22 @@ npm install abracadabra-cn
 ```javascript
 import { Abracadabra } from "abracadabra-cn";
 ```
+
+### WebAssembly
+
+前往 Release 下载编译好的 WebAssembly 文件。
+
+然后，使用 [**wasmtime**](https://github.com/bytecodealliance/wasmtime) 来调用它。
+
+```shell
+
+echo '{"method":"NEXT","mode":"ENCRYPT","inputType":"TEXT","outputType":"TEXT","input":"测试","key":"ABRACADABRA","q":true,"r":50}' | wasmtime abracadabra-cn.wasm
+
+```
+
+本项目的 WebAssembly 模块使用 [**Javy**](https://github.com/bytecodealliance/javy) 编译而来，方便在 C++、Rust、Go 等语言中调用，**不推荐**在类似 Python、 Java、Node.js 的解释器中调用。
+
+要调用本 WebAssembly 模块，需要使用尚在预览状态的 [**WASI**](https://github.com/WebAssembly/WASI)，目前仅有 wasmtime 提供了最完整的 WASI 支持，但它在各个语言的实现并不一致，具体请见 [**部署指南**](DEPLOY.md)。
 
 ### 静态页面 / 前端源码
 
@@ -169,12 +183,6 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 在映射为汉字的时候，每个字母/数字/符号均有多种可能性，完全随机选择。
 
 这进一步降低了密文的规律性，让关键词分词识别难以奏效。
-
-### 标志位(传统加密)
-
-使用 日本和制汉字 与 汉语停用字 组成二字标志位，在密文中随机位置插入，不易察觉
-
-标志位用来简化加解密操作流程，程序识别到加密标志位便会自动解密，无需用户手动指定解密，提高便利性。
 
 ## 功能比较
 

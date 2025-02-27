@@ -1,5 +1,10 @@
 // vite.config.js
 import { defineConfig } from "vite";
+import fs from 'fs';
+import path from 'path';
+
+let outDir = "";
+let configStore ;
 
 export default defineConfig({
   // 配置选项
@@ -12,4 +17,26 @@ export default defineConfig({
       fileName: "abracadabra-cn",
     },
   },
+  plugins:[
+    {
+      name: 'Abracadabra-Javy-Artifact',
+      apply: 'build', // 只在生产构建时生效
+      configResolved(config) {
+        // 保存最终输出目录路径
+        outDir = path.resolve(config.root, config.build.outDir);
+        configStore = config;
+      },
+      async writeBundle() {
+        // 自定义内容（这里可以修改为你需要追加的内容）
+        const AppendContentPath = path.join(configStore.root,"JavyInputAppendix.js");
+        const appendContent =  fs.readFileSync(AppendContentPath, 'utf8');
+
+        const TargetContentPath = path.join(outDir,"abracadabra-cn.js");
+        const TargetContent =  fs.readFileSync(TargetContentPath, 'utf8');
+        //创建全新文件
+        const newFilePath = path.join(outDir, 'abracadabra-cn-javy.js');
+        fs.writeFileSync(newFilePath, `${TargetContent}${appendContent}`);
+      }
+    }
+  ]
 });
