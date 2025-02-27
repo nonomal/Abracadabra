@@ -13,11 +13,10 @@
 <div align=center>
   
 ![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/SheepChef/Abracadabra?color=31b046)
-![C++](https://img.shields.io/badge/lang-C%2B%2B-%2300aaff)
 ![JavaScript](https://img.shields.io/badge/lang-JavaScript-orange)
+![WASM](https://img.shields.io/badge/binary-WASM-b33bb3)
 
-[<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=b33bb3"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
+[<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=00aaff"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
@@ -45,23 +44,24 @@
 
 ## 特性
 
-- 方便，密文可以描述自身。
+- **仿真，使用文言语法句式**。
 - 简短，密文简短方便传播。
 - 随机，加密结果具有随机性。
 - 安心，密码表中已剔除敏感汉字。
 - 安全，AES256 + 三重转轮混淆。
+- 双模式，同时支持仿真加密和传统加密。
 
-###  **Abracadabra Next**
+###  **古文仿真：下一代防和谐解决方案**
 
 > 虽无灯花之看，亦旅以良开临韵，鹏欲至物航定，但霞梦诚返，鹂当信花泊放，却风森良进，以书现，若走花度岩，舒鸢临笑，兰镜善停。
 >
-> 学叶明冷，称夜静少，此庭有悠叶冷鹤，寒雀明木，是夜也，林骏天速，梦惠声旧，虽说开快新，良瑞不同，恋在远月，快冰之怡，知于森。
+> 此语有绚绸悠褔，慧涧聪岩，不夏也，鸳可言云探问，且铃涧远奏，茶想彰花称选，且书雪轻赴，此雪有谜鸳少梦，极天莹空，今现韵以泊良雨，以岩，当去瑞花，非韵买鸢所当良画，不可去也。
 
 生成高仿真文言文，**参考康熙二十三年《古文观止》真实语料**。
 
 与传统方案一致的高强度加密，更复杂的组句/语法选择机制，更先进的消息隐写。
 
-将链接和短文本隐写在似是而非的文言文中，**_骗过所有传统检测，甚至大语言模型_**(结果因模型而异)。
+将链接和短文本隐写在似是而非的文言文中，**_骗过所有传统检测，_**[**_甚至大语言模型_**](https://github.com/SheepChef/Abracadabra/issues/64)(结果因模型而异)。
 
 密文高度随机，支持用户自行选择密文的随机性。
 
@@ -69,16 +69,7 @@
 
 请查阅 [**部署指南**](DEPLOY.md) 来了解详细使用方法。
 
-### C++
-
-**_C++版仅支持传统非仿真加密_**
-
-前往 Release 页面下载构建，使用命令行调用程序。
-使用参数 `-h` 查看命令帮助。
-
 ### JavaScript
-
-**_JavaScript版本支持传统加密和文言文仿真加密_**
 
 使用 npm 下载 Abracadabra 库。
 
@@ -94,11 +85,27 @@ npm install abracadabra-cn
 import { Abracadabra } from "abracadabra-cn";
 ```
 
+### WebAssembly
+
+前往 Release 下载编译好的 WebAssembly 文件。
+
+然后，使用 [**wasmtime**](https://github.com/bytecodealliance/wasmtime) 来调用它。
+
+```shell
+
+echo '{"method":"NEXT","mode":"ENCRYPT","inputType":"TEXT","outputType":"TEXT","input":"测试","key":"ABRACADABRA","q":true,"r":50}' | wasmtime abracadabra-cn.wasm
+
+```
+
+本项目的 WebAssembly 模块使用 [**Javy**](https://github.com/bytecodealliance/javy) 编译而来，方便在 C++、Rust、Go 等语言中调用，**不推荐**在类似 Python、 Java、Node.js 的解释器中调用。
+
+要调用本 WebAssembly 模块，需要使用尚在预览状态的 [**WASI**](https://github.com/WebAssembly/WASI)，目前仅有 wasmtime 提供了最完整的 WASI 支持，但它在各个语言的实现并不一致，具体请见 [**部署指南**](DEPLOY.md)。
+
 ### 静态页面 / 前端源码
 
 本项目有自动托管在Cloudflare Pages的静态页面可供直接使用。
 
-如果你想自行快速部署这个静态页，请前往前端源代码仓库。
+如果你想自行快速部署这个静态页，可以在Release中下载快速部署文件包。若要自行编译或修改，请前往前端源代码仓库。
 
 浏览器插件的源码同样在前端源代码仓库，位于crx分支。
 
@@ -123,7 +130,7 @@ import { Abracadabra } from "abracadabra-cn";
 
 Abracadabra 还在积极开发中，这里是一些注意事项。
 
-### 密文污染
+### 密文污染(传统加密)
 
 加密选择的标志位尽可能地排除了日常情况下出现碰撞的可能。
 
@@ -131,9 +138,7 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 
 如果出现污染现象，程序会立刻抛出错误并退出。
 
-对于 C++版本，你可以指定 `-f` 强制加密，也可以指定 `-g` 忽略检查并继续尝试解密(通常不会成功)。
-
-对于 JavaScript 版本，你可以选择强制加密来解决此问题。
+你可以选择强制加密来解决此问题。
 
 ## 细节概要
 
@@ -142,18 +147,18 @@ Abracadabra 还在积极开发中，这里是一些注意事项。
 ### 加解密过程
 
 ```
-明文 -> 压缩 -> AES-256-CTR -> Base64 -> 三重转轮 / 映射汉字 -> 密文
+明文 -> 压缩 -> AES-256-CTR -> Base64 -> 三重转轮 / 映射汉字 / 组句(仅仿真加密)-> 密文
 
-密文 -> 转轮逆映射 -> Base64 -> AES-256-CTR 解密 -> 解压缩 -> 明文
+密文 -> 解仿真(仅仿真加密) -> 转轮逆映射 -> Base64 -> AES-256-CTR 解密 -> 解压缩 -> 明文
 ```
 
-### 映射表(传统加密)
+### 映射表
 
 Abracadabra 以最常用的 3000 个汉字为密本，对大小写拉丁字母，阿拉伯数字和部分符号进行映射。
 
 密表为纯人工编纂，剔除了可能随机组成敏感词的汉字，不含任何贬义字。
 
-映射表公开可查，[**查阅映射表**](https://github.com/SheepChef/Abracadabra/blob/main/src/cplusplus/mapping.json) 以了解密本的全貌。
+映射表公开可查，查阅 [**映射表(传统)**](https://github.com/SheepChef/Abracadabra/blob/main/src/cplusplus/mapping.json) 或者 [**映射表(仿真)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping_next.json) 以了解密本的全貌。
 
 ### AES-256-CTR
 
@@ -177,15 +182,7 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 
 在映射为汉字的时候，每个字母/数字/符号均有多种可能性，完全随机选择。
 
-这进一步降低了密文的规律性，让它看起来像毫无意义的汉字字符串。
-
-最终的密文可能性为 65536*10^N，N为Base64字符串长度(近似正比于原文字节数)。
-
-### 标志位(传统加密)
-
-使用 日本和制汉字 与 汉语停用字 组成二字标志位，在密文中随机位置插入，不易察觉
-
-标志位用来简化加解密操作流程，程序识别到加密标志位便会自动解密，无需用户手动指定解密，提高便利性。
+这进一步降低了密文的规律性，让关键词分词识别难以奏效。
 
 ## 功能比较
 
@@ -219,6 +216,14 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 <td align=center>✅</td>
 <td align=center>❌</td>
 <td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
+</tr>
+<tr>
+<td>仿真伪装</td>
+<td align=center>✅</td>
+<td align=center>❌</td>
+<td align=center>❌</td>
 <td align=center>❌</td>
 <td align=center>❌</td>
 </tr>

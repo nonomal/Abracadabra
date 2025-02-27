@@ -1,97 +1,11 @@
 # 魔曰 部署指南
 
-这篇文档系统地介绍 Abracadabra(魔曰)两个语言版本的部署指南。
+这篇文档系统地介绍 Abracadabra(魔曰) 部署指南。
 
-- [**C++**](#c-命令行)
-- [**JavaScript**](#javascript-npm-库)
+- [**Javascript**](#javascript)
+- [**WebAssembly**](#webassembly)
 
-## C++ 命令行
-
-前往 Release 页面下载构建，使用命令行调用程序。
-使用参数 `-h` 查看命令帮助。
-
-你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
-
-```
-边难全您事二起住协踵先铭碘个版赴沢月及务褔集咫氧檀银绮铭学叫涧于路以白盈种四通重都俟沥困栀裳间烯化所德即园湍
-```
-
-### ⌨️ CLI 使用须知
-
-```shell
-PS C:\Abracadabra> .\abracadabra.exe -h
-***Abracadabra v2.5.1***
-Usage: abracadabra_win_amd64 [OPTIONS] [DEFAULT]
-
-Positionals:
-  DEFAULT TEXT Excludes: -f -i
-                              Input text, if there is no given option besides.
-
-Options:
-  -h,--help                   Print this help message and exit
-  -e Excludes: -d             Force to encrypt.
-  -d Excludes: -e -q          Force to decrypt.
-  -q Excludes: -d             Skip appending encrypt marks.
-  -g                          Ignore any data checks.
-  -t                          Test/Debug mode, output more informations.
-  -f TEXT Excludes: DEFAULT -i
-                              Input an arbitrary given file.
-  -o TEXT                     Declare an output file to save the result.
-  -i TEXT Excludes: DEFAULT -f
-                              Input text, expected if -f is not used.
-  -k TEXT                     Key to encrypt, ABRACADABRA in default.
-```
-
-程序的输入和输出分离，输入可以是 `-i` 后跟一串字符串，也可以是 `-f` 后指定任意文件。 默认情况下结果输出在控制台，也可以 `-o` 后指定一个输出文件。
-
-**理论上本程序可以处理任何文件，解密显著慢于加密。**
-
-**处理 3MB 及以上文件时速度缓慢，加密用时呈指数增长，解密用时是加密的数倍。**
-
-你可以在 `-k` 后附带密钥来增加密文的安全性，安全性由多重因素保证，详情请见下方加密细节。
-
-如果你没有指定密钥，那么将使用默认密钥 `ABRACADABRA`，这会降低安全性。
-
-`-e` 强制加密给定数据，无视标志位检测结果。
-
-`-d` 强制解密给定数据，无视标志位检测结果。
-
-`-q` 可以跳过向密文增加标志位的步骤，增强隐蔽性，但解密时需要显式指定 `-d` 解密。
-
-`-t` 用于额外输出加/解密的中间步骤(Base64)结果，由此你可以查看密钥对转轮步骤的影响。
-
-`-g` 用于忽略解密过程中的数据合法性检查。
-
-如果不附带任何模式参数 (仅提供文本)，则会自动判断给定的文本是否是密文，依照判断进行处理。
-
-### C++ 平台兼容性
-
-由于 Abracadabra 的功能涉及中文的输入和输出，在不同平台上，对不同编码的支持各不相同。
-
-项目在 Windows 11 和 Ubuntu 22.04 LTS 上通过了编译测试。
-
-在嵌入式平台(armv7a, armv8a)上通过了运行测试。
-
-### 编译与依赖
-
-如果你想自行编译 Abracadabra，请确保正确添加了以下依赖库：
-
-- [nlohmann/json](https://github.com/nlohmann/json) 用于 JSON 密本的解析
-- [cppcodec](https://github.com/tplgy/cppcodec) 用于 Base64 编解码
-- [CLI11](https://github.com/CLIUtils/CLI11) 用于解析命令行参数
-- [tiny-AES-c](https://github.com/kokke/tiny-AES-c) 用于 AES 加密
-- [PicoSHA2](https://github.com/okdshin/PicoSHA2) 用于计算哈希
-- [zlib](https://zlib.net/) 压缩支持库
-- [gzip-hpp](https://github.com/mapbox/gzip-hpp) 对 Gzip 压缩进行简单封装
-- [Unishox2](https://github.com/siara-cc/Unishox2/) 短文本压缩库
-
-另外，请确保您的环境中安装了 C++11 标准库。你需要提前编译 zlib 库并在编译时链接它。
-
-除了 Zlib 以外，本项目使用的所有库均是头文件/单文件库，因此只需事先下载库文件，编译时指定 Include 目录即可。
-
-本项目并不复杂，推荐直接用指令调用 g++ 进行构建。
-
-## JavaScript NPM 库
+## JavaScript
 
 使用 npm 下载 Abracadabra 库。
 
@@ -106,12 +20,6 @@ import { Abracadabra } from "abracadabra-cn";
 ```
 
 如果你想在网页中全量引入本库，可以导入 `abracadabra-cn.umd.cjs`
-
-你可以用以下文本来测试，请使用默认密钥(不要输入密钥)。
-
-```
-边难全您事二起住协踵先铭碘个版赴沢月及务褔集咫氧檀银绮铭学叫涧于路以白盈种四通重都俟沥困栀裳间烯化所德即园湍
-```
 
 ### NPM 部署说明
 
@@ -226,3 +134,108 @@ let Result = Abra.Output() //获取输出
 在调用 `Output()` 之前，你需要至少调用过一次 `Input()`，否则将会抛出错误。
 
 调用 `Output()` 将获得此前输入的处理结果，其返回类型可能是 `String` 或 `Uint8Array`，取决于对象实例化时指定了何种输出模式。
+
+## WebAssembly
+
+前往 Release 下载编译好的 WebAssembly 文件。
+
+然后，推荐使用 [**wasmtime**](https://github.com/bytecodealliance/wasmtime) 来调用它，其他 Runtime 不做特别兼容。
+
+本项目的 WebAssembly 模块使用 [**Javy**](https://github.com/bytecodealliance/javy) 编译而来，方便在 C++、Rust、Go 等语言中调用，**不推荐**在类似 Python、 Java、Node.js 的解释器中调用。
+
+要调用本 WebAssembly 模块，需要使用尚在预览状态的 [**WASI**](https://github.com/WebAssembly/WASI)，目前仅有 wasmtime 提供了最完整的 WASI 支持，但它在各个语言的实现并不一致。
+
+本模块的合法输入为一个JSON字符串，输入时请勿附带注释，遵循以下格式：
+
+```json
+
+{
+  "method":"", // NEXT | OLD //前者是仿真加密，后者是传统加密
+  "inputType":"", // TEXT | UINT8
+  "outputType":"", // TEXT | UINT8
+  "input":"",  //输入的数据，如果是TEXT请直接输入纯文本，如果是任意字节，请输入Base64编码字符串
+  "mode":"",   // ENCRYPT | DECRYPT | AUTO   // AUTO 仅在 method 指定 OLD 时合法 
+  "key":"",    //加密密钥，一个字符串，不可缺省，JavaScript实现的默认值为 ABRACADABRA
+  "q":bool,    //OLD模式下，决定是否去除标志位 | NEXT模式下，决定输出密文是否有标点符号
+  "r":number,  //仅NEXT模式下需要：算法的随机程度，越大随机性越强，默认 50，最大100，超过100将会出错;
+  
+}
+
+```
+
+用 wasmtime CLI 调用，在不同的命令行里有不同的方式，大多数时候是输入字符串的字符集的区别，以及是否需要在字符串外面加单引号的区别。
+
+在 Windows CMD 或者 Powershell 中调用，请确保执行了 `chcp 65001` 以调整代码页为UTF-8。
+
+```shell
+
+echo '{"method":"NEXT","mode":"ENCRYPT","inputType":"TEXT","outputType":"TEXT","input":"测试","key":"ABRACADABRA","q":true,"r":50}' | wasmtime abracadabra-cn.wasm
+
+```
+
+对于其他语言，你需要使用 Wasmtime WASI 的 `stdin` 和 `stdout` 接口来操作本模块的输入输出，调用 `_start` 方法来启动本模块。
+
+下方提供 Python 的示例，其他语言请自行查阅 wasmtime 对应的文档。
+
+```shell
+
+pip install wasmtime
+
+```
+
+```python
+
+import wasmtime
+
+def run_wasi(wasm_file):
+    engine = wasmtime.Engine()
+    module = wasmtime.Module.from_file(engine, wasm_file)
+    store = wasmtime.Store(engine)
+    linker = wasmtime.Linker(engine)
+    wasi = wasmtime.WasiConfig()
+    #Python 的 wasmtime 实现，想写入stdin，必须使用一个文件。
+    #文件里填写要输入的JSON。
+    wasi.stdin_file = "<Path_to_JSON_File>"
+    wasi.inherit_stdout()
+    wasi.inherit_stderr()
+    linker.define_wasi()
+    store.set_wasi(wasi)
+    instance = linker.instantiate(store, module)
+    start = instance.exports(store)["_start"]
+    start(store)
+try:
+    run_wasi("<Path_to_WASM_Module_File>")
+except FileNotFoundError:
+    print(f"Error: WASM file '{wasm_file}' not found.")
+except wasmtime.WasmtimeError as e:
+    print(f"Wasmtime error: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+```
+
+### 用 Javy 编译模块
+
+
+
+首先，拉取仓库，安装 [**Javy**](https://github.com/bytecodealliance/javy)，配置恰当的环境。
+
+然后，像编译普通JS库一样，执行：
+
+```shell
+
+npm install
+
+npm run build
+
+```
+
+在输出文件夹中，找到 `abracadabra-cn-javy.js`
+
+然后用 Javy 在命令行中编译：
+
+```shell
+
+javy build "Path/to/abracadabra-cn-javy.js" -o "path/Output.wasm"
+
+```
