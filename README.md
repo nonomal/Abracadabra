@@ -69,6 +69,8 @@
 
 请查阅 [**部署指南**](DEPLOY.md) 来了解详细使用方法。
 
+旧的 C++ 版本已被废弃，不再受后向兼容维护。
+
 ### JavaScript
 
 使用 npm 下载 Abracadabra 库。
