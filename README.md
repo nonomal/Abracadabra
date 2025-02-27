@@ -160,7 +160,7 @@ Abracadabra 以最常用的 3000 个汉字为密本，对大小写拉丁字母�
 
 密表为纯人工编纂，剔除了可能随机组成敏感词的汉字，不含任何贬义字。
 
-映射表公开可查，查阅 [**映射表(传统)**](https://github.com/SheepChef/Abracadabra/blob/main/src/cplusplus/mapping.json) 或者 [**映射表(仿真)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping_next.json) 以了解密本的全貌。
+映射表公开可查，查阅 [**映射表(传统)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping.json) 或者 [**映射表(仿真)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping_next.json) 以了解密本的全貌。
 
 ### AES-256-CTR
 
