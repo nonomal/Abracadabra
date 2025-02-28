@@ -10,7 +10,7 @@ on:
     branches: [ "main", "dev_nodejs" ]
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,3 +26,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
+    - name: 保存构建工件
+      uses: actions/upload-artifact@v4
+      with:
+          name: dist-without-markdown
+          path: |
+            dist
+            !dist/**/*.md
+          
