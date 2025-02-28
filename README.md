@@ -17,6 +17,7 @@
 ![WASM](https://img.shields.io/badge/binary-WASM-b33bb3)
 
 [<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=00aaff"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
+[<img src="https://img.shields.io/github/actions/workflow/status/SheepChef/Abracadabra/node.js.yml?branch=main&label=%E6%9E%84%E5%BB%BA"/>](https://github.com/SheepChef/Abracadabra/actions/workflows/node.js.yml)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
