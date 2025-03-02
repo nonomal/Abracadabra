@@ -167,6 +167,8 @@ let Result = Abra.Output() //获取输出
 
 在 Windows CMD 或者 Powershell 中调用，请确保执行了 `chcp 65001` 以调整代码页为UTF-8。
 
+注意在 Windows CMD 中，输入的字符串**不需要**用单引号囊括。
+
 ```shell
 
 echo '{"method":"NEXT","mode":"ENCRYPT","inputType":"TEXT","outputType":"TEXT","input":"测试","key":"ABRACADABRA","q":true,"r":50}' | wasmtime abracadabra-cn.wasm

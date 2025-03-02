@@ -17,6 +17,7 @@
 ![WASM](https://img.shields.io/badge/binary-WASM-b33bb3)
 
 [<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=00aaff"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
+[<img src="https://img.shields.io/github/actions/workflow/status/SheepChef/Abracadabra/node.js.yml?branch=main&label=%E6%9E%84%E5%BB%BA"/>](https://github.com/SheepChef/Abracadabra/actions/workflows/node.js.yml)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
@@ -68,6 +69,8 @@
 ## 快速使用
 
 请查阅 [**部署指南**](DEPLOY.md) 来了解详细使用方法。
+
+旧的 C++ 版本已被废弃，不再受后向兼容维护。
 
 ### JavaScript
 
@@ -158,7 +161,7 @@ Abracadabra 以最常用的 3000 个汉字为密本，对大小写拉丁字母�
 
 密表为纯人工编纂，剔除了可能随机组成敏感词的汉字，不含任何贬义字。
 
-映射表公开可查，查阅 [**映射表(传统)**](https://github.com/SheepChef/Abracadabra/blob/main/src/cplusplus/mapping.json) 或者 [**映射表(仿真)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping_next.json) 以了解密本的全貌。
+映射表公开可查，查阅 [**映射表(传统)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping.json) 或者 [**映射表(仿真)**](https://github.com/SheepChef/Abracadabra/blob/main/src/javascript/mapping_next.json) 以了解密本的全貌。
 
 ### AES-256-CTR
 
