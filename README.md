@@ -17,6 +17,7 @@
 ![WASM](https://img.shields.io/badge/binary-WASM-b33bb3)
 
 [<img src="https://img.shields.io/github/v/release/SheepChef/Abracadabra?color=00aaff"/>](https://github.com/SheepChef/Abracadabra/releases/latest)
+[<img src="https://img.shields.io/github/actions/workflow/status/SheepChef/Abracadabra/node.js.yml?branch=main&label=%E6%9E%84%E5%BB%BA"/>](https://github.com/SheepChef/Abracadabra/actions/workflows/node.js.yml)
 ![GitHub Repo stars](https://img.shields.io/github/stars/SheepChef/Abracadabra)
 
 </div>
@@ -53,9 +54,9 @@
 
 ###  **古文仿真：下一代防和谐解决方案**
 
-> 虽无灯花之看，亦旅以良开临韵，鹏欲至物航定，但霞梦诚返，鹂当信花泊放，却风森良进，以书现，若走花度岩，舒鸢临笑，兰镜善停。
+> 定雪以关雨，故选速文者，当事浩鹏之纯茶。作必与其雀，而航欲任以铃者，楼也。但欲极者遥，雪无文，无以致花。
 >
-> 此语有绚绸悠褔，慧涧聪岩，不夏也，鸳可言云探问，且铃涧远奏，茶想彰花称选，且书雪轻赴，此雪有谜鸳少梦，极天莹空，今现韵以泊良雨，以岩，当去瑞花，非韵买鸢所当良画，不可去也。
+> 莺在悦岩，遥城之近，游于璃。乐林曰，是故无极无畅，无纯无静，叶之所走、心之所停也。信俊灯，光善韵银，乃稍旅。秀兰能长雨之怡，行光中之迷，鹤定而瑞裳事也。文欲取庭弹度，却琴心益求，非叶也。
 
 生成高仿真文言文，**参考康熙二十三年《古文观止》真实语料**。
 
@@ -286,6 +287,20 @@ AES 加密密钥和转轮密钥是同一个，均采用哈希值。
 <td align=center>🟡</td>
 </tr>
 </table>
+
+```
+明文：Abracadabra
+
+魔曰(仿真)：铃有将报，局有竟然。故探盈声者，当度青莺之静云。非木也，琴与树换，振棋以至雁。
+魔曰(传统)：困句夏之全玚凪斋或骏琅咨兆咩谜理金说宙银歌舒
+
+熊曰：呋食性類啽家現出爾常肉嘿達嗷很
+佛曰：諸南隸僧南降南吽諸陀南摩隸南僧南缽南薩咤南心彌嚴迦聞婆吽願南眾南色南兜南眾南如婆如南
+社会主义：自由民主公正文明法治文明公正民主公正和谐公正民主公正自由公正民主公正文明法治文明公正民主
+兽音：~呜嗷嗷嗷嗷呜呜啊呜嗷呜嗷呜呜~嗷啊呜啊嗷啊呜嗷呜~呜~嗷~呜呜嗷嗷嗷嗷嗷嗷呜啊嗷呜啊呜嗷呜呜~嗷啊嗷啊嗷啊呜嗷嗷~~~嗷~呜呜嗷嗷嗷嗷嗷嗷呜啊嗷呜呜呜嗷呜呜~呜啊呜啊嗷啊呜嗷嗷~嗷啊
+火星文：（不支持英文）
+
+```
 
 ## 鸣谢
 
