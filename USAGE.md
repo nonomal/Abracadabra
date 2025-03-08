@@ -1,6 +1,6 @@
 # 魔曰 细节和使用指南
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![License](https://img.shields.io/github/license/SheepChef/Abracadabra?color=yellow)
 
 **Abracadabra(魔曰)** 是一个用于加密短文本/链接的工具。
 
